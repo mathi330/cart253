@@ -47,13 +47,13 @@ function draw() {
   triangle(width/2, height/2, width/2 + 69, height/2, width/2, height/2 + 69);
 
   noStroke();
-  fill(204, 204, 255, 120);
+  fill(204, 204, 255);
   ellipse(width/2, height/2, 40, 40);
-  fill(195, 195, 246, 120);
+  fill(195, 195, 246);
   ellipse(width/2, height/2, 30, 30);
-  fill(186, 186, 237, 120);
+  fill(186, 186, 237);
   ellipse(width/2, height/2, 20, 20);
-  fill(177, 177, 228, 120);
+  fill(177, 177, 228);
   ellipse(width/2, height/2, 10, 10);
 
   stroke(255);
