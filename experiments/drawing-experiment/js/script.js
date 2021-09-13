@@ -1,21 +1,25 @@
 "use strict";
 
 /**************************************************
-Template p5 project
-Pippin Barr
+Drawing experiment
+Mathilde Davan
 
-Playing around with colors and shapes.
+Experiment with p5's drawing and color functions.
+
+Abstract image of a landscape.
 **************************************************/
 
 // setup()
 //
-// Description of setup() goes here.
+// Draws the background of the lanscape.
 function setup() {
   ellipseMode(CORNER);
 
   createCanvas(900, 500);
+  //Set backround to red-pink.
   background(200, 0, 100);
 
+  //Draw 5 rectangles rotated in the background with colors creating a gradient.
   noStroke(1);
   fill(210, 0, 100, 100);
   rotate(PI / 100.0);
@@ -40,12 +44,14 @@ function setup() {
 
 // draw()
 //
-// Description of draw() goes here.
+// Draws the foreground of the landscape.
 function draw() {
-  stroke(0, 0, 0, 10);
+  //Draw a triangle with a black stroke and no fill.
+  stroke(0);
   noFill();
   triangle(width/2, height/2, width/2 + 69, height/2, width/2, height/2 + 69);
 
+  //Draw a cone with a blue-purple gradient.
   noStroke();
   fill(204, 204, 255);
   ellipse(width/2, height/2, 40, 40);
@@ -56,6 +62,7 @@ function draw() {
   fill(177, 177, 228);
   ellipse(width/2, height/2, 10, 10);
 
+  //Draw the line of the mountains as white line (from top-left corner to bottom-right corner).
   stroke(255);
   strokeWeight(2);
   line(0, 0, width/6, height/3);
