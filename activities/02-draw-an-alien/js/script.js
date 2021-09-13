@@ -2,7 +2,8 @@
 Draw an alien
 Mathilde Davan
 
-In this project, I drew an alien with simple shapes.
+In this project, I drew an alien.
+link to the webpage: https://mathi330.github.io/cart253/activities/02-draw-an-alien/
 */
 
 "use strict";
