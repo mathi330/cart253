@@ -2,41 +2,52 @@
 I like to move it!
 Mathilde Davan
 
-This is a project where blah blah blah...
+This project is an abstract piece composed of a moving triangle in the center
+changing color with a square of the same color in the background rotating.
+Made on top of the triangle, we can see 4 empty squares and 4 empty circles
+moving across the canvas each in its own direction.
+I also made my background slightly transparent to make the movements of the
+empty shapes more mesmerizing and fluid in my opinion.
+The mouse's movements were integrated with the size of the empty squares and
+the customized mouse cursor that I made and that reminds the movements and
+shapes of the bigger empty shapes.
 */
 
 "use strict";
 
 let bg = {
-  r: 0,
-  g: 0,
-  b: 0,
+  fill: 0,
+  alpha: 50,
 };
 
 let cursor = {
-  //coordinates
+  //squares
   x1: 0,
-  y1: -1,
+  y1: -5,
   x2: 5,
-  y2: -1,
-  x3: -5,
-  y3: -1,
+  y2: 0,
+  x3: 0,
+  y3: 5,
   x4: -5,
-  y4: 5,
-  x5: 0,
-  y5: 6,
-  x6: 0,
-  y6: 6,
+  y4: 0,
+  sizeS: 25,
+  minSizeS: 3,
+  maxSizeS: 25,
+  growthS: -0.1,
+
+  //circles
+  x5: -5,
+  y5: -5,
+  x6: 5,
+  y6: -5,
   x7: 5,
   y7: 5,
-  sizeHead: 20,
-  sizeEyes: 5,
-  //fill
-  fillR: 200,
-  fillG: 220,
-  fillB: 180,
-  random1: -0.04,
-  random2: 0.04,
+  x8: -5,
+  y8: 5,
+  sizeC: 2,
+  minSizeC: 2,
+  maxSizeC: 25,
+  growthC: 0.1,
 };
 
 //Create object for the triangle in the middle of the canvas.
@@ -72,6 +83,8 @@ let stroke1 = {
   x: 0,
   y: 0,
   size: 500,
+  sizeMin: 70,
+  sizeMax: 900,
   speed: 1.5,
   growth: -0.39,
   stroke: 255,
@@ -112,6 +125,8 @@ let square1 = {
   x: 400,
   y: 0,
   size: 100,
+  sizeMin: 50,
+  sizeMax: 700,
   speed: 1.5,
   growth: -0.39,
   stroke: 255,
@@ -155,12 +170,9 @@ let centerSquare = {
 };
 
 /**
-Description of preload
-*/
-function preload() {}
+setup()
 
-/**
-Description of setup
+Set canvas' size and make the rectangles be drawn from their center.
 */
 function setup() {
   createCanvas(800, 800);
@@ -168,18 +180,21 @@ function setup() {
 }
 
 /**
-Description of draw()
+draw()
+
+Set background to black.
+Draw a triangle in the middle (changes shape and color).
+Make empty circles (white stroke) grow and move across the canvas (diagonals).
+Make empty squares grow (mouseX) and move across the canvas.
+Make a cursor inspired from the empty shapes mentionned above.
+Make a square (same color as the triangle) rotate in the center of the canvas.
 */
 function draw() {
   //Draw black background
-  background(bg.r, bg.g, bg.b, 50);
-
+  background(bg.fill, bg.alpha);
   noCursor();
 
-  // Increase the angle so the sine result changes.
-  middleTriangle.angle += middleTriangle.angleChange;
-
-  //Draw triangleCenter.
+  //Draw the triangle of the middle of the canvas.
   noStroke();
   //triangle color.
   middleTriangle.r = middleTriangle.r + middleTriangle.changeR;
@@ -197,6 +212,8 @@ function draw() {
     middleTriangle.changeB = -middleTriangle.changeB;
   }
   //Movement of the triangle.
+  // Increase the angle so the sine result changes.
+  middleTriangle.angle += middleTriangle.angleChange;
   middleTriangle.x1 += middleTriangle.speedx1 * sin(middleTriangle.angle);
   middleTriangle.y1 += middleTriangle.speedy1 * sin(middleTriangle.angle);
   middleTriangle.x2 += middleTriangle.speedx2 * sin(middleTriangle.angle);
@@ -211,8 +228,7 @@ function draw() {
     middleTriangle.x3,
     middleTriangle.y3
   );
-
-  //Changing the triangles shape and making it move.
+  //Stopping the angles of the triangle to go too far.
   if (middleTriangle.x1 >= 443.3 || middleTriangle.x1 <= 356.7) {
     middleTriangle.speedx1 = -middleTriangle.speedx1;
   }
@@ -276,7 +292,7 @@ function draw() {
   ellipse(stroke4.x, stroke4.y, stroke1.size);
 
   //If statement to invert the growth of the empty circles.
-  if (stroke1.size >= width || stroke1.size <= 50) {
+  if (stroke1.size >= stroke1.sizeMax || stroke1.size <= stroke1.sizeMin) {
     stroke1.growth = -stroke1.growth;
   }
 
@@ -298,7 +314,8 @@ function draw() {
   //empty square (top)
   square1.y += square1.speed;
   square1.y = constrain(square1.y, 0, height);
-  square1.size = map(mouseX, 0, width, 50, 300);
+  square1.size = map(mouseX, 0, width, square1.sizeMin, square1.sizeMax);
+  square1.size = constrain(square1.size, square1.sizeMin, square1.sizeMax);
   rect(square1.x, square1.y, square1.size);
 
   //empty square (right)
@@ -324,42 +341,33 @@ function draw() {
     square4.speed = -square4.speed;
   }
 
-  // //Smiley face cursor.
-  // noStroke();
-  // //fill for the head(changes with the mouse's movements).
-  // cursor.fillR = cursor.fillR + random(cursor.random1, cursor.random2);
-  // cursor.fillG = cursor.fillG + random(cursor.random1, cursor.random2);
-  // cursor.fillB = cursor.fillB + random(cursor.random1, cursor.random2);
-  // fill(
-  //   noise(cursor.fillR) * mouseX,
-  //   noise(cursor.fillG) * mouseY,
-  //   noise(cursor.fillB) * 255
-  // );
-  // //head
-  // ellipse(mouseX + cursor.x1, mouseY + cursor.y1, cursor.sizeHead);
-  // //eyes
-  // fill(0);
-  // ellipse(mouseX + cursor.x2, mouseY + cursor.y2, cursor.sizeEyes);
-  // ellipse(mouseX + cursor.x3, mouseY + cursor.y3, cursor.sizeEyes);
-  // //mouth (smiling)
-  // stroke(0);
-  // line(
-  //   mouseX + cursor.x4,
-  //   mouseY + cursor.y4,
-  //   mouseX + cursor.x5,
-  //   mouseY + cursor.y5
-  // );
-  // line(
-  //   mouseX + cursor.x6,
-  //   mouseY + cursor.y6,
-  //   mouseX + cursor.x7,
-  //   mouseY + cursor.y7
-  // );
+  //Draw cursor
+  //Draw the squares of the cursor.
+  cursor.sizeS += cursor.growthS;
+  rect(mouseX + cursor.x1, mouseY + cursor.y1, cursor.sizeS);
+  rect(mouseX + cursor.x2, mouseY + cursor.y2, cursor.sizeS);
+  rect(mouseX + cursor.x3, mouseY + cursor.y3, cursor.sizeS);
+  rect(mouseX + cursor.x4, mouseY + cursor.y4, cursor.sizeS);
+  //Make the squares grow and shrink.
+  if (cursor.sizeS >= cursor.maxSizeS || cursor.sizeS <= cursor.minSizeS) {
+    cursor.growthS = -cursor.growthS;
+  }
 
-  //Draw a square rotating.
+  //Draw the circles of the cursor.
+  cursor.sizeC += cursor.growthC;
+  ellipse(mouseX + cursor.x5, mouseY + cursor.y5, cursor.sizeC);
+  ellipse(mouseX + cursor.x6, mouseY + cursor.y6, cursor.sizeC);
+  ellipse(mouseX + cursor.x7, mouseY + cursor.y7, cursor.sizeC);
+  ellipse(mouseX + cursor.x8, mouseY + cursor.y8, cursor.sizeC);
+  //Make the circles grow and shrink.
+  if (cursor.sizeC >= cursor.maxSizeC || cursor.sizeC <= cursor.minSizeC) {
+    cursor.growthC = -cursor.growthC;
+  }
+
+  //Draw a square spin.
   noStroke();
   //Fill the same color as the triangle in the middle.
-  fill(middleTriangle.r, middleTriangle.g, middleTriangle.b, 15);
+  fill(middleTriangle.r, middleTriangle.g, middleTriangle.b, 25);
   centerSquare.angle += centerSquare.rotate;
   let t = tan(centerSquare.angle);
   translate(centerSquare.x, centerSquare.y, centerSquare.size);
