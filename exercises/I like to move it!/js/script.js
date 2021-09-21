@@ -16,14 +16,21 @@ let bg = {
 let cursor = {
   //coordinates
   x1: 0,
-  y1: -5,
+  y1: -1,
   x2: 5,
-  y2: 0,
-  x3: 0,
-  y3: 5,
+  y2: -1,
+  x3: -5,
+  y3: -1,
   x4: -5,
-  y4: 0,
-  size: 10,
+  y4: 5,
+  x5: 0,
+  y5: 6,
+  x6: 0,
+  y6: 6,
+  x7: 5,
+  y7: 5,
+  sizeHead: 20,
+  sizeEyes: 5,
   //fill
   fillR: 200,
   fillG: 220,
@@ -32,6 +39,7 @@ let cursor = {
   random2: 0.04,
 };
 
+//Create object for the triangle in the middle of the canvas.
 let middleTriangle = {
   //Coordinates of the angles of the triangle.
   x1: 400,
@@ -54,9 +62,12 @@ let middleTriangle = {
   speedy2: -1,
   speedx3: 1,
   speedy3: -1,
+  //angle to use the sine.
+  angle: 0,
+  angleChange: 0.01,
 };
 
-//Create object for top left empty circle/circle stroke => stroke1
+//Create object for top left (at the start of the program) empty circle/circle stroke => stroke1
 let stroke1 = {
   x: 0,
   y: 0,
@@ -67,7 +78,7 @@ let stroke1 = {
   strokeWeight: 2,
 };
 
-//Create object for top left empty circle => stroke1
+//Create object for top right (at the start of the program) empty circle => stroke1
 let stroke2 = {
   x: 800,
   y: 0,
@@ -77,7 +88,7 @@ let stroke2 = {
   strokeWeight: 2,
 };
 
-//Create object for top left empty circle => stroke1
+//Create object for bottom right (at the start of the program) empty circle => stroke1
 let stroke3 = {
   x: 800,
   y: 800,
@@ -86,7 +97,7 @@ let stroke3 = {
   strokeWeight: 1.5,
 };
 
-//Create object for top left empty circle => stroke1
+//Create object for bottom left (at the start of the program) empty circle => stroke1
 let stroke4 = {
   x: 0,
   y: 800,
@@ -96,9 +107,52 @@ let stroke4 = {
   strokeWeight: 2,
 };
 
-//angle to use the sine.
-let angle = 0;
-let angleChange = 0.01;
+//Create object for top (at the start of the program) empty square.
+let square1 = {
+  x: 400,
+  y: 0,
+  size: 100,
+  speed: 1.5,
+  growth: -0.39,
+  stroke: 255,
+  strokeWeight: 2,
+};
+
+//Create object for right (at the start of the program) empty square.
+let square2 = {
+  x: 800,
+  y: 400,
+  size: 100,
+  speed: -1.5,
+  strokeWeight: 2,
+};
+
+//Create object for bottom (at the start of the program) empty square.
+let square3 = {
+  x: 400,
+  y: 800,
+  size: 100,
+  speed: -1.5,
+  strokeWeight: 2,
+};
+
+//Create object for left (at the start of the program) empty square.
+let square4 = {
+  x: -0,
+  y: 400,
+  size: 100,
+  speed: 1.5,
+  strokeWeight: 2,
+};
+
+//Create object for the middle square(under triangle).
+let centerSquare = {
+  x: 400,
+  y: 400,
+  size: 400,
+  angle: 0.0,
+  rotate: 0.005,
+};
 
 /**
 Description of preload
@@ -110,6 +164,7 @@ Description of setup
 */
 function setup() {
   createCanvas(800, 800);
+  rectMode(CENTER);
 }
 
 /**
@@ -122,7 +177,7 @@ function draw() {
   noCursor();
 
   // Increase the angle so the sine result changes.
-  angle += angleChange;
+  middleTriangle.angle += middleTriangle.angleChange;
 
   //Draw triangleCenter.
   noStroke();
@@ -142,12 +197,12 @@ function draw() {
     middleTriangle.changeB = -middleTriangle.changeB;
   }
   //Movement of the triangle.
-  middleTriangle.x1 += middleTriangle.speedx1 * sin(angle);
-  middleTriangle.y1 += middleTriangle.speedy1 * sin(angle);
-  middleTriangle.x2 += middleTriangle.speedx2 * sin(angle);
-  middleTriangle.y2 += middleTriangle.speedy2 * sin(angle);
-  middleTriangle.x3 += middleTriangle.speedx3 * sin(angle);
-  middleTriangle.y3 += middleTriangle.speedy3 * sin(angle);
+  middleTriangle.x1 += middleTriangle.speedx1 * sin(middleTriangle.angle);
+  middleTriangle.y1 += middleTriangle.speedy1 * sin(middleTriangle.angle);
+  middleTriangle.x2 += middleTriangle.speedx2 * sin(middleTriangle.angle);
+  middleTriangle.y2 += middleTriangle.speedy2 * sin(middleTriangle.angle);
+  middleTriangle.x3 += middleTriangle.speedx3 * sin(middleTriangle.angle);
+  middleTriangle.y3 += middleTriangle.speedy3 * sin(middleTriangle.angle);
   triangle(
     middleTriangle.x1,
     middleTriangle.y1,
@@ -180,7 +235,7 @@ function draw() {
     middleTriangle.speedy3 = -middleTriangle.speedy3;
   }
 
-  //Setting stroke for the empty circles.
+  //Setting stroke for the empty circles and empty squares.
   noFill();
   strokeWeight(stroke1.strokeWeight);
   stroke(stroke1.stroke, stroke1.stroke, stroke1.stroke);
@@ -225,7 +280,7 @@ function draw() {
     stroke1.growth = -stroke1.growth;
   }
 
-  //If statement to invert trajectories of empty circles.
+  //If statement to invert trajectories of empty circles when they touch the sides of canvas.
   if (
     stroke1.x >= width ||
     (stroke1.x <= 0 && stroke1.y >= width) ||
@@ -239,21 +294,75 @@ function draw() {
     stroke4.speedy = -stroke4.speedy;
   }
 
-  //personalized cursor.
+  //Draw side squares (motion similar to empty circles).
+  //empty square (top)
+  square1.y += square1.speed;
+  square1.y = constrain(square1.y, 0, height);
+  square1.size = map(mouseX, 0, width, 50, 300);
+  rect(square1.x, square1.y, square1.size);
+
+  //empty square (right)
+  square2.x += square2.speed;
+  square2.x = constrain(square2.x, 0, width);
+  rect(square2.x, square2.y, square1.size);
+
+  //empty square (bottom)
+  square3.y += square3.speed;
+  square3.y = constrain(square3.y, 0, height);
+  rect(square3.x, square3.y, square1.size);
+
+  //empty square (left)
+  square4.x += square4.speed;
+  square4.x = constrain(square4.x, 0, width);
+  rect(square4.x, square4.y, square1.size);
+
+  //If statement to invert the trajectories of the empty squares when they touch the sides of canvas.
+  if (square1.y >= height || square1.y <= 0) {
+    square1.speed = -square1.speed;
+    square2.speed = -square2.speed;
+    square3.speed = -square3.speed;
+    square4.speed = -square4.speed;
+  }
+
+  // //Smiley face cursor.
+  // noStroke();
+  // //fill for the head(changes with the mouse's movements).
+  // cursor.fillR = cursor.fillR + random(cursor.random1, cursor.random2);
+  // cursor.fillG = cursor.fillG + random(cursor.random1, cursor.random2);
+  // cursor.fillB = cursor.fillB + random(cursor.random1, cursor.random2);
+  // fill(
+  //   noise(cursor.fillR) * mouseX,
+  //   noise(cursor.fillG) * mouseY,
+  //   noise(cursor.fillB) * 255
+  // );
+  // //head
+  // ellipse(mouseX + cursor.x1, mouseY + cursor.y1, cursor.sizeHead);
+  // //eyes
+  // fill(0);
+  // ellipse(mouseX + cursor.x2, mouseY + cursor.y2, cursor.sizeEyes);
+  // ellipse(mouseX + cursor.x3, mouseY + cursor.y3, cursor.sizeEyes);
+  // //mouth (smiling)
+  // stroke(0);
+  // line(
+  //   mouseX + cursor.x4,
+  //   mouseY + cursor.y4,
+  //   mouseX + cursor.x5,
+  //   mouseY + cursor.y5
+  // );
+  // line(
+  //   mouseX + cursor.x6,
+  //   mouseY + cursor.y6,
+  //   mouseX + cursor.x7,
+  //   mouseY + cursor.y7
+  // );
+
+  //Draw a square rotating.
   noStroke();
-  cursor.fillR = cursor.fillR + random(cursor.random1, cursor.random2);
-  cursor.fillG = cursor.fillG + random(cursor.random1, cursor.random2);
-  cursor.fillB = cursor.fillB + random(cursor.random1, cursor.random2);
-  // let colo1 = noise(cursor.fillR) * mouseX;
-  // let colo2 = noise(cursor.fillG) * mouseY;
-  // let colo3 = noise(cursor.fillB) * 255;
-  fill(
-    noise(cursor.fillR) * mouseX,
-    noise(cursor.fillG) * mouseY,
-    noise(cursor.fillB) * 255
-  );
-  ellipse(mouseX + cursor.x1, mouseY + cursor.y1, cursor.size);
-  ellipse(mouseX + cursor.x2, mouseY + cursor.y2, cursor.size);
-  ellipse(mouseX + cursor.x3, mouseY + cursor.y3, cursor.size);
-  ellipse(mouseX + cursor.x4, mouseY + cursor.y4, cursor.size);
+  //Fill the same color as the triangle in the middle.
+  fill(middleTriangle.r, middleTriangle.g, middleTriangle.b, 15);
+  centerSquare.angle += centerSquare.rotate;
+  let t = tan(centerSquare.angle);
+  translate(centerSquare.x, centerSquare.y, centerSquare.size);
+  rotate(t);
+  rect(0, 0, centerSquare.size);
 }

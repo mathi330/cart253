@@ -11,6 +11,33 @@ screen.
 
 "use strict";
 
+//Create customized cursor.
+let cursor = {
+  //coordinates
+  x1: 0,
+  y1: -1,
+  x2: 5,
+  y2: -1,
+  x3: -5,
+  y3: -1,
+  x4: -5,
+  y4: 5,
+  x5: 0,
+  y5: 6,
+  x6: 0,
+  y6: 6,
+  x7: 5,
+  y7: 5,
+  sizeHead: 20,
+  sizeEyes: 5,
+  //fill
+  fillR: 200,
+  fillG: 220,
+  fillB: 180,
+  random1: -0.04,
+  random2: 0.04,
+};
+
 //Create object for left circle => circle1
 let circle1 = {
   x: 0,
@@ -117,6 +144,7 @@ draw()
 Draw background, moving circles, and empty circles (objects called stroke1, 2, 3 ,4).
 */
 function draw() {
+    noCursor();
   noStroke();
 
   //Draw the background and changing color depending on the mouse.
@@ -217,4 +245,36 @@ function draw() {
     stroke4.speedx = -stroke4.speedx;
     stroke4.speedy = -stroke4.speedy;
   }
+    
+      //Smiley face cursor.
+  noStroke();
+  //fill for the head(changes with the mouse's movements).
+  cursor.fillR = cursor.fillR + random(cursor.random1, cursor.random2);
+  cursor.fillG = cursor.fillG + random(cursor.random1, cursor.random2);
+  cursor.fillB = cursor.fillB + random(cursor.random1, cursor.random2);
+  fill(
+    noise(cursor.fillR) * mouseX,
+    noise(cursor.fillG) * mouseY,
+    noise(cursor.fillB) * 255
+  );
+  //head
+  ellipse(mouseX + cursor.x1, mouseY + cursor.y1, cursor.sizeHead);
+  //eyes
+  fill(0);
+  ellipse(mouseX + cursor.x2, mouseY + cursor.y2, cursor.sizeEyes);
+  ellipse(mouseX + cursor.x3, mouseY + cursor.y3, cursor.sizeEyes);
+  //mouth (smiling)
+  stroke(0);
+  line(
+    mouseX + cursor.x4,
+    mouseY + cursor.y4,
+    mouseX + cursor.x5,
+    mouseY + cursor.y5
+  );
+  line(
+    mouseX + cursor.x6,
+    mouseY + cursor.y6,
+    mouseX + cursor.x7,
+    mouseY + cursor.y7
+  );
 }
