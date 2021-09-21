@@ -2,15 +2,15 @@
 I like to move it!
 Mathilde Davan
 
-This project is an abstract piece composed of a moving triangle in the center
-changing color with a square of the same color in the background rotating.
-Made on top of the triangle, we can see 4 empty squares and 4 empty circles
-moving across the canvas each in its own direction.
-I also made my background slightly transparent to make the movements of the
-empty shapes more mesmerizing and fluid in my opinion.
-The mouse's movements were integrated with the size of the empty squares and
-the customized mouse cursor that I made and that reminds the movements and
-shapes of the bigger empty shapes.
+The idea behind this project is an abstract and a bit hypnotic piece. I didn't
+want to overwhelm the viewer with to many colors or shapes moving too fast. I
+think that the elements that are the most relaxing are the empty circles and
+squares growing and shrinking while travelling across the canvas.
+For the more hypnotic aspect, the elements that convey it are the square
+spinning in the middle and the triangle moving as well as their color slowly
+changing.
+I also added a customized cursor more as an experiment and parallel to the
+empty shapes.
 */
 
 "use strict";
@@ -21,6 +21,8 @@ let bg = {
 };
 
 let cursor = {
+  stroke: 255,
+  alpha: 50,
   //squares
   x1: 0,
   y1: -5,
@@ -343,6 +345,7 @@ function draw() {
 
   //Draw cursor
   //Draw the squares of the cursor.
+  stroke(cursor.stroke, cursor.alpha);
   cursor.sizeS += cursor.growthS;
   rect(mouseX + cursor.x1, mouseY + cursor.y1, cursor.sizeS);
   rect(mouseX + cursor.x2, mouseY + cursor.y2, cursor.sizeS);
@@ -365,6 +368,7 @@ function draw() {
   }
 
   //Draw a square spin.
+  // I used some of p5.js' code to make my square rotate: https://p5js.org/examples/transform-rotate.html
   noStroke();
   //Fill the same color as the triangle in the middle.
   fill(middleTriangle.r, middleTriangle.g, middleTriangle.b, 25);
