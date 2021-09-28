@@ -8,6 +8,8 @@ author, and this description to match your project!
 
 "use strict";
 
+let img;
+
 let bg = {
   r: 50,
   g: 50,
@@ -15,10 +17,12 @@ let bg = {
   a: 100,
 };
 
+//Objects for the enemies.
 let enemy1 = {
   x: 0,
   y: undefined,
   size: 150,
+  sizeRect: 50,
   vx: 0,
   vy: 0,
   speedx: 4.3,
@@ -27,6 +31,7 @@ let enemy1 = {
     r: 200,
     g: 100,
     b: 150,
+    a: 200,
   },
 };
 
@@ -42,6 +47,7 @@ let enemy2 = {
     r: 200,
     g: 100,
     b: 150,
+    a: 200,
   },
 };
 
@@ -57,6 +63,7 @@ let enemy3 = {
     r: 200,
     g: 100,
     b: 150,
+    a: 200,
   },
 };
 
@@ -94,15 +101,15 @@ function setup() {
 
   //Setup for the coordinates and speed of the enemies at the beginning of the program.
   // +/-enemy.size/2 serves to make sure that the enemy does not appear partially out of the canvas.
-  enemy1.x = random(0 + enemy1.size / 2, width - enemy1.size / 2);
-  enemy1.y = enemy1.size / 2;
+  enemy1.x = width - (enemy1.size / 2 + 1); //+1 to make sure it doesn't stick to the side.
+  enemy1.y = random(0 + enemy1.size / 2 + 1, height - enemy1.size / 2 - 1);
   enemy1.speedy = random(1, 4);
 
   enemy2.x = enemy2.size / 2;
-  enemy2.y = random(0 + enemy2.size / 2, height - enemy2.size / 2);
+  enemy2.y = random(0 + enemy2.size / 2 + 1, height - enemy2.size / 2 - 1);
   enemy2.speedx = random(1, 4);
 
-  enemy3.x = random(0 + enemy3.size / 2, width - enemy3.size / 2);
+  enemy3.x = random(0 + enemy3.size / 2 + 1, width - enemy3.size / 2 - 1);
   enemy3.y = enemy3.size / 2;
   enemy3.speedy = random(1, 4);
 
@@ -274,14 +281,31 @@ function draw() {
   rect(0, 0, me.size);
   pop();
 
-  //When an enemy and the user come into contact, the enemy changes direction.
+  //Changing the background when "me" and "enemies" collide.
   let distMeEnemy1 = dist(me.x, me.y, enemy1.x, enemy1.y);
   let distMeEnemy2 = dist(me.x, me.y, enemy2.x, enemy2.y);
   let distMeEnemy3 = dist(me.x, me.y, enemy3.x, enemy3.y);
+  if (
+    distMeEnemy1 <= me.size / 2 + enemy1.size / 2 ||
+    distMeEnemy2 <= me.size / 2 + enemy2.size / 2 ||
+    distMeEnemy3 <= me.size / 2 + enemy3.size / 2
+  ) {
+    if (bg.r === 50 && bg.g === 50 && bg.b === 50) {
+      bg.r = random(0, 255);
+      bg.g = random(0, 255);
+      bg.b = random(0, 255);
+    } else {
+      bg.r = 50;
+      bg.g = 50;
+      bg.b = 50;
+    }
+  }
+
+  //When an enemy and the user come into contact, the enemy changes direction.
   if (distMeEnemy1 <= me.size / 2 + enemy1.size / 2) {
-    enemy1.x = random(0 + enemy1.size / 2, width - enemy1.size / 2);
-    enemy1.y = enemy1.size / 2;
-    enemy3.speedx = 4.3;
+    enemy1.x = width - (enemy1.size / 2 + 1);
+    enemy1.y = random(0 + enemy1.size / 2, height - enemy1.size / 2);
+    enemy1.speedx = 4.3;
     enemy1.speedy = random(1, 4);
   }
   if (distMeEnemy2 <= me.size / 2 + enemy2.size / 2) {
