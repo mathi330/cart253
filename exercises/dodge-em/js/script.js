@@ -2,8 +2,10 @@
 Dodge 'em
 Mathilde Davan
 
-This is a template. You must fill in the title,
-author, and this description to match your project!
+In this project, the user moves the emoji with the mouse and can either try to avoid the moving circles/enemies or instead make them collide to change
+the emoji shown and the color of the background (which alternates between a dark grey and a random color).
+When they reach the sleepy and they collide with a circle, the screen goes black with "GO SLEEP!!" written on it.
+The user can reset the "game" by clicking with their mouse on the canvas and it will go back to the smiling emoji (the first in the order).
 */
 
 "use strict";
@@ -364,6 +366,7 @@ function draw() {
   }
 }
 
+//If you press the mouse, the emoji goes back to the first image (and it will start again if you reached the "GO SLEEP!!" screen).
 function mousePressed() {
   me.image = smile;
   loop();
