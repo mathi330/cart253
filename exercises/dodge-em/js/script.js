@@ -8,6 +8,7 @@ author, and this description to match your project!
 
 "use strict";
 
+//Object for the 3 covid-19 particules.
 let covid = {
   xCoordinates: {
     x0: 0,
@@ -32,6 +33,19 @@ let covid = {
   speedx: 5,
   speedy: 2,
   size: 50,
+};
+
+//Object for the user.
+let user = {
+  x: 0,
+  y: 0,
+  size: 100,
+  vx: 0,
+  vy: 0,
+  ax: 0,
+  ay: 0,
+  maxSpeed: 3,
+  acceleration: 0.05,
 };
 
 /**
@@ -68,15 +82,38 @@ Description of draw()
 function draw() {
   background(0);
 
+  //Create the user's sprite.
+  //Pipin's code in the lesson on movement to make the ellipse follow the mouse.
+  if (mouseX > user.x) {
+    user.ax = user.acceleration;
+  } else if (mouseX < user.x) {
+    user.ax = -user.acceleration;
+  }
+  if (mouseY > user.y) {
+    user.ay = user.acceleration;
+  } else if (mouseY < user.y) {
+    user.ay = -user.acceleration;
+  }
+  //Adding the acceleration to the velocity.
+  user.vx += user.ax;
+  user.vx = constrain(user.vx, -user.maxSpeed, user.maxSpeed);
+  user.vy += user.ay;
+  user.vy = constrain(user.vy, -user.maxSpeed, user.maxSpeed);
+  //Adding the velocity to the x and y coordinates.
+  user.x += user.vx;
+  user.y += user.vy;
+  //Draw the ellipse representing the user.
+  fill(255);
+  ellipse(user.x, user.y, user.size);
+
+  //Create the 3 covid paricules.
   fill(255, 0, 0);
   noStroke();
-
-  //Create the first covide-19 virus.
+  //Create the first covid-19 virus.
   covid.xCoordinates.x0 += covid.xVector.vx0;
   covid.yCoordinates.y0 += covid.yVector.vy0;
   ellipse(covid.xCoordinates.x0, covid.yCoordinates.y0, covid.size);
-
-  //If statement to make the circle appear back into the the canvas.
+  //If statement to make the circle appear back into the canvas.
   if (
     covid.xCoordinates.x0 >= width ||
     covid.xCoordinates.x0 <= 0 ||
@@ -85,7 +122,6 @@ function draw() {
   ) {
     covid.xCoordinates.x0 = random(0, windowWidth);
     covid.yCoordinates.y0 = random(0, windowHeight);
-
     //Changes the direction of the circle depending on its coordinates.
     if (covid.xCoordinates.x0 >= width / 2) {
       covid.speedx = -covid.speedx;
@@ -97,11 +133,11 @@ function draw() {
     covid.yVector.vy0 = covid.speedy;
   }
 
-  //Create the second covide-19 virus.
+  //Create the second covid-19 virus.
   covid.xCoordinates.x1 += covid.xVector.vx1;
   covid.yCoordinates.y1 += covid.yVector.vy1;
   ellipse(covid.xCoordinates.x1, covid.yCoordinates.y1, covid.size);
-
+  //If statement to make the circle appear back into the canvas.
   if (
     covid.xCoordinates.x1 >= width ||
     covid.xCoordinates.x1 <= 0 ||
@@ -110,6 +146,7 @@ function draw() {
   ) {
     covid.xCoordinates.x1 = random(0, windowWidth);
     covid.yCoordinates.y1 = random(0, windowHeight);
+    //Changes the direction of the circle depending on its coordinates.
     if (covid.xCoordinates.x1 >= width / 2) {
       covid.speedx = -covid.speedx;
     }
@@ -120,11 +157,11 @@ function draw() {
     covid.yVector.vy1 = covid.speedy;
   }
 
-  //Create the third covide-19 virus.
+  //Create the third covid-19 virus.
   covid.xCoordinates.x2 += covid.xVector.vx2;
   covid.yCoordinates.y2 += covid.yVector.vy2;
   ellipse(covid.xCoordinates.x2, covid.yCoordinates.y2, covid.size);
-
+  //If statement to make the circle appear back into the canvas.
   if (
     covid.xCoordinates.x2 >= width ||
     covid.xCoordinates.x2 <= 0 ||
@@ -133,6 +170,7 @@ function draw() {
   ) {
     covid.xCoordinates.x2 = random(0, windowWidth);
     covid.yCoordinates.y2 = random(0, windowHeight);
+    //Changes the direction of the circle depending on its coordinates.
     if (covid.xCoordinates.x2 >= width / 2) {
       covid.speedx = -covid.speedx;
     }
