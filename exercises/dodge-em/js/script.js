@@ -60,6 +60,27 @@ let enemy3 = {
   },
 };
 
+//Object for the user "me".
+let me = {
+  x: undefined,
+  y: undefined,
+  size: 100,
+  vx: 0,
+  vy: 0,
+  ax: 0,
+  ay: 0,
+  maxSpeed: 3,
+  acceleration: 0.1,
+  color: {
+    r: 255,
+    g: 255,
+    b: 255,
+    a: 255,
+  },
+  rotate: 0.005,
+  angle: 0.0,
+};
+
 /**
 Description of preload
 */
@@ -81,6 +102,11 @@ function setup() {
   enemy3.x = random(0, width);
   enemy3.y = enemy3.size / 2;
   enemy3.speedy = random(1, 4);
+
+  //Setup for the position of the user at the beginning.
+  rectMode(CENTER);
+  me.x = width / 2;
+  me.y = height / 2;
 }
 
 /**
@@ -168,4 +194,34 @@ function draw() {
     enemy3.speedx = -enemy3.speedx;
     enemy3.speedy = -enemy3.speedy;
   }
+
+  //Create "me" and its movements.
+  push();
+  fill(me.color.r, me.color.g, me.color.b, me.color.a);
+  //Making "me" follow the mouse with an acceleration effect.
+  if (mouseX > me.x) {
+    me.ax = me.acceleration;
+  } else if (mouseX < me.x) {
+    me.ax = -me.acceleration;
+  }
+  if (mouseY > me.y) {
+    me.ay = me.acceleration;
+  } else if (mouseY < me.y) {
+    me.ay = -me.acceleration;
+  }
+  me.vx += me.ax;
+  me.vx = constrain(me.vx, -me.maxSpeed, me.maxSpeed);
+
+  me.vy += me.ay;
+  me.vy = constrain(me.vy, -me.maxSpeed, me.maxSpeed);
+
+  me.x += me.vx;
+  me.y += me.vy;
+  //Make "me" rotate in a cool way.
+  me.angle += me.rotate;
+  let t = tan(me.angle);
+  translate(me.x, me.y, me.size);
+  rotate(t);
+  rect(0, 0, me.size);
+  pop();
 }
