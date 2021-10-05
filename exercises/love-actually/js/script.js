@@ -8,6 +8,8 @@ author, and this description to match your project!
 
 "use strict";
 
+let state = `simulation`;
+
 //Object for the element the user can move around ("me").
 let me = {
   x: undefined,
@@ -25,24 +27,105 @@ let me = {
 };
 
 let hearts = {
-  image: undefined,
-  x: undefined,
-  y: undefined,
-  size: undefined,
-  vx: 0,
-  vy: 0,
-  speed: 10,
-  tx: 0,
-  ty: 10,
-  blackHeart: undefined,
-  blueHeart: undefined,
-  greenHeart: undefined,
-  orangeHeart: undefined,
-  pinkHeart: undefined,
-  purpleHeart: undefined,
-  redHeart: undefined,
-  whiteHeart: undefined,
-  yellowHeart: undefined,
+  blackHeart: {
+    image: undefined,
+    x: undefined,
+    y: undefined,
+    size: undefined,
+    vx: 0,
+    vy: 0,
+    speed: 10,
+    tx: 0,
+    ty: 10,
+  },
+  blueHeart: {
+    image: undefined,
+    x: undefined,
+    y: undefined,
+    size: undefined,
+    vx: 0,
+    vy: 0,
+    speed: 10,
+    tx: 100,
+    ty: 110,
+  },
+  greenHeart: {
+    image: undefined,
+    x: undefined,
+    y: undefined,
+    size: undefined,
+    vx: 0,
+    vy: 0,
+    speed: 10,
+    tx: 200,
+    ty: 210,
+  },
+  orangeHeart: {
+    image: undefined,
+    x: undefined,
+    y: undefined,
+    size: undefined,
+    vx: 0,
+    vy: 0,
+    speed: 10,
+    tx: 300,
+    ty: 310,
+  },
+  pinkHeart: {
+    image: undefined,
+    x: undefined,
+    y: undefined,
+    size: undefined,
+    vx: 0,
+    vy: 0,
+    speed: 10,
+    tx: 400,
+    ty: 410,
+  },
+  purpleHeart: {
+    image: undefined,
+    x: undefined,
+    y: undefined,
+    size: undefined,
+    vx: 0,
+    vy: 0,
+    speed: 10,
+    tx: 500,
+    ty: 510,
+  },
+  redHeart: {
+    image: undefined,
+    x: undefined,
+    y: undefined,
+    size: undefined,
+    vx: 0,
+    vy: 0,
+    speed: 10,
+    tx: 600,
+    ty: 610,
+  },
+  whiteHeart: {
+    image: undefined,
+    x: undefined,
+    y: undefined,
+    size: undefined,
+    vx: 0,
+    vy: 0,
+    speed: 10,
+    tx: 700,
+    ty: 710,
+  },
+  yellowHeart: {
+    image: undefined,
+    x: undefined,
+    y: undefined,
+    size: undefined,
+    vx: 0,
+    vy: 0,
+    speed: 10,
+    tx: 800,
+    ty: 810,
+  },
 };
 
 /**
@@ -51,18 +134,18 @@ preload()
 
 */
 function preload() {
-  hearts.blackHeart = loadImage("assets/images/black-heart.png");
+  hearts.blackHeart.image = loadImage("assets/images/black-heart.png");
 
-  hearts.blueHeart = loadImage("assets/images/blue-heart.png");
-  hearts.greenHeart = loadImage("assets/images/green-heart.png");
-  hearts.orangeHeart = loadImage("assets/images/orange-heart.png");
-  hearts.pinkHeart = loadImage("assets/images/pink-heart.png");
-  hearts.purpleHeart = loadImage("assets/images/purple-heart.png");
-  hearts.redHeart = loadImage("assets/images/red-heart.png");
-  hearts.whiteHeart = loadImage("assets/images/white-heart.png");
-  hearts.yellowHeart = loadImage("assets/images/yellow-heart.png");
+  hearts.blueHeart.image = loadImage("assets/images/blue-heart.png");
+  hearts.greenHeart.image = loadImage("assets/images/green-heart.png");
+  hearts.orangeHeart.image = loadImage("assets/images/orange-heart.png");
+  hearts.pinkHeart.image = loadImage("assets/images/pink-heart.png");
+  hearts.purpleHeart.image = loadImage("assets/images/purple-heart.png");
+  hearts.redHeart.image = loadImage("assets/images/red-heart.png");
+  hearts.whiteHeart.image = loadImage("assets/images/white-heart.png");
+  hearts.yellowHeart.image = loadImage("assets/images/yellow-heart.png");
 
-  hearts.image = hearts.blueHeart;
+  hearts.image = hearts.blueHeart.image;
 }
 
 /**
@@ -74,10 +157,24 @@ function setup() {
   imageMode(CENTER);
   createCanvas(windowWidth, windowHeight);
   setupMe();
+  setupAllHearts();
+}
 
-  hearts.x = random(0, width);
-  hearts.y = random(0, height);
-  hearts.size = random(100, 150);
+function setupHearts(heart) {
+  heart.x = random(0, width);
+  heart.y = random(0, height);
+  heart.size = random(100, 150);
+}
+
+function setupAllHearts() {
+  setupHearts(hearts.blueHeart);
+  setupHearts(hearts.greenHeart);
+  setupHearts(hearts.orangeHeart);
+  setupHearts(hearts.pinkHeart);
+  setupHearts(hearts.purpleHeart);
+  setupHearts(hearts.redHeart);
+  setupHearts(hearts.whiteHeart);
+  setupHearts(hearts.yellowHeart);
 }
 
 /**
@@ -101,25 +198,32 @@ draw()
 function draw() {
   background(0);
 
+  switch (state) {
+    case `title`:
+      title();
+      break;
+
+    case `simulation`:
+      simulation();
+      break;
+
+    case `ending`:
+      ending();
+      break;
+  }
+}
+
+function title() {}
+
+function simulation() {
+  justMe();
+  allHearts();
+}
+
+function justMe() {
   moveMe();
   checkOffScreenMe();
   displayMe();
-
-  //hearts
-  hearts.tx += 0.005;
-  hearts.ty += 0.005;
-
-  let noiseX = noise(hearts.tx);
-  let noiseY = noise(hearts.ty);
-
-  hearts.vx = map(noiseX, 0, 1, -hearts.speed, hearts.speed);
-  hearts.vy = map(noiseY, 0, 1, -hearts.speed, hearts.speed);
-
-  hearts.x += hearts.vx;
-  hearts.y += hearts.vy;
-  checkOffScreenHearts();
-
-  image(hearts.image, hearts.x, hearts.y, hearts.size, hearts.size);
 }
 
 /**
@@ -163,22 +267,6 @@ function checkOffScreenMe() {
   }
 }
 
-function checkOffScreenHearts() {
-  //Sees if "hearts" is off screen, and if it is, it will appear on the opposite side of the canvas.
-  if (hearts.x < 0) {
-    hearts.x = width;
-  }
-  if (hearts.x > width) {
-    hearts.x = 0;
-  }
-  if (hearts.y < 0) {
-    hearts.y = height;
-  }
-  if (hearts.y > height) {
-    hearts.y = 0;
-  }
-}
-
 /**
 displayMe()
 
@@ -188,4 +276,111 @@ function displayMe() {
   //Display "me"
   fill(me.fill.r, me.fill.g, me.fill.b, me.fill.a);
   ellipse(me.x, me.y, me.size);
+}
+
+/**
+allHearts()
+
+function for all that has to do with the hearts in the program.
+*/
+function allHearts() {
+  moveAllHearts();
+  checkOffScreenAllHearts();
+  displayAllHearts();
+}
+
+/**
+moveHearts(heart)
+
+function to make a heart move with perlin noise.
+ */
+function moveHearts(heart) {
+  heart.tx += 0.005;
+  heart.ty += 0.005;
+
+  let noiseX = noise(heart.tx);
+  let noiseY = noise(heart.ty);
+
+  heart.vx = map(noiseX, 0, 1, -heart.speed, heart.speed);
+  heart.vy = map(noiseY, 0, 1, -heart.speed, heart.speed);
+
+  heart.x += heart.vx;
+  heart.y += heart.vy;
+}
+
+/**
+moveAllHearts()
+
+function applying moveHearts for all 8 heart images.
+ */
+function moveAllHearts() {
+  moveHearts(hearts.blueHeart);
+  moveHearts(hearts.greenHeart);
+  moveHearts(hearts.orangeHeart);
+  moveHearts(hearts.pinkHeart);
+  moveHearts(hearts.purpleHeart);
+  moveHearts(hearts.redHeart);
+  moveHearts(hearts.whiteHeart);
+  moveHearts(hearts.yellowHeart);
+}
+
+/**
+checkOffScreenHeart(heart)
+
+function to see if "heart" is off screen, and if it is, it will appear on the opposite side of the canvas.
+ */
+function checkOffScreenHeart(heart) {
+  if (heart.x + me.size / 2 < 0) {
+    heart.x = width + me.size / 2;
+  }
+  if (heart.x - me.size / 2 > width) {
+    heart.x = 0 - me.size / 2;
+  }
+  if (heart.y + me.size / 2 < 0) {
+    heart.y = height + me.size / 2;
+  }
+  if (heart.y - me.size / 2 > height) {
+    heart.y = 0 - me.size / 2;
+  }
+}
+
+/**
+checkOffScreenAllHearts()
+
+function applying checkOffScreenHeart for all 8 heart images.
+ */
+function checkOffScreenAllHearts() {
+  checkOffScreenHeart(hearts.blueHeart);
+  checkOffScreenHeart(hearts.greenHeart);
+  checkOffScreenHeart(hearts.orangeHeart);
+  checkOffScreenHeart(hearts.pinkHeart);
+  checkOffScreenHeart(hearts.purpleHeart);
+  checkOffScreenHeart(hearts.redHeart);
+  checkOffScreenHeart(hearts.whiteHeart);
+  checkOffScreenHeart(hearts.yellowHeart);
+}
+
+/**
+displayAllHearts(heart)
+
+function to display "heart."
+ */
+function displayHeart(heart) {
+  image(heart.image, heart.x, heart.y, heart.size, heart.size);
+}
+
+/**
+displayAllHearts()
+
+function applying displayHeart for all 8 heart images.
+ */
+function displayAllHearts() {
+  displayHeart(hearts.blueHeart);
+  displayHeart(hearts.greenHeart);
+  displayHeart(hearts.orangeHeart);
+  displayHeart(hearts.pinkHeart);
+  displayHeart(hearts.purpleHeart);
+  displayHeart(hearts.redHeart);
+  displayHeart(hearts.whiteHeart);
+  displayHeart(hearts.yellowHeart);
 }
