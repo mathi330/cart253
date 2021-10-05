@@ -8,7 +8,7 @@ author, and this description to match your project!
 
 "use strict";
 
-let state = `simulation`;
+let state = `title`;
 
 //Object for the element the user can move around ("me").
 let me = {
@@ -134,6 +134,7 @@ preload()
 
 */
 function preload() {
+  //images
   hearts.blackHeart.image = loadImage("assets/images/black-heart.png");
 
   hearts.blueHeart.image = loadImage("assets/images/blue-heart.png");
@@ -160,12 +161,22 @@ function setup() {
   setupAllHearts();
 }
 
+/**
+setupHearts
+
+function that sets up "heart."
+*/
 function setupHearts(heart) {
   heart.x = random(0, width);
   heart.y = random(0, height);
   heart.size = random(100, 150);
 }
 
+/**
+setupAllHearts
+
+function applying setupHearts to all the colored hears.
+*/
 function setupAllHearts() {
   setupHearts(hearts.blueHeart);
   setupHearts(hearts.greenHeart);
@@ -213,13 +224,37 @@ function draw() {
   }
 }
 
-function title() {}
+/**
+title()
 
+function for the title of the simulation.
+*/
+function title() {
+  push();
+  fill(255);
+  textFont(`Quicksand`);
+  textAlign(CENTER, CENTER);
+  textSize(40);
+  textStyle(BOLD);
+  text(`Love, Actually`, width / 2, height / 2);
+  pop();
+}
+
+/**
+simulation()
+
+function with everything that happens in the simulation part.
+*/
 function simulation() {
   justMe();
   allHearts();
 }
 
+/**
+justMe()
+
+function with all information on "me."
+*/
 function justMe() {
   moveMe();
   checkOffScreenMe();
@@ -383,4 +418,10 @@ function displayAllHearts() {
   displayHeart(hearts.redHeart);
   displayHeart(hearts.whiteHeart);
   displayHeart(hearts.yellowHeart);
+}
+
+function keyPressed() {
+  if (state === `title`) {
+    state = `simulation`;
+  }
 }
