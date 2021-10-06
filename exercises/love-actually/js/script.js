@@ -769,6 +769,12 @@ function whiteHeartCount() {
   }
 }
 
+function reset() {
+  preload();
+  setupMe();
+  setupAllHearts();
+}
+
 /**
 keyPressed()
 
@@ -790,5 +796,6 @@ function keyPressed() {
     state === `ending9`
   ) {
     state = `title`;
+    reset();
   }
 }
