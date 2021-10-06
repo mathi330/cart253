@@ -22,7 +22,7 @@ let me = {
     r: 255,
     g: 255,
     b: 255,
-    a: 255,
+    a: 150,
   },
 };
 
@@ -37,6 +37,7 @@ let hearts = {
     speed: 10,
     tx: 0,
     ty: 10,
+    alpha: 255,
   },
   blueHeart: {
     image: undefined,
@@ -48,6 +49,7 @@ let hearts = {
     speed: 10,
     tx: 100,
     ty: 110,
+    alpha: 255,
   },
   greenHeart: {
     image: undefined,
@@ -59,6 +61,7 @@ let hearts = {
     speed: 10,
     tx: 200,
     ty: 210,
+    alpha: 255,
   },
   orangeHeart: {
     image: undefined,
@@ -70,6 +73,7 @@ let hearts = {
     speed: 10,
     tx: 300,
     ty: 310,
+    alpha: 255,
   },
   pinkHeart: {
     image: undefined,
@@ -81,6 +85,7 @@ let hearts = {
     speed: 10,
     tx: 400,
     ty: 410,
+    alpha: 255,
   },
   purpleHeart: {
     image: undefined,
@@ -92,6 +97,7 @@ let hearts = {
     speed: 10,
     tx: 500,
     ty: 510,
+    alpha: 255,
   },
   redHeart: {
     image: undefined,
@@ -103,6 +109,7 @@ let hearts = {
     speed: 10,
     tx: 600,
     ty: 610,
+    alpha: 255,
   },
   whiteHeart: {
     image: undefined,
@@ -114,6 +121,7 @@ let hearts = {
     speed: 10,
     tx: 700,
     ty: 710,
+    alpha: 255,
   },
   yellowHeart: {
     image: undefined,
@@ -125,7 +133,9 @@ let hearts = {
     speed: 10,
     tx: 800,
     ty: 810,
+    alpha: 255,
   },
+  nbHearts: 7,
 };
 
 /**
@@ -136,7 +146,6 @@ preload()
 function preload() {
   //images
   hearts.blackHeart.image = loadImage("assets/images/black-heart.png");
-
   hearts.blueHeart.image = loadImage("assets/images/blue-heart.png");
   hearts.greenHeart.image = loadImage("assets/images/green-heart.png");
   hearts.orangeHeart.image = loadImage("assets/images/orange-heart.png");
@@ -145,14 +154,12 @@ function preload() {
   hearts.redHeart.image = loadImage("assets/images/red-heart.png");
   hearts.whiteHeart.image = loadImage("assets/images/white-heart.png");
   hearts.yellowHeart.image = loadImage("assets/images/yellow-heart.png");
-
-  hearts.image = hearts.blueHeart.image;
 }
 
 /**
 setup()
 
-
+function that sets up everything (hearts and "me") before the start of draw().
 */
 function setup() {
   imageMode(CENTER);
@@ -207,7 +214,7 @@ draw()
 
 */
 function draw() {
-  background(0);
+  background(10);
 
   switch (state) {
     case `title`:
@@ -218,8 +225,8 @@ function draw() {
       simulation();
       break;
 
-    case `ending`:
-      ending();
+    case `ending1`:
+      ending1();
       break;
   }
 }
@@ -246,71 +253,9 @@ simulation()
 function with everything that happens in the simulation part.
 */
 function simulation() {
-  justMe();
+  collisionMeAllHearts();
   allHearts();
-}
-
-/**
-justMe()
-
-function with all information on "me."
-*/
-function justMe() {
-  moveMe();
-  checkOffScreenMe();
-  displayMe();
-}
-
-/**
-moveME()
-
-function to make the interactive element "me" move with the arrow keys of the keyboard.
-*/
-function moveMe() {
-  if (keyIsDown(LEFT_ARROW)) {
-    me.x -= me.vx;
-  }
-  if (keyIsDown(RIGHT_ARROW)) {
-    me.x += me.vx;
-  }
-
-  if (keyIsDown(UP_ARROW)) {
-    me.y -= me.vy;
-  }
-  if (keyIsDown(DOWN_ARROW)) {
-    me.y += me.vy;
-  }
-}
-
-/**
-checkOffScreenMe()
-
-funcion to see if "me" is off screen, and if it is, it will appear on the opposite side of the canvas.
- */
-function checkOffScreenMe() {
-  if (me.x + me.size / 2 < 0) {
-    me.x = width + me.size / 2;
-  }
-  if (me.x - me.size / 2 > width) {
-    me.x = 0 - me.size / 2;
-  }
-  if (me.y + me.size / 2 < 0) {
-    me.y = height + me.size / 2;
-  }
-  if (me.y - me.size / 2 > height) {
-    me.y = 0 - me.size / 2;
-  }
-}
-
-/**
-displayMe()
-
-function to display the interactive element "me."
- */
-function displayMe() {
-  //Display "me"
-  fill(me.fill.r, me.fill.g, me.fill.b, me.fill.a);
-  ellipse(me.x, me.y, me.size);
+  justMe();
 }
 
 /**
@@ -321,6 +266,7 @@ function for all that has to do with the hearts in the program.
 function allHearts() {
   moveAllHearts();
   checkOffScreenAllHearts();
+  allHeartsCollision();
   displayAllHearts();
 }
 
@@ -396,6 +342,45 @@ function checkOffScreenAllHearts() {
 }
 
 /**
+heartsCollision(heart1, heart2)
+
+function that creates interaction between hearts when they collide together.
+*/
+function heartsCollision(heart1, heart2) {
+  let d = dist(heart1.x, heart1.y, heart2.x, heart2.y);
+  if (d < heart1.size / 2 + heart2.size / 2) {
+    heart1.image = hearts.blackHeart.image;
+  }
+}
+
+/**
+allHeartsCollision()
+
+function that puts in application heartsCollision()
+(interesting to notice that their is a hierarchy in which heart will become black depending on the 2 colliding hearts).
+*/
+function allHeartsCollision() {
+  heartsCollision(hearts.greenHeart, hearts.blueHeart);
+  heartsCollision(hearts.orangeHeart, hearts.blueHeart);
+  heartsCollision(hearts.pinkHeart, hearts.blueHeart);
+  heartsCollision(hearts.purpleHeart, hearts.blueHeart);
+
+  heartsCollision(hearts.greenHeart, hearts.yellowHeart);
+  heartsCollision(hearts.orangeHeart, hearts.yellowHeart);
+  heartsCollision(hearts.pinkHeart, hearts.yellowHeart);
+  heartsCollision(hearts.purpleHeart, hearts.yellowHeart);
+
+  heartsCollision(hearts.greenHeart, hearts.redHeart);
+  heartsCollision(hearts.orangeHeart, hearts.redHeart);
+  heartsCollision(hearts.pinkHeart, hearts.redHeart);
+  heartsCollision(hearts.purpleHeart, hearts.redHeart);
+
+  heartsCollision(hearts.blueHeart, hearts.whiteHeart);
+  heartsCollision(hearts.yellowHeart, hearts.whiteHeart);
+  heartsCollision(hearts.redHeart, hearts.whiteHeart);
+}
+
+/**
 displayAllHearts(heart)
 
 function to display "heart."
@@ -420,6 +405,102 @@ function displayAllHearts() {
   displayHeart(hearts.yellowHeart);
 }
 
+/**
+justMe()
+
+function with all information on "me."
+*/
+function justMe() {
+  moveMe();
+  checkOffScreenMe();
+  displayMe();
+}
+
+/**
+moveME()
+
+function to make the interactive element "me" move with the arrow keys of the keyboard.
+*/
+function moveMe() {
+  if (keyIsDown(LEFT_ARROW)) {
+    me.x -= me.vx;
+  }
+  if (keyIsDown(RIGHT_ARROW)) {
+    me.x += me.vx;
+  }
+
+  if (keyIsDown(UP_ARROW)) {
+    me.y -= me.vy;
+  }
+  if (keyIsDown(DOWN_ARROW)) {
+    me.y += me.vy;
+  }
+}
+
+/**
+checkOffScreenMe()
+
+funcion to see if "me" is off screen, and if it is, it will appear on the opposite side of the canvas.
+ */
+function checkOffScreenMe() {
+  if (me.x + me.size / 2 < 0) {
+    me.x = width + me.size / 2;
+  }
+  if (me.x - me.size / 2 > width) {
+    me.x = 0 - me.size / 2;
+  }
+  if (me.y + me.size / 2 < 0) {
+    me.y = height + me.size / 2;
+  }
+  if (me.y - me.size / 2 > height) {
+    me.y = 0 - me.size / 2;
+  }
+}
+
+/**
+displayMe()
+
+function to display the interactive element "me."
+ */
+function displayMe() {
+  //Display "me"
+  noStroke();
+  fill(me.fill.r, me.fill.g, me.fill.b, me.fill.a);
+  ellipse(me.x, me.y, me.size);
+}
+
+/**
+collisionMeHearts(heart)
+
+function that makes "me" interact with the hearts when they collide.
+*/
+function collisionMeHearts(heart) {
+  let d = dist(me.x, me.y, heart.x, heart.y);
+  if (d < me.size / 2 + heart.size / 2) {
+    heart.image = hearts.whiteHeart.image;
+  }
+}
+
+/**
+collisionMeAllHearts()
+
+function applying collisionMeHearts() to all hearts.
+*/
+function collisionMeAllHearts() {
+  collisionMeHearts(hearts.blueHeart);
+  collisionMeHearts(hearts.greenHeart);
+  collisionMeHearts(hearts.orangeHeart);
+  collisionMeHearts(hearts.pinkHeart);
+  collisionMeHearts(hearts.purpleHeart);
+  collisionMeHearts(hearts.redHeart);
+  collisionMeHearts(hearts.yellowHeart);
+}
+
+/**
+keyPressed()
+
+function to change the variable state from title to simulation by pressing any key of the keyboard.
+*/
 function keyPressed() {
   if (state === `title`) {
     state = `simulation`;
