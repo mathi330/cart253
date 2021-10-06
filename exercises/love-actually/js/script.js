@@ -8,6 +8,7 @@ author, and this description to match your project!
 
 "use strict";
 
+//variable to change the state of the program.
 let state = `title`;
 
 //Object for the element the user can move around ("me").
@@ -26,6 +27,7 @@ let me = {
   },
 };
 
+//Object that contains all the hearts that the user ("me") can interact with.
 let hearts = {
   blackHeart: {
     image: undefined,
@@ -141,7 +143,7 @@ let hearts = {
 /**
 preload()
 
-
+function that puts all the images used in this program into variables.
 */
 function preload() {
   //images
@@ -211,7 +213,7 @@ function setupMe() {
 /**
 draw()
 
-
+function that chooses the background's color and calls functions depending on the "state" variable.
 */
 function draw() {
   background(10);
@@ -228,7 +230,52 @@ function draw() {
     case `ending1`:
       ending1();
       break;
+
+    case `ending2`:
+      ending2();
+      break;
+
+    case `ending3`:
+      ending3();
+      break;
+
+    case `ending4`:
+      ending4();
+      break;
+
+    case `ending5`:
+      ending5();
+      break;
+
+    case `ending6`:
+      ending6();
+      break;
+
+    case `ending7`:
+      ending7();
+      break;
+
+    case `ending8`:
+      ending8();
+      break;
+
+    case `ending9`:
+      ending9();
+      break;
   }
+}
+
+/**
+typeSetting()
+
+function that sets up the information for most of the text that appears in the program.
+*/
+function typeSetting() {
+  fill(255);
+  textFont(`Quicksand`);
+  textAlign(CENTER, CENTER);
+  textSize(40);
+  textStyle(BOLD);
 }
 
 /**
@@ -238,12 +285,22 @@ function for the title of the simulation.
 */
 function title() {
   push();
+  typeSetting();
+  fill(255);
+  text(`Love, Actually`, width / 2, height / 2);
+  pop();
+
+  push();
   fill(255);
   textFont(`Quicksand`);
-  textAlign(CENTER, CENTER);
-  textSize(40);
-  textStyle(BOLD);
-  text(`Love, Actually`, width / 2, height / 2);
+  textAlign(CENTER, BOTTOM);
+  textSize(20);
+  text(
+    `You can move the circle in the center with the arrow keys and change the hearts you touch to white.
+To start, press any key.`,
+    width / 2,
+    height - 50
+  );
   pop();
 }
 
@@ -254,8 +311,136 @@ function with everything that happens in the simulation part.
 */
 function simulation() {
   collisionMeAllHearts();
+  coloredHearts();
   allHearts();
   justMe();
+}
+
+/**
+ending()
+
+The following 9 functions are all the possible endings for this program.
+depending on the number of white heart, the quote that appears is different.
+*/
+function ending1() {
+  push();
+  typeSetting();
+  text(
+    `(1/8 hearts)
+    “The loneliest moment in someone’s life is when they are
+     watching their whole world fall apart, and all they can do is
+     stare blankly.”
+                                                    ― F. Scott Fitzgerald `,
+    width / 2,
+    height / 2
+  );
+  pop();
+}
+function ending2() {
+  push();
+  typeSetting();
+  text(
+    `(2/8 hearts)
+    “Remember: the time you feel lonely is the time you most need
+    to be by yourself. Life's cruelest irony.”
+                                        ― Douglas Coupland, Shampoo Planet`,
+    width / 2,
+    height / 2
+  );
+  pop();
+}
+function ending3() {
+  push();
+  typeSetting();
+  text(
+    `(3/8 hearts)
+    “It's often just enough to be with someone. I don't need to
+  touch them. Not even talk. A feeling passes between you both.
+  You're not alone.”
+                                                            ― Marilyn Monroe`,
+    width / 2,
+    height / 2
+  );
+  pop();
+}
+function ending4() {
+  push();
+  typeSetting();
+  text(
+    `(4/8 hearts)
+    “The most valuable gift you can receive is an honest friend.”
+                                                        ― Stephen Richards`,
+    width / 2,
+    height / 2
+  );
+  pop();
+}
+function ending5() {
+  push();
+  typeSetting();
+  text(
+    `(5/8 hearts)
+    “Friendship gives us the strength to turn from lambs into
+    lions.”
+                                                        ― Stephen Richards`,
+    width / 2,
+    height / 2
+  );
+  pop();
+}
+function ending6() {
+  push();
+  typeSetting();
+  text(
+    `(6/8 hearts)
+    “...while finding true love was one of the most splendid things
+    that could happen to you in life, finding a friend was equally
+    splendid.”
+                                        ― Félix J. Palma, The Map of the Sky`,
+    width / 2,
+    height / 2
+  );
+  pop();
+}
+function ending7() {
+  push();
+  typeSetting();
+  text(
+    `(7/8 hearts)
+    “The only way love can last a lifetime is if it's unconditional. The truth
+  is this: love is not determined by the one being loved but rather by the
+  one choosing to love.”
+                                              ― Stephen Kendrick, The Love Dare`,
+    width / 2,
+    height / 2
+  );
+  pop();
+}
+function ending8() {
+  push();
+  typeSetting();
+  text(
+    `(8/8 hearts)
+    “Nothing you become will disappoint me; I have no preconception that
+    I'd like to see you be or do. I have no desire to forsee you, only to
+    discover you. You can't disappoint me”
+                                                                ― Mary Haskell`,
+    width / 2,
+    height / 2
+  );
+  pop();
+}
+function ending9() {
+  push();
+  typeSetting();
+  text(
+    `(0/8 hearts)
+    "Forever Alone..."
+                          ― Me`,
+    width / 2,
+    height / 2
+  );
+  pop();
 }
 
 /**
@@ -497,6 +682,94 @@ function collisionMeAllHearts() {
 }
 
 /**
+coloredHearts
+
+function that sees if all the hearts are either white or black.
+*/
+function coloredHearts() {
+  if (
+    (hearts.blueHeart.image === hearts.whiteHeart.image ||
+      hearts.blueHeart.image === hearts.blackHeart.image) &&
+    (hearts.greenHeart.image === hearts.whiteHeart.image ||
+      hearts.greenHeart.image === hearts.blackHeart.image) &&
+    (hearts.orangeHeart.image === hearts.whiteHeart.image ||
+      hearts.orangeHeart.image === hearts.blackHeart.image) &&
+    (hearts.pinkHeart.image === hearts.whiteHeart.image ||
+      hearts.pinkHeart.image === hearts.blackHeart.image) &&
+    (hearts.purpleHeart.image === hearts.whiteHeart.image ||
+      hearts.purpleHeart.image === hearts.blackHeart.image) &&
+    (hearts.redHeart.image === hearts.whiteHeart.image ||
+      hearts.redHeart.image === hearts.blackHeart.image) &&
+    (hearts.yellowHeart.image === hearts.whiteHeart.image ||
+      hearts.yellowHeart.image === hearts.blackHeart.image)
+  ) {
+    whiteHeartCount();
+  }
+}
+
+/**
+whiteHeartCount()
+
+function that counts the number of white hearts when all hearts are either white or black.
+Depending on the number of white heart, it will choose the appropriate ending.
+*/
+function whiteHeartCount() {
+  let count = 0;
+  if (hearts.blueHeart.image === hearts.whiteHeart.image) {
+    count++;
+  }
+  if (hearts.greenHeart.image === hearts.whiteHeart.image) {
+    count++;
+  }
+  if (hearts.orangeHeart.image === hearts.whiteHeart.image) {
+    count++;
+  }
+  if (hearts.pinkHeart.image === hearts.whiteHeart.image) {
+    count++;
+  }
+  if (hearts.purpleHeart.image === hearts.whiteHeart.image) {
+    count++;
+  }
+  if (hearts.redHeart.image === hearts.whiteHeart.image) {
+    count++;
+  }
+  if (hearts.yellowHeart.image === hearts.whiteHeart.image) {
+    count++;
+  }
+  if (hearts.whiteHeart.image === hearts.whiteHeart.image) {
+    count++;
+  }
+
+  if (count === 1) {
+    state = `ending1`;
+  }
+  if (count === 2) {
+    state = `ending2`;
+  }
+  if (count === 3) {
+    state = `ending3`;
+  }
+  if (count === 4) {
+    state = `ending4`;
+  }
+  if (count === 5) {
+    state = `ending5`;
+  }
+  if (count === 6) {
+    state = `ending6`;
+  }
+  if (count === 7) {
+    state = `ending7`;
+  }
+  if (count === 8) {
+    state = `ending8`;
+  }
+  if (count === 0) {
+    state = `ending9`;
+  }
+}
+
+/**
 keyPressed()
 
 function to change the variable state from title to simulation by pressing any key of the keyboard.
@@ -504,5 +777,18 @@ function to change the variable state from title to simulation by pressing any k
 function keyPressed() {
   if (state === `title`) {
     state = `simulation`;
+  }
+  if (
+    state === `ending1` ||
+    state === `ending2` ||
+    state === `ending3` ||
+    state === `ending4` ||
+    state === `ending5` ||
+    state === `ending6` ||
+    state === `ending7` ||
+    state === `ending8` ||
+    state === `ending9`
+  ) {
+    state = `title`;
   }
 }
