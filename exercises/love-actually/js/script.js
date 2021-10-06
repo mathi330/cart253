@@ -2,8 +2,10 @@
 Looking for love
 Mathilde Davan
 
-This is a template. You must fill in the title,
-author, and this description to match your project!
+This project is a simulation where the user uses the arrow keys on their keyboard to move the "me" around.
+When the user collide with a heart, the heart turns white, but some hearts will turn black when they collide with certain hearts too.
+The program ends when all the hearts are either black or white.
+Depending on the number of white hearts a quote will appear (romantic love, friendship, or loneliness).
 */
 
 "use strict";
@@ -297,7 +299,7 @@ function title() {
   textSize(20);
   text(
     `You can move the circle in the center with the arrow keys and change the hearts you touch to white.
-To start, press any key.`,
+To start, press the space bar.`,
     width / 2,
     height - 50
   );
@@ -769,6 +771,11 @@ function whiteHeartCount() {
   }
 }
 
+/**
+reset()
+
+function that resets both the hearts' colors and the coordinates of the hearts and "me."
+*/
 function reset() {
   preload();
   setupMe();
@@ -778,24 +785,26 @@ function reset() {
 /**
 keyPressed()
 
-function to change the variable state from title to simulation by pressing any key of the keyboard.
+function to change the variable state from title to simulation by pressing the space bar of the keyboard.
 */
 function keyPressed() {
-  if (state === `title`) {
-    state = `simulation`;
-  }
-  if (
-    state === `ending1` ||
-    state === `ending2` ||
-    state === `ending3` ||
-    state === `ending4` ||
-    state === `ending5` ||
-    state === `ending6` ||
-    state === `ending7` ||
-    state === `ending8` ||
-    state === `ending9`
-  ) {
-    state = `title`;
-    reset();
+  if (keyCode === 32) {
+    if (state === `title`) {
+      state = `simulation`;
+    }
+    if (
+      state === `ending1` ||
+      state === `ending2` ||
+      state === `ending3` ||
+      state === `ending4` ||
+      state === `ending5` ||
+      state === `ending6` ||
+      state === `ending7` ||
+      state === `ending8` ||
+      state === `ending9`
+    ) {
+      state = `title`;
+      reset();
+    }
   }
 }
