@@ -8,6 +8,7 @@ author, and this description to match your project!
 
 "use strict";
 
+//the bottom of the canvas that represents the earth/ground.
 let ground = {
   x: undefined,
   y: undefined,
@@ -20,9 +21,8 @@ let ground = {
   },
 };
 
-// The small rectangle we'll control with the mouse
-// Changes stroke color when overlap detected
-let small = {
+// The customized cursor (a small rectangle)
+let cursor = {
   x: undefined,
   y: undefined,
   width: 5,
@@ -30,16 +30,28 @@ let small = {
   stroke: undefined,
 };
 
-// The big rectangle that will just sit in the centre
-let big = {
-  x: undefined,
-  y: undefined,
-  width: 200,
-  height: 200,
-  stroke: undefined,
-  isBeingDragged: false,
-  gravity: 0,
-  acceleration: 0.2,
+// The material.
+let material = {
+  material1: {
+    x: undefined,
+    y: undefined,
+    width: 200,
+    height: 200,
+    stroke: undefined,
+    isBeingDragged: false,
+    gravity: 0,
+    acceleration: 0.2,
+  },
+  material2: {
+    x: undefined,
+    y: undefined,
+    width: 200,
+    height: 200,
+    stroke: undefined,
+    isBeingDragged: false,
+    gravity: 0,
+    acceleration: 0.2,
+  },
 };
 
 /**
@@ -52,12 +64,14 @@ function setup() {
   rectMode(CENTER);
 
   setupGround();
-  setupMaterial();
+  setupMaterial(material.material1, material.material2);
+  setupMaterial(material.material2, material.material1);
   noCursor();
 
   // Default stroke colors for the two shapes
-  small.stroke = color(255);
-  big.stroke = color(255, 255, 0);
+  cursor.stroke = color(255);
+  material.material1.stroke = color(255, 255, 0);
+  material.material2.stroke = color(255, 0, 0);
 }
 
 /**
@@ -79,13 +93,13 @@ setupMaterial()
 
 function that sets up size and coordinates for material.
 */
-function setupMaterial() {
+function setupMaterial(material, otherMaterial) {
   //choosing random sizes for the material while taking into account the size of the canvas.
-  big.width = random(width / 13, width / 8);
-  big.height = random(height / 20, height / 11);
+  material.width = random(width / 13, width / 8);
+  material.height = random(height / 20, height / 11);
   //choosing coordinates of the material while taking into account the ground and the material's size.
-  big.x = random(big.width / 2, width - big.width / 2);
-  big.y = ground.y - ground.height / 2 - big.height / 2;
+  material.x = random(material.width / 2, width - material.width / 2);
+  material.y = ground.y - ground.height / 2 - material.height / 2;
   // - materials.stroke.strokeWeight;
 }
 
@@ -93,10 +107,12 @@ function draw() {
   background(0);
   displayGround();
 
-  moveSmall();
-  handleDragging();
-  drawBig();
-  drawSmall();
+  moveCursor();
+  handleDragging(material.material1);
+  handleDragging(material.material2);
+  drawMaterial(material.material1, material.material2);
+  drawMaterial(material.material2, material.material1);
+  drawCursor();
 }
 
 /**
@@ -112,70 +128,86 @@ function displayGround() {
   pop();
 }
 
-function moveSmall() {
-  // Move the small rectangle to the position of the mouse
-  small.x = mouseX;
-  small.y = mouseY;
+function moveCursor() {
+  // Move the cursor rectangle to the position of the mouse
+  cursor.x = mouseX;
+  cursor.y = mouseY;
 }
 
 /**
 handleDragging()
 
-function that make the big shape be dragged when isBeingDragged is true.
+function that make the material shape be dragged when isBeingDragged is true.
 */
-function handleDragging() {
-  if (big.isBeingDragged) {
-    big.x = mouseX;
-    big.y = mouseY;
+function handleDragging(material) {
+  if (material.isBeingDragged) {
+    material.x = mouseX;
+    material.y = mouseY;
   }
 }
 
 /**
-Same idea as above for the big shape
+Same idea as above for the material shape
 */
-function drawBig() {
+function drawMaterial(material, otherMaterial) {
   push();
-  //If statement to create a gravity effect.
-  if (
-    big.y !== ground.y - ground.height / 2 - big.height / 2 &&
-    big.isBeingDragged === false
-  ) {
-    big.gravity += big.acceleration;
-  } else {
-    //resets the gravity to zero.
-    big.gravity = 0;
-  }
-  big.y += big.gravity;
-  insideCanvas(big);
-  stroke(big.stroke);
+  gravityMaterial(material, otherMaterial);
+  material.y += material.gravity;
+  insideCanvas(material);
+  stroke(material.stroke);
   noFill();
-  rect(big.x, big.y, big.width, big.height);
+  rect(material.x, material.y, material.width, material.height);
   pop();
 }
 
+function gravityMaterial(material, otherMaterial) {
+  //If statement to create a gravity effect.
+  if (
+    material.x + material.width / 2 >
+      otherMaterial.x - otherMaterial.width / 2 &&
+    material.x - material.width / 2 <
+      otherMaterial.x + otherMaterial.width / 2 &&
+    material.isBeingDragged === false
+  ) {
+    if (material.y < otherMaterial.height) {
+      material.gravity += material.acceleration;
+    } else {
+      material.gravity = 0;
+    }
+  } else if (
+    material.y !== ground.y - ground.height / 2 - material.height / 2 &&
+    material.isBeingDragged === false
+  ) {
+    material.gravity += material.acceleration;
+  } else {
+    //resets the gravity to zero when it touches the ground.
+    material.gravity = 0;
+  }
+}
+
 /**
-Displays the smaller shape using appropriate drawing settings
+Displays the cursorer shape using appropriate drawing settings
 */
-function drawSmall() {
+function drawCursor() {
   push();
-  insideCanvas(small);
+  insideCanvas(cursor);
   noFill();
-  stroke(small.stroke);
-  rect(small.x, small.y, small.width, small.height);
+  stroke(cursor.stroke);
+  rect(cursor.x, cursor.y, cursor.width, cursor.height);
   pop();
 }
 
 /**
 mouseIsInsideShape()
 
-Checks if the small rectangle/cursor is inside the big rectangle.
+Checks if the cursor rectangle/cursor is inside the material rectangle.
 */
-function mouseIsInsideShape() {
+function mouseIsInsideShape(material) {
   if (
-    small.x - small.width / 2 > big.x - big.width / 2 &&
-    small.x + small.width / 2 < big.x + big.width / 2 &&
-    small.y - small.height / 2 > big.y - big.height / 2 &&
-    small.y + small.height / 2 < big.y + big.height / 2
+    cursor.x - cursor.width / 2 > material.x - material.width / 2 &&
+    cursor.x + cursor.width / 2 < material.x + material.width / 2 &&
+    cursor.y - cursor.height / 2 > material.y - material.height / 2 &&
+    cursor.y + cursor.height / 2 < material.y + material.height / 2
   ) {
     return true;
   } else {
@@ -187,8 +219,11 @@ function mouseIsInsideShape() {
 sees if the mouse is inside the shape when the mouse is pressed.
 */
 function mousePressed() {
-  if (mouseIsInsideShape()) {
-    big.isBeingDragged = true;
+  if (mouseIsInsideShape(material.material1)) {
+    material.material1.isBeingDragged = true;
+  }
+  if (mouseIsInsideShape(material.material2)) {
+    material.material2.isBeingDragged = true;
   }
 }
 
@@ -196,7 +231,8 @@ function mousePressed() {
 stops dragging when the mouse is released.
 */
 function mouseReleased() {
-  big.isBeingDragged = false;
+  material.material1.isBeingDragged = false;
+  material.material2.isBeingDragged = false;
 }
 
 /**
