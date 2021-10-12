@@ -38,6 +38,8 @@ let big = {
   height: 200,
   stroke: undefined,
   isBeingDragged: false,
+  gravity: 0,
+  acceleration: 0.2,
 };
 
 /**
@@ -46,7 +48,7 @@ setup()
 
 */
 function setup() {
-  createCanvas(800, 700);
+  createCanvas(1000, 700);
   rectMode(CENTER);
 
   setupGround();
@@ -129,6 +131,41 @@ function handleDragging() {
 }
 
 /**
+Same idea as above for the big shape
+*/
+function drawBig() {
+  push();
+  //If statement to create a gravity effect.
+  if (
+    big.y !== ground.y - ground.height / 2 - big.height / 2 &&
+    big.isBeingDragged === false
+  ) {
+    big.gravity += big.acceleration;
+  } else {
+    //resets the gravity to zero.
+    big.gravity = 0;
+  }
+  big.y += big.gravity;
+  insideCanvas(big);
+  stroke(big.stroke);
+  noFill();
+  rect(big.x, big.y, big.width, big.height);
+  pop();
+}
+
+/**
+Displays the smaller shape using appropriate drawing settings
+*/
+function drawSmall() {
+  push();
+  insideCanvas(small);
+  noFill();
+  stroke(small.stroke);
+  rect(small.x, small.y, small.width, small.height);
+  pop();
+}
+
+/**
 mouseIsInsideShape()
 
 Checks if the small rectangle/cursor is inside the big rectangle.
@@ -160,30 +197,6 @@ stops dragging when the mouse is released.
 */
 function mouseReleased() {
   big.isBeingDragged = false;
-}
-
-/**
-Displays the smaller shape using appropriate drawing settings
-*/
-function drawSmall() {
-  push();
-  insideCanvas(small);
-  noFill();
-  stroke(small.stroke);
-  rect(small.x, small.y, small.width, small.height);
-  pop();
-}
-
-/**
-Same idea as above for the big shape
-*/
-function drawBig() {
-  push();
-  insideCanvas(big);
-  stroke(big.stroke);
-  noFill();
-  rect(big.x, big.y, big.width, big.height);
-  pop();
 }
 
 /**
