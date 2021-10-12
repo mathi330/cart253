@@ -11,8 +11,8 @@ author, and this description to match your project!
 let ground = {
   x: undefined,
   y: undefined,
-  sizeX: undefined,
-  sizeY: 50,
+  width: undefined,
+  height: 50,
   fill: {
     r: 200,
     g: 200,
@@ -20,44 +20,42 @@ let ground = {
   },
 };
 
-let materials = {
+// The small rectangle we'll control with the mouse
+// Changes stroke color when overlap detected
+let small = {
   x: undefined,
   y: undefined,
-  sizeX: undefined,
-  minSizeX: undefined,
-  maxSizeX: undefined,
-  sizeY: undefined,
-  minSizeY: undefined,
-  maxSizeY: undefined,
-  isBeingDragged: false,
+  width: 5,
+  height: 5,
+  stroke: undefined,
+};
 
-  fill: {
-    r: 250,
-    g: 50,
-    b: 50,
-  },
-  stroke: {
-    r: 0,
-    g: 0,
-    b: 0,
-    strokeWeight: 3,
-  },
+// The big rectangle that will just sit in the centre
+let big = {
+  x: undefined,
+  y: undefined,
+  width: 200,
+  height: 200,
+  stroke: undefined,
+  isBeingDragged: false,
 };
 
 /**
-Description of preload
-*/
-function preload() {}
+setup()
 
-/**
-Description of setup
+
 */
 function setup() {
-  createCanvas(1000, 700);
+  createCanvas(800, 700);
   rectMode(CENTER);
 
   setupGround();
   setupMaterial();
+  noCursor();
+
+  // Default stroke colors for the two shapes
+  small.stroke = color(255);
+  big.stroke = color(255, 255, 0);
 }
 
 /**
@@ -67,11 +65,11 @@ function to set up the grounds size and coordinates.
 */
 function setupGround() {
   //determining the height and lenght of the ground depending on the size of the canvas.
-  ground.sizeX = width;
-  ground.sizeY = height / 11;
+  ground.width = width;
+  ground.height = height / 11;
   //placing the ground according to the size of the canvas and size of the ground.
   ground.x = width / 2;
-  ground.y = height - ground.sizeY / 2;
+  ground.y = height - ground.height / 2;
 }
 
 /**
@@ -80,23 +78,23 @@ setupMaterial()
 function that sets up size and coordinates for material.
 */
 function setupMaterial() {
-  //choosing random sizes for the material.
-  materials.sizeX = random(width / 15, width / 8);
-  materials.sizeY = random(height / 15, height / 11);
-  //choosing coordiantes of the material while taking into account the ground and the material's size.
-  materials.x = random(0 + materials.sizeX / 2, width - materials.sizeX / 2);
-  materials.y = ground.y - ground.sizeY / 2 - materials.sizeY / 2;
+  //choosing random sizes for the material while taking into account the size of the canvas.
+  big.width = random(width / 13, width / 8);
+  big.height = random(height / 20, height / 11);
+  //choosing coordinates of the material while taking into account the ground and the material's size.
+  big.x = random(big.width / 2, width - big.width / 2);
+  big.y = ground.y - ground.height / 2 - big.height / 2;
   // - materials.stroke.strokeWeight;
 }
 
-/**
-Description of draw()
-*/
 function draw() {
   background(0);
   displayGround();
 
-  displayMaterial();
+  moveSmall();
+  handleDragging();
+  drawBig();
+  drawSmall();
 }
 
 /**
@@ -108,20 +106,94 @@ function displayGround() {
   push();
   noStroke();
   fill(ground.fill.r, ground.fill.g, ground.fill.b);
-  rect(ground.x, ground.y, ground.sizeX, ground.sizeY);
+  rect(ground.x, ground.y, ground.width, ground.height);
+  pop();
+}
+
+function moveSmall() {
+  // Move the small rectangle to the position of the mouse
+  small.x = mouseX;
+  small.y = mouseY;
+}
+
+/**
+handleDragging()
+
+function that make the big shape be dragged when isBeingDragged is true.
+*/
+function handleDragging() {
+  if (big.isBeingDragged) {
+    big.x = mouseX;
+    big.y = mouseY;
+  }
+}
+
+/**
+mouseIsInsideShape()
+
+Checks if the small rectangle/cursor is inside the big rectangle.
+*/
+function mouseIsInsideShape() {
+  if (
+    small.x - small.width / 2 > big.x - big.width / 2 &&
+    small.x + small.width / 2 < big.x + big.width / 2 &&
+    small.y - small.height / 2 > big.y - big.height / 2 &&
+    small.y + small.height / 2 < big.y + big.height / 2
+  ) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+/**
+sees if the mouse is inside the shape when the mouse is pressed.
+*/
+function mousePressed() {
+  if (mouseIsInsideShape()) {
+    big.isBeingDragged = true;
+  }
+}
+
+/**
+stops dragging when the mouse is released.
+*/
+function mouseReleased() {
+  big.isBeingDragged = false;
+}
+
+/**
+Displays the smaller shape using appropriate drawing settings
+*/
+function drawSmall() {
+  push();
+  insideCanvas(small);
+  noFill();
+  stroke(small.stroke);
+  rect(small.x, small.y, small.width, small.height);
   pop();
 }
 
 /**
-displayMaterial()
-
-function that displays the material.
+Same idea as above for the big shape
 */
-function displayMaterial() {
-  //fill and stroke (for now I don't have a stroke but I still put it in case I change my mind).
-  fill(materials.fill.r, materials.fill.g, materials.fill.b);
-  noStroke();
-  // strokeWeight(materials.stroke.strokeWeight);
-  // stroke(materials.stroke.r, materials.stroke.g, materials.stroke.b);
-  rect(materials.x, materials.y, materials.sizeX, materials.sizeY);
+function drawBig() {
+  push();
+  insideCanvas(big);
+  stroke(big.stroke);
+  noFill();
+  rect(big.x, big.y, big.width, big.height);
+  pop();
+}
+
+/**
+constrain to make sure the shapes don't go outside the canvas.
+*/
+function insideCanvas(shape) {
+  shape.x = constrain(shape.x, shape.width / 2, width - shape.width / 2);
+  shape.y = constrain(
+    shape.y,
+    shape.height / 2,
+    ground.y - ground.height / 2 - shape.height / 2
+  );
 }
