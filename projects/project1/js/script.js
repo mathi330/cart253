@@ -52,6 +52,26 @@ let material = {
     gravity: 0,
     acceleration: 0.2,
   },
+  material3: {
+    x: undefined,
+    y: undefined,
+    width: 200,
+    height: 200,
+    stroke: undefined,
+    isBeingDragged: false,
+    gravity: 0,
+    acceleration: 0.2,
+  },
+  material4: {
+    x: undefined,
+    y: undefined,
+    width: 200,
+    height: 200,
+    stroke: undefined,
+    isBeingDragged: false,
+    gravity: 0,
+    acceleration: 0.2,
+  },
 };
 
 /**
@@ -60,18 +80,18 @@ setup()
 
 */
 function setup() {
-  createCanvas(1000, 700);
+  createCanvas(windowWidth, windowHeight);
   rectMode(CENTER);
 
   setupGround();
-  setupMaterial(material.material1, material.material2);
-  setupMaterial(material.material2, material.material1);
+  setupMaterial(material.material1);
+  setupMaterial(material.material2);
+  setupMaterial(material.material3);
+  setupMaterial(material.material4);
   noCursor();
 
   // Default stroke colors for the two shapes
   cursor.stroke = color(255);
-  material.material1.stroke = color(255, 255, 0);
-  material.material2.stroke = color(255, 0, 0);
 }
 
 /**
@@ -93,14 +113,14 @@ setupMaterial()
 
 function that sets up size and coordinates for material.
 */
-function setupMaterial(material, otherMaterial) {
+function setupMaterial(material) {
+  material.stroke = color(random(150, 255), random(150, 200), random(100, 150));
   //choosing random sizes for the material while taking into account the size of the canvas.
   material.width = random(width / 13, width / 8);
   material.height = random(height / 20, height / 11);
   //choosing coordinates of the material while taking into account the ground and the material's size.
   material.x = random(material.width / 2, width - material.width / 2);
   material.y = ground.y - ground.height / 2 - material.height / 2;
-  // - materials.stroke.strokeWeight;
 }
 
 function draw() {
@@ -110,8 +130,21 @@ function draw() {
   moveCursor();
   handleDragging(material.material1);
   handleDragging(material.material2);
+  handleDragging(material.material3);
+  handleDragging(material.material4);
+
   drawMaterial(material.material1, material.material2);
+  drawMaterial(material.material1, material.material3);
+  drawMaterial(material.material1, material.material4);
   drawMaterial(material.material2, material.material1);
+  drawMaterial(material.material2, material.material3);
+  drawMaterial(material.material2, material.material4);
+  drawMaterial(material.material3, material.material1);
+  drawMaterial(material.material3, material.material2);
+  drawMaterial(material.material3, material.material4);
+  drawMaterial(material.material4, material.material1);
+  drawMaterial(material.material4, material.material2);
+  drawMaterial(material.material4, material.material3);
   drawCursor();
 }
 
@@ -153,7 +186,7 @@ function drawMaterial(material, otherMaterial) {
   push();
   gravityMaterial(material, otherMaterial);
   material.y += material.gravity;
-  insideCanvas(material);
+  insideCanvas(material, ground);
   stroke(material.stroke);
   noFill();
   rect(material.x, material.y, material.width, material.height);
@@ -162,26 +195,15 @@ function drawMaterial(material, otherMaterial) {
 
 function gravityMaterial(material, otherMaterial) {
   //If statement to create a gravity effect.
-  if (
-    material.x + material.width / 2 >
-      otherMaterial.x - otherMaterial.width / 2 &&
-    material.x - material.width / 2 <
-      otherMaterial.x + otherMaterial.width / 2 &&
-    material.isBeingDragged === false
-  ) {
-    if (material.y < otherMaterial.height) {
-      material.gravity += material.acceleration;
-    } else {
+  if (!material.isBeingDragged) {
+    if (material.y === ground.y - ground.height / 2 - material.height / 2) {
+      //resets the gravity to zero when it touches the ground.
       material.gravity = 0;
+    } else if (shapeIsInsideShape(material, otherMaterial)) {
+      material.gravity = 0;
+    } else {
+      material.gravity += material.acceleration;
     }
-  } else if (
-    material.y !== ground.y - ground.height / 2 - material.height / 2 &&
-    material.isBeingDragged === false
-  ) {
-    material.gravity += material.acceleration;
-  } else {
-    //resets the gravity to zero when it touches the ground.
-    material.gravity = 0;
   }
 }
 
@@ -190,7 +212,7 @@ Displays the cursorer shape using appropriate drawing settings
 */
 function drawCursor() {
   push();
-  insideCanvas(cursor);
+  insideCanvas(cursor, ground);
   noFill();
   stroke(cursor.stroke);
   rect(cursor.x, cursor.y, cursor.width, cursor.height);
@@ -215,6 +237,25 @@ function mouseIsInsideShape(material) {
   }
 }
 
+function shapeIsInsideShape(material, otherMaterial) {
+  if (
+    material.x + material.width / 2 >=
+      otherMaterial.x - otherMaterial.width / 2 &&
+    material.x - material.width / 2 <=
+      otherMaterial.x + otherMaterial.width / 2 &&
+    material.y + material.height / 2 >=
+      otherMaterial.y - otherMaterial.height / 2 &&
+    material.y - material.height / 2 <=
+      otherMaterial.y + otherMaterial.height / 2
+  ) {
+    material.y =
+      otherMaterial.y - otherMaterial.height / 2 - material.height / 2;
+    return true;
+  } else {
+    return false;
+  }
+}
+
 /**
 sees if the mouse is inside the shape when the mouse is pressed.
 */
@@ -225,6 +266,12 @@ function mousePressed() {
   if (mouseIsInsideShape(material.material2)) {
     material.material2.isBeingDragged = true;
   }
+  if (mouseIsInsideShape(material.material3)) {
+    material.material3.isBeingDragged = true;
+  }
+  if (mouseIsInsideShape(material.material4)) {
+    material.material4.isBeingDragged = true;
+  }
 }
 
 /**
@@ -233,12 +280,14 @@ stops dragging when the mouse is released.
 function mouseReleased() {
   material.material1.isBeingDragged = false;
   material.material2.isBeingDragged = false;
+  material.material3.isBeingDragged = false;
+  material.material4.isBeingDragged = false;
 }
 
 /**
 constrain to make sure the shapes don't go outside the canvas.
 */
-function insideCanvas(shape) {
+function insideCanvas(shape, ground) {
   shape.x = constrain(shape.x, shape.width / 2, width - shape.width / 2);
   shape.y = constrain(
     shape.y,
