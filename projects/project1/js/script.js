@@ -48,19 +48,22 @@ function setup() {
 
   //Create and setup all the materials.
   for (let i = 0; i < countMaterial; i++) {
-    let material = createMaterial();
-    print(i + "  " + material.width);
+    let material = createMaterial("material-" + i);
     materials.push(material);
   }
 
-  // Default stroke colors for the two shapes
+  // Default stroke colors for the cursor.
   cursor.stroke = color(255);
 }
 
-function createMaterial() {
+/**
+function for the material's object.
+*/
+function createMaterial(myName) {
   let myWidth = random(width / 13, width / 8);
   let myHeight = random(height / 20, height / 11);
   let material = {
+    name: myName,
     x: random(myWidth / 2, width - myWidth / 2),
     y: ground.y - ground.height / 2 - myHeight / 2,
     width: myWidth,
@@ -69,6 +72,7 @@ function createMaterial() {
     isBeingDragged: false,
     gravity: 0,
     acceleration: 0.2,
+    materialUnder: null,
   };
   return material;
 }
@@ -87,39 +91,45 @@ function setupGround() {
   ground.y = height - ground.height / 2;
 }
 
-/**
-setupMaterial()
-
-function that sets up size and coordinates for material.
-*/
-// function setupMaterial(material) {
-//   material.stroke = color(random(150, 255), random(150, 200), random(100, 150));
-//   //choosing random sizes for the material while taking into account the size of the canvas.
-//   material.width = random(width / 13, width / 8);
-//   material.height = random(height / 20, height / 11);
-//   //choosing coordinates of the material while taking into account the ground and the material's size.
-//   material.x = random(material.width / 2, width - material.width / 2);
-//   material.y = ground.y - ground.height / 2 - material.height / 2;
-// }
-
 function draw() {
   background(0);
+  moveCursor();
+  drawCursor();
+
+  simulation();
+}
+
+/**
+Create the simulation.
+*/
+function simulation() {
   displayGround();
 
-  moveCursor();
-
+  //loop to process the dragging of materials.
   for (let i = 0; i < materials.length; i++) {
-    handleDragging(materials[i]);
+    let material = materials[i];
+    handleDragging(material);
+    if (
+      material.gravity === 0 &&
+      !material.isBeingDragged &&
+      !material.materialUnder === null
+    ) {
+      if (material.y === ground.y - ground.height / 2 - material.height / 2) {
+        if (shapeIsInsideShape(material, material.materialUnder)) {
+          startFreeFall(material);
+          material.materialUnder = null;
+        }
+      }
+    }
   }
+  //loop to create the materials.
   for (let i = 0; i < materials.length; i++) {
     for (let j = 0; j < materials.length; j++) {
       if (i !== j) {
         drawMaterial(materials[i], materials[j]);
-        // print("Coucou " + materials[i].x);
       }
     }
   }
-  drawCursor();
 }
 
 /**
@@ -164,20 +174,30 @@ function drawMaterial(material, otherMaterial) {
   stroke(material.stroke);
   noFill();
   rect(material.x, material.y, material.width, material.height);
-  // print(
-  //   material.x + " " + material.y + " " + material.width + " " + material.height
-  // );
   pop();
 }
 
+/**
+Create the illusion of gravity.
+If the material is not on the ground
+     and not on top of another material, then it will fall.
+*/
 function gravityMaterial(material, otherMaterial) {
   //If statement to create a gravity effect.
+
   if (!material.isBeingDragged && material.gravity > 0) {
     if (material.y === ground.y - ground.height / 2 - material.height / 2) {
       //resets the gravity to zero when it touches the ground.
       material.gravity = 0;
     } else if (shapeIsInsideShape(material, otherMaterial)) {
       material.gravity = 0;
+
+      if (
+        material.y + material.height / 2 <=
+        otherMaterial.y - otherMaterial.height / 2
+      ) {
+        material.materialUnder = otherMaterial;
+      }
     } else {
       material.gravity += material.acceleration;
     }
@@ -223,7 +243,9 @@ function shapeIsInsideShape(material, otherMaterial) {
     material.y + material.height / 2 >=
       otherMaterial.y - otherMaterial.height / 2 &&
     material.y - material.height / 2 <=
-      otherMaterial.y + otherMaterial.height / 2
+      otherMaterial.y + otherMaterial.height / 2 &&
+    !material.isBeingDragged &&
+    !otherMaterial.isBeingDragged
   ) {
     material.y =
       otherMaterial.y - otherMaterial.height / 2 - material.height / 2;
@@ -240,11 +262,38 @@ function mousePressed() {
   for (let i = 0; i < materials.length; i++) {
     if (mouseIsInsideShape(materials[i])) {
       materials[i].isBeingDragged = true;
+
+      materials[i].materialUnder = null;
+      //make any material on top of the material being dragged to start their free fall.
+      startFreeFallForMaterialOnTop(materials[i]);
     }
   }
 }
 
-function isOnTopOfMaterial() {}
+/**
+Start a free fall and make those on top fall too.
+*/
+function startFreeFall(material) {
+  material.isBeingDragged = false;
+  material.gravity = 0.1;
+  material.materialUnder = null;
+  startFreeFallForMaterialOnTop(material);
+}
+
+function startFreeFallForMaterialOnTop(myMaterialUnder) {
+  //Sorting out the array of the materials based on their y position.
+  //We want the biggest y to be the first of the new array.
+  let sortedMaterials = materials.sort(function (a, b) {
+    return a.y < b.y;
+  });
+  //See if there is a material above the current "myMaterialUnder."
+  for (let i = 0; i < sortedMaterials.length; i++) {
+    if (materials[i].materialUnder === myMaterialUnder) {
+      //If there is one, make it fall.
+      startFreeFall(materials[i]);
+    }
+  }
+}
 
 /**
 stops dragging when the mouse is released.
@@ -253,10 +302,8 @@ function mouseReleased() {
   for (let i = 0; i < materials.length; i++) {
     if (mouseIsInsideShape(materials[i])) {
       // Processing the released element.
-      materials[i].isBeingDragged = false;
-      materials[i].gravity = 0.1;
-    } else {
-      //
+      startFreeFall(materials[i]);
+      startFreeFallForMaterialOnTop(materials[i]);
     }
   }
 }
