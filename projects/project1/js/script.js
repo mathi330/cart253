@@ -31,48 +31,8 @@ let cursor = {
 };
 
 // The material.
-let material = {
-  material1: {
-    x: undefined,
-    y: undefined,
-    width: 200,
-    height: 200,
-    stroke: undefined,
-    isBeingDragged: false,
-    gravity: 0,
-    acceleration: 0.2,
-  },
-  material2: {
-    x: undefined,
-    y: undefined,
-    width: 200,
-    height: 200,
-    stroke: undefined,
-    isBeingDragged: false,
-    gravity: 0,
-    acceleration: 0.2,
-  },
-  material3: {
-    x: undefined,
-    y: undefined,
-    width: 200,
-    height: 200,
-    stroke: undefined,
-    isBeingDragged: false,
-    gravity: 0,
-    acceleration: 0.2,
-  },
-  material4: {
-    x: undefined,
-    y: undefined,
-    width: 200,
-    height: 200,
-    stroke: undefined,
-    isBeingDragged: false,
-    gravity: 0,
-    acceleration: 0.2,
-  },
-};
+let materials = [];
+let countMaterial = 5;
 
 /**
 setup()
@@ -84,14 +44,33 @@ function setup() {
   rectMode(CENTER);
 
   setupGround();
-  setupMaterial(material.material1);
-  setupMaterial(material.material2);
-  setupMaterial(material.material3);
-  setupMaterial(material.material4);
   noCursor();
+
+  //Create and setup all the materials.
+  for (let i = 0; i < countMaterial; i++) {
+    let material = createMaterial();
+    print(i + "  " + material.width);
+    materials.push(material);
+  }
 
   // Default stroke colors for the two shapes
   cursor.stroke = color(255);
+}
+
+function createMaterial() {
+  let myWidth = random(width / 13, width / 8);
+  let myHeight = random(height / 20, height / 11);
+  let material = {
+    x: random(myWidth / 2, width - myWidth / 2),
+    y: ground.y - ground.height / 2 - myHeight / 2,
+    width: myWidth,
+    height: myHeight,
+    stroke: color(random(150, 255), random(150, 200), random(100, 150)),
+    isBeingDragged: false,
+    gravity: 0,
+    acceleration: 0.2,
+  };
+  return material;
 }
 
 /**
@@ -100,7 +79,7 @@ setupGround()
 function to set up the grounds size and coordinates.
 */
 function setupGround() {
-  //determining the height and lenght of the ground depending on the size of the canvas.
+  //determining the height and length of the ground depending on the size of the canvas.
   ground.width = width;
   ground.height = height / 11;
   //placing the ground according to the size of the canvas and size of the ground.
@@ -113,38 +92,33 @@ setupMaterial()
 
 function that sets up size and coordinates for material.
 */
-function setupMaterial(material) {
-  material.stroke = color(random(150, 255), random(150, 200), random(100, 150));
-  //choosing random sizes for the material while taking into account the size of the canvas.
-  material.width = random(width / 13, width / 8);
-  material.height = random(height / 20, height / 11);
-  //choosing coordinates of the material while taking into account the ground and the material's size.
-  material.x = random(material.width / 2, width - material.width / 2);
-  material.y = ground.y - ground.height / 2 - material.height / 2;
-}
+// function setupMaterial(material) {
+//   material.stroke = color(random(150, 255), random(150, 200), random(100, 150));
+//   //choosing random sizes for the material while taking into account the size of the canvas.
+//   material.width = random(width / 13, width / 8);
+//   material.height = random(height / 20, height / 11);
+//   //choosing coordinates of the material while taking into account the ground and the material's size.
+//   material.x = random(material.width / 2, width - material.width / 2);
+//   material.y = ground.y - ground.height / 2 - material.height / 2;
+// }
 
 function draw() {
   background(0);
   displayGround();
 
   moveCursor();
-  handleDragging(material.material1);
-  handleDragging(material.material2);
-  handleDragging(material.material3);
-  handleDragging(material.material4);
 
-  drawMaterial(material.material1, material.material2);
-  drawMaterial(material.material1, material.material3);
-  drawMaterial(material.material1, material.material4);
-  drawMaterial(material.material2, material.material1);
-  drawMaterial(material.material2, material.material3);
-  drawMaterial(material.material2, material.material4);
-  drawMaterial(material.material3, material.material1);
-  drawMaterial(material.material3, material.material2);
-  drawMaterial(material.material3, material.material4);
-  drawMaterial(material.material4, material.material1);
-  drawMaterial(material.material4, material.material2);
-  drawMaterial(material.material4, material.material3);
+  for (let i = 0; i < materials.length; i++) {
+    handleDragging(materials[i]);
+  }
+  for (let i = 0; i < materials.length; i++) {
+    for (let j = 0; j < materials.length; j++) {
+      if (i !== j) {
+        drawMaterial(materials[i], materials[j]);
+        // print("Coucou " + materials[i].x);
+      }
+    }
+  }
   drawCursor();
 }
 
@@ -190,12 +164,15 @@ function drawMaterial(material, otherMaterial) {
   stroke(material.stroke);
   noFill();
   rect(material.x, material.y, material.width, material.height);
+  // print(
+  //   material.x + " " + material.y + " " + material.width + " " + material.height
+  // );
   pop();
 }
 
 function gravityMaterial(material, otherMaterial) {
   //If statement to create a gravity effect.
-  if (!material.isBeingDragged) {
+  if (!material.isBeingDragged && material.gravity > 0) {
     if (material.y === ground.y - ground.height / 2 - material.height / 2) {
       //resets the gravity to zero when it touches the ground.
       material.gravity = 0;
@@ -260,28 +237,28 @@ function shapeIsInsideShape(material, otherMaterial) {
 sees if the mouse is inside the shape when the mouse is pressed.
 */
 function mousePressed() {
-  if (mouseIsInsideShape(material.material1)) {
-    material.material1.isBeingDragged = true;
-  }
-  if (mouseIsInsideShape(material.material2)) {
-    material.material2.isBeingDragged = true;
-  }
-  if (mouseIsInsideShape(material.material3)) {
-    material.material3.isBeingDragged = true;
-  }
-  if (mouseIsInsideShape(material.material4)) {
-    material.material4.isBeingDragged = true;
+  for (let i = 0; i < materials.length; i++) {
+    if (mouseIsInsideShape(materials[i])) {
+      materials[i].isBeingDragged = true;
+    }
   }
 }
+
+function isOnTopOfMaterial() {}
 
 /**
 stops dragging when the mouse is released.
 */
 function mouseReleased() {
-  material.material1.isBeingDragged = false;
-  material.material2.isBeingDragged = false;
-  material.material3.isBeingDragged = false;
-  material.material4.isBeingDragged = false;
+  for (let i = 0; i < materials.length; i++) {
+    if (mouseIsInsideShape(materials[i])) {
+      // Processing the released element.
+      materials[i].isBeingDragged = false;
+      materials[i].gravity = 0.1;
+    } else {
+      //
+    }
+  }
 }
 
 /**
