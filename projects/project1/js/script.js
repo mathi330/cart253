@@ -67,12 +67,15 @@ function createMaterial(myName) {
     x: random(myWidth / 2, width - myWidth / 2),
     y: ground.y - ground.height / 2 - myHeight / 2,
     width: myWidth,
+    sizeX: myWidth,
     height: myHeight,
+    sizeY: myHeight,
     stroke: color(random(150, 255), random(150, 200), random(100, 150)),
     isBeingDragged: false,
     gravity: 0,
     acceleration: 0.2,
     materialUnder: null,
+    shiftKeyPressed: false,
   };
   return material;
 }
@@ -217,6 +220,27 @@ function drawCursor() {
 }
 
 /**
+Changes the orientation of the material the user is double clicking on.
+ */
+function doubleClicked() {
+  for (let i = 0; i < materials.length; i++) {
+    if (
+      mouseIsInsideShape(materials[i]) &&
+      materials[i].width > materials[i].height
+    ) {
+      materials[i].width = materials[i].sizeY;
+      materials[i].height = materials[i].sizeX;
+    } else if (
+      mouseIsInsideShape(materials[i]) &&
+      materials[i].width < materials[i].height
+    ) {
+      materials[i].width = materials[i].sizeX;
+      materials[i].height = materials[i].sizeY;
+    }
+  }
+}
+
+/**
 mouseIsInsideShape()
 
 Checks if the cursor rectangle/cursor is inside the material rectangle.
@@ -234,6 +258,11 @@ function mouseIsInsideShape(material) {
   }
 }
 
+/**
+shapeIsInsideShape()
+
+Checks if two materials are overlapping.
+*/
 function shapeIsInsideShape(material, otherMaterial) {
   if (
     material.x + material.width / 2 >=
