@@ -70,7 +70,9 @@ function createMaterial(myName) {
     sizeX: myWidth,
     height: myHeight,
     sizeY: myHeight,
-    stroke: color(random(150, 255), random(150, 200), random(100, 150)),
+    colorfulFill: true,
+    fillWhenDragged: color(150, 150, 150, 50),
+    fill: color(random(150, 255), random(150, 200), random(100, 150), 100),
     isBeingDragged: false,
     gravity: 0,
     acceleration: 0.2,
@@ -96,10 +98,11 @@ function setupGround() {
 
 function draw() {
   background(0);
-  moveCursor();
-  drawCursor();
 
   simulation();
+
+  moveCursor();
+  drawCursor();
 }
 
 /**
@@ -163,6 +166,9 @@ function handleDragging(material) {
   if (material.isBeingDragged) {
     material.x = mouseX;
     material.y = mouseY;
+    material.colorfulFill = false;
+  } else {
+    material.colorfulFill = true;
   }
 }
 
@@ -174,8 +180,14 @@ function drawMaterial(material, otherMaterial) {
   gravityMaterial(material, otherMaterial);
   material.y += material.gravity;
   insideCanvas(material, ground);
-  stroke(material.stroke);
-  noFill();
+  // stroke(material.stroke);
+  noStroke();
+  if (material.colorfulFill) {
+    fill(material.fill);
+  } else {
+    fill(material.fillWhenDragged);
+  }
+
   rect(material.x, material.y, material.width, material.height);
   pop();
 }
