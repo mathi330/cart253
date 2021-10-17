@@ -8,6 +8,8 @@ author, and this description to match your project!
 
 "use strict";
 
+let state = `title`;
+
 //the bottom of the canvas that represents the earth/ground.
 let ground = {
   x: undefined,
@@ -32,11 +34,12 @@ let cursor = {
 
 // The materials.
 let materials = [];
-let countMaterial = 5;
+let countMaterial = undefined;
+let allowMovingMaterial = true;
 
 // The enemies
 let enemies = [];
-let countEnemy = 5;
+let countEnemy = undefined;
 
 //------------------------------------
 //------------------------------------
@@ -53,18 +56,6 @@ function setup() {
   setupGround();
   noCursor();
 
-  //Create and setup all the materials.
-  for (let i = 0; i < countMaterial; i++) {
-    let material = createMaterial("material-" + i);
-    materials.push(material);
-  }
-
-  //Create and setup all the enemies.
-  for (let i = 0; i < countEnemy; i++) {
-    let enemy = createEnemy("enemy-" + i);
-    enemies.push(enemy);
-  }
-
   // Default stroke colors for the cursor.
   cursor.stroke = color(255);
 }
@@ -73,11 +64,29 @@ function setup() {
 //------------------------------------
 
 /**
+Initializing the objects for the game.
+*/
+function createEverythingForGame() {
+  //Create and setup all the materials.
+  for (let i = 0; i < countMaterial; i++) {
+    let material = createMaterial("material-" + i);
+    materials.push(material);
+  }
+  allowMovingMaterial = true;
+
+  //Create and setup all the enemies.
+  for (let i = 0; i < countEnemy; i++) {
+    let enemy = createEnemy("enemy-" + i);
+    enemies.push(enemy);
+  }
+}
+
+/**
 function for the material's object.
 (the name variable is to help me know which material is which when debugging).
 */
 function createMaterial(myName) {
-  let myWidth = random(width / 13, width / 8);
+  let myWidth = random(width / 15, width / 10);
   let myHeight = random(height / 20, height / 11);
   let myAlpha = 100;
   let material = {
@@ -97,7 +106,6 @@ function createMaterial(myName) {
       alpha: myAlpha,
     },
     isBeingDragged: false,
-    isDead: false,
     gravity: 0,
     acceleration: 0.2,
     materialUnder: null,
@@ -123,8 +131,6 @@ function createEnemy(myName) {
     speedX: random(-speedValue, speedValue),
     speedY: random(-speedValue, speedValue),
     speedValue: speedValue,
-    gravity: 0,
-    acceleration: 0.2,
     startAttack: false,
     numLives: 0,
     maxLives: 3,
@@ -152,13 +158,52 @@ function setupGround() {
 function draw() {
   background(0);
 
-  simulation();
+  switch (state) {
+    case `title`:
+      title();
+      break;
+
+    case `simulation`:
+      simulation();
+      break;
+
+    case `ending`:
+      ending();
+      break;
+  }
 
   myCursor();
 }
 
 //------------------------------------
 //------------------------------------
+
+/**
+Create the title page.
+*/
+function title() {
+  push();
+  fill(255);
+  textFont(`Quicksand`);
+  textAlign(LEFT, TOP);
+  textSize(20);
+  text(
+    `    Drag and drop the blocks to build a structure.
+    Press ENTER to start the enemy attack.
+    Try to make a structure that will last longer than the enemies!`,
+    width / 5,
+    height / 5
+  );
+
+  textAlign(CENTER, CENTER);
+  textSize(32);
+  text(`Building Blocks`, width / 2, height / 2);
+
+  textAlign(RIGHT, BOTTOM);
+  textSize(20);
+  text(`Tap hello!!`, (width / 3) * 2, (height / 3) * 2);
+  pop();
+}
 
 /**
 Create the simulation.
@@ -172,9 +217,8 @@ function simulation() {
   //loop to create the materials.
   materialsCreation();
 
-  for (let i = 0; i < enemies.length; i++) {
-    drawEnemy(enemies[i]);
-  }
+  //Loop to create the enemies.
+  enemiesCreation();
 }
 
 /**
@@ -183,108 +227,6 @@ moves and displays the customized cursor.
 function myCursor() {
   moveCursor();
   drawCursor();
-}
-
-//------------------------------------
-//------------------------------------
-
-/**
-Create enemies (in Progress)
-*/
-
-function drawEnemy(enemy) {
-  push();
-  noStroke();
-  fill(enemy.fillBeforeAttack);
-
-  consequenceEnemyTouchingMaterial(enemy);
-  moveEnemy(enemy);
-  restrictEnemyToCanvas(enemy);
-  ellipse(enemy.x, enemy.y, enemy.size);
-  pop();
-}
-
-/**
-Makes the enemy disappear when it touches a material and loose lives.
-*/
-function consequenceEnemyTouchingMaterial(enemy) {
-  for (let i = 0; i < materials.length; i++) {
-    if (enemyIsTouchingMaterial(enemy, materials[i])) {
-      //Sees if the enemy still has a life
-      if (enemy.numLives < enemy.maxLives) {
-        //if yes, the enemy's y is reinitialized
-        enemy.y = enemy.size + enemy.speedValue;
-        enemy.numLives++;
-      } else {
-        //if not, the enemy dies/disappears.
-        enemy.startAttack = false;
-      }
-      materials[i].fill.alpha -= 20;
-      if (materials[i].fill.alpha <= 0) {
-        materialIsDead(materials[i]);
-        //removes the dead material from the list.
-        materials.splice(i, 1);
-        // if (materials.length === 0) {
-        // }
-      }
-    }
-  }
-}
-
-function materialIsDead(material) {
-  startFreeFall(material);
-}
-
-/**
-Checks if an enemy is touching a material.
-*/
-function enemyIsTouchingMaterial(enemy, material) {
-  if (
-    enemy.x + enemy.size / 2 >= material.x - material.width / 2 &&
-    enemy.x - enemy.size / 2 <= material.x + material.width / 2 &&
-    enemy.y + enemy.size / 2 >= material.y - material.height / 2 &&
-    enemy.y - enemy.size / 2 <= material.y + material.height / 2 &&
-    !material.isBeingDragged
-  ) {
-    return true;
-  } else {
-    return false;
-  }
-}
-
-/**
-Make the enemies bounce off the borders of the canvas (and ground).
-*/
-function restrictEnemyToCanvas(enemy) {
-  if (enemy.x + enemy.size >= width + enemy.speedValue) {
-    enemy.speedX = -enemy.speedX;
-  }
-  if (enemy.x - enemy.size <= 0 - enemy.speedValue) {
-    enemy.speedX = -enemy.speedX;
-  }
-  if (enemy.y + enemy.size >= height - ground.height + enemy.speedValue) {
-    enemy.speedY = -enemy.speedY;
-  }
-  if (enemy.y - enemy.size <= 0 - enemy.speedValue) {
-    enemy.speedY = -enemy.speedY;
-  }
-}
-
-/**
-Makes the enemy move according to its velocity.
-*/
-function moveEnemy(enemy) {
-  if (enemy.startAttack) {
-    fill(enemy.fillDuringAttack);
-    enemy.vx = enemy.speedX;
-    enemy.vy = enemy.speedY;
-  } else {
-    fill(enemy.fillBeforeAttack);
-    enemy.vx = 0;
-    enemy.vy = 0;
-  }
-  enemy.x += enemy.vx;
-  enemy.y += enemy.vy;
 }
 
 //------------------------------------
@@ -337,6 +279,15 @@ function materialsCreation() {
         drawMaterial(materials[i], materials[j]);
       }
     }
+  }
+}
+
+/**
+function that creates the enemies.
+*/
+function enemiesCreation() {
+  for (let i = 0; i < enemies.length; i++) {
+    drawEnemy(enemies[i]);
   }
 }
 
@@ -434,7 +385,28 @@ function drawMaterial(material, otherMaterial) {
 //------------------------------------
 
 /**
-Inside the startFreeFall() and drawMaterial() functions.
+Inside the enemiesCreation() function.
+*/
+
+/**
+Displays the enemy's shape using appropriate drawing settings
+*/
+function drawEnemy(enemy) {
+  push();
+  noStroke();
+  fill(enemy.fillBeforeAttack);
+  restrictEnemyToCanvas(enemy);
+  consequenceEnemyTouchingMaterial(enemy);
+  moveEnemy(enemy);
+  ellipse(enemy.x, enemy.y, enemy.size);
+  pop();
+}
+
+//------------------------------------
+//------------------------------------
+
+/**
+Inside the startFreeFall() function.
 */
 
 /**
@@ -454,6 +426,13 @@ function startFreeFallForMaterialOnTop(myMaterialUnder) {
     }
   }
 }
+
+//------------------------------------
+//------------------------------------
+
+/**
+Inside the drawMaterial() function.
+*/
 
 /**
 Create the illusion of gravity.
@@ -491,6 +470,92 @@ function insideCanvas(shape, ground) {
     -shape.height / 2,
     ground.y - ground.height / 2 - shape.height / 2
   );
+}
+
+//------------------------------------
+//------------------------------------
+
+/**
+Inside the drawEnemy() function.
+*/
+
+/**
+Make the enemies bounce off the borders of the canvas (and ground).
+*/
+function restrictEnemyToCanvas(enemy) {
+  if (enemy.x + enemy.size >= width + enemy.speedValue) {
+    enemy.speedX = -enemy.speedX;
+  }
+  if (enemy.x - enemy.size <= 0 - enemy.speedValue) {
+    enemy.speedX = -enemy.speedX;
+  }
+  if (enemy.y + enemy.size >= height - ground.height + enemy.speedValue) {
+    enemy.speedY = -enemy.speedY;
+  }
+  if (enemy.y - enemy.size <= 0 - enemy.speedValue) {
+    enemy.speedY = -enemy.speedY;
+  }
+}
+
+/**
+Makes the enemy disappear when it touches a material and loose lives.
+*/
+function consequenceEnemyTouchingMaterial(enemy) {
+  for (let i = 0; i < materials.length; i++) {
+    if (enemyIsTouchingMaterial(enemy, materials[i])) {
+      //Sees if the enemy still has a life
+      if (enemy.numLives < enemy.maxLives) {
+        //if yes, the enemy's y is reinitialized
+        enemy.y = enemy.size + enemy.speedValue;
+        enemy.numLives++;
+      } else {
+        //if not, the enemy dies/disappears.
+        enemy.startAttack = false;
+      }
+      materials[i].fill.alpha -= 20;
+      if (materials[i].fill.alpha <= 0) {
+        startFreeFall(materials[i]);
+        //removes the dead material from the list.
+        materials.splice(i, 1);
+        // if (materials.length === 0) {
+        // }
+      }
+    }
+  }
+}
+
+/**
+Makes the enemy move according to its velocity.
+*/
+function moveEnemy(enemy) {
+  if (enemy.startAttack) {
+    fill(enemy.fillDuringAttack);
+    enemy.vx = enemy.speedX;
+    enemy.vy = enemy.speedY;
+  } else {
+    fill(enemy.fillBeforeAttack);
+    enemy.vx = 0;
+    enemy.vy = 0;
+  }
+  enemy.x += enemy.vx;
+  enemy.y += enemy.vy;
+}
+
+/**
+Checks if an enemy is touching a material.
+*/
+function enemyIsTouchingMaterial(enemy, material) {
+  if (
+    enemy.x + enemy.size / 2 >= material.x - material.width / 2 &&
+    enemy.x - enemy.size / 2 <= material.x + material.width / 2 &&
+    enemy.y + enemy.size / 2 >= material.y - material.height / 2 &&
+    enemy.y - enemy.size / 2 <= material.y + material.height / 2 &&
+    !material.isBeingDragged
+  ) {
+    return true;
+  } else {
+    return false;
+  }
 }
 
 //------------------------------------
@@ -552,13 +617,15 @@ function drawCursor() {
 Sees if the mouse is inside the shape when the mouse is pressed.
 */
 function mousePressed() {
-  for (let i = 0; i < materials.length; i++) {
-    if (mouseIsInsideShape(materials[i])) {
-      materials[i].isBeingDragged = true;
+  if (allowMovingMaterial) {
+    for (let i = 0; i < materials.length; i++) {
+      if (mouseIsInsideShape(materials[i])) {
+        materials[i].isBeingDragged = true;
 
-      materials[i].materialUnder = null;
-      //make any material on top of the material being dragged to start their free fall.
-      startFreeFallForMaterialOnTop(materials[i]);
+        materials[i].materialUnder = null;
+        //make any material on top of the material being dragged to start their free fall.
+        startFreeFallForMaterialOnTop(materials[i]);
+      }
     }
   }
 }
@@ -598,9 +665,29 @@ function doubleClicked() {
 }
 
 function keyPressed() {
-  if (keyCode === ENTER) {
+  if (keyCode === LEFT_ARROW && state === `title`) {
+    state = `simulation`;
+    countMaterial = 10;
+    countEnemy = 5;
+    createEverythingForGame();
+  }
+  if (keyCode === UP_ARROW && state === `title`) {
+    state = `simulation`;
+    countMaterial = 7;
+    countEnemy = 7;
+    createEverythingForGame();
+  }
+  if (keyCode === RIGHT_ARROW && state === `title`) {
+    state = `simulation`;
+    countMaterial = 5;
+    countEnemy = 10;
+    createEverythingForGame();
+  }
+
+  if (keyCode === ENTER && state === `simulation`) {
     for (let i = 0; i < enemies.length; i++) {
       enemies[i].startAttack = true;
     }
+    allowMovingMaterial = false;
   }
 }
