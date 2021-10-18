@@ -9,7 +9,6 @@ author, and this description to match your project!
 "use strict";
 
 let state = `title`;
-let endingText = `undefined`;
 
 //the bottom of the canvas that represents the earth/ground.
 let ground = {
@@ -24,7 +23,7 @@ let ground = {
   },
 };
 
-// The customized cursor (a small rectangle)
+// The customized cursor (a small circle)
 let cursor = {
   x: undefined,
   y: undefined,
@@ -45,15 +44,14 @@ let countEnemy = undefined;
 //Timer
 let beginTimer = false;
 // 60 frames per second so 60 times the number of seconds I want.
-let myTimer = 60 * 60;
+let myTimer = 60 * 15;
 
 //------------------------------------
 //------------------------------------
 
 /**
-setup()
-
-
+function to setup things that need to be there from the start but don't need
+to be reinitialized for every game.
 */
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -75,14 +73,14 @@ Initializing the objects for the game.
 function createEverythingForGame() {
   //Create and setup all the materials.
   for (let i = 0; i < countMaterial; i++) {
-    let material = createMaterial("material-" + i);
+    let material = createMaterial();
     materials.push(material);
   }
   allowMovingMaterial = true;
 
   //Create and setup all the enemies.
   for (let i = 0; i < countEnemy; i++) {
-    let enemy = createEnemy("enemy-" + i);
+    let enemy = createEnemy();
     enemies.push(enemy);
   }
 }
@@ -91,11 +89,10 @@ function createEverythingForGame() {
 function for the material's object.
 (the name variable is to help me know which material is which when debugging).
 */
-function createMaterial(myName) {
+function createMaterial() {
   let myWidth = random(width / 17, width / 12);
   let myHeight = random(height / 25, height / 13);
   let material = {
-    name: myName,
     x: random(myWidth / 2, width - myWidth / 2),
     y: ground.y - ground.height / 2 - myHeight / 2,
     width: myWidth,
@@ -110,9 +107,10 @@ function createMaterial(myName) {
       b: random(150, 230),
       alpha: 100,
     },
+    // stroke: 255,
     isBeingDragged: false,
     gravity: 0,
-    acceleration: 0.2,
+    acceleration: 0.05,
     materialUnder: null,
   };
   return material;
@@ -121,13 +119,14 @@ function createMaterial(myName) {
 /**
 function for the enemy's object (similar to the one for the material).
 */
-function createEnemy(myName) {
+function createEnemy() {
   let mySize = random(width / 60, width / 100);
   let speedValues = [-6, -5, -4, -3, -2, -1, 1, 2, 3, 4, 5, 6];
   let enemy = {
-    name: myName,
     size: mySize,
-    fillBeforeAttack: color(0, 0),
+    noSize: 0,
+    currentSize: undefined,
+    fillBeforeAttack: color(100, 100),
     fillDuringAttack: color(random(180, 255), random(180, 255), 0, 200),
     x: random(mySize + 6, width - mySize - 6),
     y: mySize + 6,
@@ -144,8 +143,6 @@ function createEnemy(myName) {
 }
 
 /**
-setupGround()
-
 function to set up the ground's size and coordinates.
 */
 function setupGround() {
@@ -155,6 +152,20 @@ function setupGround() {
   //placing the ground according to the size of the canvas and size of the ground.
   ground.x = width / 2;
   ground.y = height - ground.height / 2;
+}
+
+/**
+function to reset everything once the game is finished.
+*/
+function reset() {
+  materials.length = 0;
+  let countMaterial = undefined;
+  enemies.length = 0;
+  let countEnemy = undefined;
+  beginTimer = false;
+  myTimer = 60 * 15;
+  createMaterial();
+  createEnemy();
 }
 
 //------------------------------------
@@ -199,7 +210,7 @@ function title() {
   text(
     `    Drag and drop the blocks to build a structure.
     Press ENTER to start the enemy attack.
-    Try to make a structure that will last longer than the enemies!`,
+    Try to make a structure that will survive until the time is up!`,
     width / 5,
     height / 5
   );
@@ -235,15 +246,12 @@ function simulation() {
   //Loop to create the enemies.
   enemiesCreation();
 
-  //Supposed to choose which ending is the right one.
-  //not working as of now => needs debugging.
+  //Chooses which ending is the right one.
   chooseEnding();
 }
 
 /**
 Create the endings
-For some reason, I don't get anything for either endings...
-Needs debugging.
 */
 function happyEnding() {
   push();
@@ -253,6 +261,9 @@ function happyEnding() {
   textAlign(CENTER, CENTER);
   textSize(32);
   text(`You survived the enemies!`, width / 2, height / 2);
+  textAlign(CENTER, BOTTOM);
+  textSize(20);
+  text(`Click any key to start again!`, width / 2, (height / 5) * 4);
   pop();
 }
 
@@ -268,6 +279,9 @@ You ruined the world...`,
     width / 2,
     height / 2
   );
+  textAlign(CENTER, BOTTOM);
+  textSize(20);
+  text(`Click any key to start again!`, width / 2, (height / 5) * 4);
   pop();
 }
 
@@ -394,7 +408,7 @@ Start a free fall and make those on top fall too.
 */
 function startFreeFall(material) {
   material.isBeingDragged = false;
-  material.gravity = 0.1;
+  material.gravity = 0.05;
   material.materialUnder = null;
   startFreeFallForMaterialOnTop(material);
 }
@@ -448,7 +462,7 @@ function drawEnemy(enemy) {
   restrictEnemyToCanvas(enemy);
   consequenceEnemyTouchingMaterial(enemy);
   moveEnemy(enemy);
-  ellipse(enemy.x, enemy.y, enemy.size);
+  ellipse(enemy.x, enemy.y, enemy.currentSize);
   pop();
 }
 
@@ -556,19 +570,17 @@ function consequenceEnemyTouchingMaterial(enemy) {
       //Sees if the enemy still has a life
       if (enemy.numLives < enemy.maxLives) {
         //if yes, the enemy's y is reinitialized
-        enemy.y = enemy.size + enemy.maxSpeedValue;
+        enemy.y = enemy.currentSize + enemy.maxSpeedValue;
         enemy.numLives++;
       } else {
-        //if not, the enemy dies/disappears.
+        //if not, the enemy disappears (and stop moving).
         enemy.startAttack = false;
       }
       materials[i].fill.alpha -= 20;
-      if (materials[i].fill.alpha <= 0) {
+      if (materials[i].fill.alpha <= 20) {
         startFreeFall(materials[i]);
         //removes the dead material from the list.
         materials.splice(i, 1);
-        // if (materials.length === 0) {
-        // }
       }
     }
   }
@@ -582,10 +594,12 @@ function moveEnemy(enemy) {
     fill(enemy.fillDuringAttack);
     enemy.vx = enemy.speedX;
     enemy.vy = enemy.speedY;
+    enemy.currentSize = enemy.size;
   } else {
     fill(enemy.fillBeforeAttack);
     enemy.vx = 0;
     enemy.vy = 0;
+    enemy.currentSize = enemy.noSize;
   }
   enemy.x += enemy.vx;
   enemy.y += enemy.vy;
@@ -596,10 +610,10 @@ Checks if an enemy is touching a material.
 */
 function enemyIsTouchingMaterial(enemy, material) {
   if (
-    enemy.x + enemy.size / 2 >= material.x - material.width / 2 &&
-    enemy.x - enemy.size / 2 <= material.x + material.width / 2 &&
-    enemy.y + enemy.size / 2 >= material.y - material.height / 2 &&
-    enemy.y - enemy.size / 2 <= material.y + material.height / 2 &&
+    enemy.x + enemy.currentSize / 2 >= material.x - material.width / 2 &&
+    enemy.x - enemy.currentSize / 2 <= material.x + material.width / 2 &&
+    enemy.y + enemy.currentSize / 2 >= material.y - material.height / 2 &&
+    enemy.y - enemy.currentSize / 2 <= material.y + material.height / 2 &&
     !material.isBeingDragged
   ) {
     return true;
@@ -612,9 +626,8 @@ function enemyIsTouchingMaterial(enemy, material) {
 //------------------------------------
 
 /**
-Chooses between the 2 possible endings by considering the timer and the number of materials.
-For some reason, I don't get anything for either endings...
-Needs debugging.
+Chooses between the 2 possible endings
+considering the timer and the number of material left.
 */
 function chooseEnding() {
   if (beginTimer) {
@@ -743,13 +756,13 @@ function keyPressed() {
   if (keyCode === UP_ARROW && state === `title`) {
     state = `simulation`;
     countMaterial = 7;
-    countEnemy = 14;
+    countEnemy = 12;
     createEverythingForGame();
   }
   if (keyCode === RIGHT_ARROW && state === `title`) {
     state = `simulation`;
     countMaterial = 7;
-    countEnemy = 21;
+    countEnemy = 17;
     createEverythingForGame();
   }
 
@@ -759,5 +772,10 @@ function keyPressed() {
     }
     beginTimer = true;
     allowMovingMaterial = false;
+  }
+
+  if (state === `happy ending` || state === `sad ending`) {
+    reset();
+    state = `title`;
   }
 }
