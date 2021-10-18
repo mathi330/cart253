@@ -9,6 +9,7 @@ author, and this description to match your project!
 "use strict";
 
 let state = `title`;
+let endingText = `undefined`;
 
 //the bottom of the canvas that represents the earth/ground.
 let ground = {
@@ -40,6 +41,11 @@ let allowMovingMaterial = true;
 // The enemies
 let enemies = [];
 let countEnemy = undefined;
+
+//Timer
+let beginTimer = false;
+// 60 frames per second so 60 times the number of seconds I want.
+let myTimer = 60 * 60;
 
 //------------------------------------
 //------------------------------------
@@ -86,9 +92,8 @@ function for the material's object.
 (the name variable is to help me know which material is which when debugging).
 */
 function createMaterial(myName) {
-  let myWidth = random(width / 15, width / 10);
-  let myHeight = random(height / 20, height / 11);
-  let myAlpha = 100;
+  let myWidth = random(width / 17, width / 12);
+  let myHeight = random(height / 25, height / 13);
   let material = {
     name: myName,
     x: random(myWidth / 2, width - myWidth / 2),
@@ -103,7 +108,7 @@ function createMaterial(myName) {
       r: random(150, 255),
       g: random(100, 150),
       b: random(150, 230),
-      alpha: myAlpha,
+      alpha: 100,
     },
     isBeingDragged: false,
     gravity: 0,
@@ -118,19 +123,19 @@ function for the enemy's object (similar to the one for the material).
 */
 function createEnemy(myName) {
   let mySize = random(width / 60, width / 100);
-  let speedValue = 5;
+  let speedValues = [-6, -5, -4, -3, -2, -1, 1, 2, 3, 4, 5, 6];
   let enemy = {
     name: myName,
     size: mySize,
     fillBeforeAttack: color(0, 0),
     fillDuringAttack: color(random(180, 255), random(180, 255), 0, 200),
-    x: random(mySize + speedValue, width - mySize - speedValue),
-    y: mySize + speedValue,
+    x: random(mySize + 6, width - mySize - 6),
+    y: mySize + 6,
     vx: 0,
     vy: 0,
-    speedX: random(-speedValue, speedValue),
-    speedY: random(-speedValue, speedValue),
-    speedValue: speedValue,
+    speedX: random(speedValues),
+    speedY: random(speedValues),
+    maxSpeedValue: 6,
     startAttack: false,
     numLives: 0,
     maxLives: 3,
@@ -167,8 +172,12 @@ function draw() {
       simulation();
       break;
 
-    case `ending`:
-      ending();
+    case `happy ending`:
+      happyEnding();
+      break;
+
+    case `sad ending`:
+      sadEnding();
       break;
   }
 
@@ -201,7 +210,13 @@ function title() {
 
   textAlign(RIGHT, BOTTOM);
   textSize(20);
-  text(`Tap hello!!`, (width / 3) * 2, (height / 3) * 2);
+  text(
+    `Click the left arrow for an easy level,
+    the up arrow for a medium level
+    and the right arrow for a hard level!`,
+    (width / 5) * 4,
+    (height / 5) * 4
+  );
   pop();
 }
 
@@ -219,6 +234,41 @@ function simulation() {
 
   //Loop to create the enemies.
   enemiesCreation();
+
+  //Supposed to choose which ending is the right one.
+  //not working as of now => needs debugging.
+  chooseEnding();
+}
+
+/**
+Create the endings
+For some reason, I don't get anything for either endings...
+Needs debugging.
+*/
+function happyEnding() {
+  push();
+  stroke(255);
+  fill(255);
+  textFont(`Quicksand`);
+  textAlign(CENTER, CENTER);
+  textSize(32);
+  text(`You survived the enemies!`, width / 2, height / 2);
+  pop();
+}
+
+function sadEnding() {
+  push();
+  fill(255);
+  textFont(`Quicksand`);
+  textAlign(CENTER, CENTER);
+  textSize(32);
+  text(
+    `Nothing is left standing...
+You ruined the world...`,
+    width / 2,
+    height / 2
+  );
+  pop();
 }
 
 /**
@@ -483,16 +533,16 @@ Inside the drawEnemy() function.
 Make the enemies bounce off the borders of the canvas (and ground).
 */
 function restrictEnemyToCanvas(enemy) {
-  if (enemy.x + enemy.size >= width + enemy.speedValue) {
+  if (enemy.x + enemy.size >= width + enemy.maxSpeedValue) {
     enemy.speedX = -enemy.speedX;
   }
-  if (enemy.x - enemy.size <= 0 - enemy.speedValue) {
+  if (enemy.x - enemy.size <= 0 - enemy.maxSpeedValue) {
     enemy.speedX = -enemy.speedX;
   }
-  if (enemy.y + enemy.size >= height - ground.height + enemy.speedValue) {
+  if (enemy.y + enemy.size >= height - ground.height + enemy.maxSpeedValue) {
     enemy.speedY = -enemy.speedY;
   }
-  if (enemy.y - enemy.size <= 0 - enemy.speedValue) {
+  if (enemy.y - enemy.size <= 0 - enemy.maxSpeedValue) {
     enemy.speedY = -enemy.speedY;
   }
 }
@@ -506,7 +556,7 @@ function consequenceEnemyTouchingMaterial(enemy) {
       //Sees if the enemy still has a life
       if (enemy.numLives < enemy.maxLives) {
         //if yes, the enemy's y is reinitialized
-        enemy.y = enemy.size + enemy.speedValue;
+        enemy.y = enemy.size + enemy.maxSpeedValue;
         enemy.numLives++;
       } else {
         //if not, the enemy dies/disappears.
@@ -562,24 +612,18 @@ function enemyIsTouchingMaterial(enemy, material) {
 //------------------------------------
 
 /**
-Inside the mousePressed() function.
+Chooses between the 2 possible endings by considering the timer and the number of materials.
+For some reason, I don't get anything for either endings...
+Needs debugging.
 */
-
-/**
-mouseIsInsideShape()
-
-Checks if the cursor rectangle/cursor is inside the material rectangle.
-*/
-function mouseIsInsideShape(material) {
-  if (
-    cursor.x - cursor.width / 2 > material.x - material.width / 2 &&
-    cursor.x + cursor.width / 2 < material.x + material.width / 2 &&
-    cursor.y - cursor.height / 2 > material.y - material.height / 2 &&
-    cursor.y + cursor.height / 2 < material.y + material.height / 2
-  ) {
-    return true;
-  } else {
-    return false;
+function chooseEnding() {
+  if (beginTimer) {
+    myTimer--;
+    if (materials.length <= 0 && state === `simulation`) {
+      state = `sad ending`;
+    } else if (myTimer <= 0 && materials.length > 0 && state === `simulation`) {
+      state = `happy ending`;
+    }
   }
 }
 
@@ -608,6 +652,31 @@ function drawCursor() {
   stroke(cursor.stroke);
   ellipse(cursor.x, cursor.y, cursor.width, cursor.height);
   pop();
+}
+
+//------------------------------------
+//------------------------------------
+
+/**
+Inside the mousePressed() function.
+*/
+
+/**
+mouseIsInsideShape()
+
+Checks if the cursor rectangle/cursor is inside the material rectangle.
+*/
+function mouseIsInsideShape(material) {
+  if (
+    cursor.x - cursor.width / 2 > material.x - material.width / 2 &&
+    cursor.x + cursor.width / 2 < material.x + material.width / 2 &&
+    cursor.y - cursor.height / 2 > material.y - material.height / 2 &&
+    cursor.y + cursor.height / 2 < material.y + material.height / 2
+  ) {
+    return true;
+  } else {
+    return false;
+  }
 }
 
 //------------------------------------
@@ -667,20 +736,20 @@ function doubleClicked() {
 function keyPressed() {
   if (keyCode === LEFT_ARROW && state === `title`) {
     state = `simulation`;
-    countMaterial = 10;
-    countEnemy = 5;
+    countMaterial = 7; //1 material has 5 "lives"
+    countEnemy = 7; //1 enemy has 3 "lives"
     createEverythingForGame();
   }
   if (keyCode === UP_ARROW && state === `title`) {
     state = `simulation`;
     countMaterial = 7;
-    countEnemy = 7;
+    countEnemy = 14;
     createEverythingForGame();
   }
   if (keyCode === RIGHT_ARROW && state === `title`) {
     state = `simulation`;
-    countMaterial = 5;
-    countEnemy = 10;
+    countMaterial = 7;
+    countEnemy = 21;
     createEverythingForGame();
   }
 
@@ -688,6 +757,7 @@ function keyPressed() {
     for (let i = 0; i < enemies.length; i++) {
       enemies[i].startAttack = true;
     }
+    beginTimer = true;
     allowMovingMaterial = false;
   }
 }
