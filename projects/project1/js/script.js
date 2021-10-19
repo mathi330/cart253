@@ -100,6 +100,10 @@ let hard = {
   hover: false,
 };
 
+// The background shapes.
+let bg = [];
+let bgCount = 3;
+
 // The materials.
 let materials = [];
 let countMaterial = undefined;
@@ -130,6 +134,8 @@ function setup() {
   noCursor();
   chooseButtonsColor();
 
+  initializeBackground();
+
   // Default stroke colors for the cursor.
   cursor.stroke = color(255);
 }
@@ -137,6 +143,9 @@ function setup() {
 //------------------------------------
 //------------------------------------
 
+/**
+function to choose the colors of the buttons for the levels.
+*/
 function chooseButtonsColor() {
   easy.fill.r = random(150, 255);
   easy.fill.g = random(100, 150);
@@ -247,6 +256,37 @@ function reset() {
   createMaterial();
   createEnemy();
   chooseButtonsColor();
+  initializeBackground();
+}
+
+/**
+Set up the background rectangles.
+*/
+function initializeBackground() {
+  bg = [];
+  for (let i = 0; i < bgCount; i++) {
+    let myBackground = createBackgroundShapes();
+    bg.push(myBackground);
+  }
+}
+
+/**
+function for the object of the rectangles in the background
+*/
+function createBackgroundShapes() {
+  let myWidth = random((width / 4) * random(1, 3), (width / 2) * random(1, 2));
+  let myHeight = random(
+    (height / 5) * random(1, 4),
+    (height / 3) * random(1, 2)
+  );
+  let myBackground = {
+    x: random(0, width),
+    y: random(0, height),
+    width: myWidth,
+    height: myHeight,
+    fill: color(200, random(10, 20)),
+  };
+  return myBackground;
 }
 
 //------------------------------------
@@ -256,7 +296,7 @@ function reset() {
 Function calling the title, the simulation, and the endings.
 */
 function draw() {
-  background(0);
+  drawBackground();
 
   switch (state) {
     case `title`:
@@ -281,6 +321,17 @@ function draw() {
 
 //------------------------------------
 //------------------------------------
+
+function drawBackground() {
+  background(0);
+  for (let i = 0; i < bg.length; i++) {
+    push();
+    noStroke();
+    fill(bg[i].fill);
+    rect(bg[i].x, bg[i].y, bg[i].width, bg[i].height);
+    pop();
+  }
+}
 
 /**
 Create the title page with the instructions for the user.
@@ -919,7 +970,7 @@ function mousePressed() {
   if (state === `title` && mouseIsInsideShape(hard)) {
     state = `simulation`;
     countMaterial = 10;
-    countEnemy = 15;
+    countEnemy = 16;
     createEverythingForGame();
   }
 
