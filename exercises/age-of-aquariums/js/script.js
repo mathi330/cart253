@@ -30,6 +30,7 @@ let candyColor = [
 
 function setup() {
   createCanvas(600, 400);
+  noCursor();
 }
 
 //   for (let i = 0; i < numCandies; i++) {
@@ -123,16 +124,18 @@ function setup() {
 
 function draw() {
   background(0);
-  fill(255);
-  noStroke();
+  noFill();
+  stroke(255, 255, 0);
+  // fill(255);
+  // noStroke();
   beginShape();
-  vertex(mouseX - 50, mouseY);
-  vertex(mouseX - 50, mouseY + 17);
-  vertex(mouseX - 45, mouseY + 12);
-  vertex(mouseX - 42, mouseY + 18);
-  vertex(mouseX - 41, mouseY + 17);
-  vertex(mouseX - 43, mouseY + 12);
-  vertex(mouseX - 34, mouseY + 16);
-  vertex(mouseX - 50, mouseY);
+  vertex(mouseX, mouseY);
+  vertex(mouseX, mouseY + 16);
+  vertex(mouseX + 4, mouseY + 12);
+  vertex(mouseX + 6, mouseY + 18);
+  vertex(mouseX + 7, mouseY + 17);
+  vertex(mouseX + 5, mouseY + 11);
+  vertex(mouseX + 10, mouseY + 11);
+  vertex(mouseX, mouseY);
   endShape();
 }
