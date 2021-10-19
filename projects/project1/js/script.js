@@ -119,6 +119,9 @@ let beginTimer = false;
 let numSec = 60 * 15;
 let myTimer = numSec;
 
+let beginPause = false;
+let pause = 20;
+
 //------------------------------------
 //------------------------------------
 
@@ -199,10 +202,11 @@ function createMaterial() {
     },
     // stroke: 255,
     isBeingDragged: false,
-    gravity: 0,
+    gravity: 0.05,
     acceleration: 0.05,
     materialUnder: null,
     start: true,
+    test: true,
   };
   return material;
 }
@@ -212,7 +216,7 @@ function for the enemy's object (similar to the one for the material).
 */
 function createEnemy() {
   let mySize = random(width / 60, width / 100);
-  let speedValues = [-7, -6, -5, -4, -3, 3, 4, 5, 6, 7];
+  let speedValues = [-8, -9, -7, -6, -5, -4, 4, 5, 6, 7, 8, 9];
   let enemy = {
     size: mySize,
     fill: color(random(180, 255), random(180, 255), 0, 200),
@@ -667,9 +671,39 @@ function drawMaterial(material, otherMaterial) {
   }
 
   //Loop to make the materials fall at the start of the simulation.
-  //If 2 materials are overlapping at the start, one will not fall => needs debugging.
   if (material.start) {
+    //See if two shapes are overlapping at the beginning of the program
+    // and if yes relocate one of the two.
+    //A lot better than before but still bugs when more than 2 materials overlap.
+    if (
+      shapeIsInsideShape(material, otherMaterial) ||
+      shapeIsInsideShape(otherMaterial, material)
+    ) {
+      //if material is higher then otherMaterial.
+      if (material.y >= otherMaterial.y) {
+        otherMaterial.y =
+          material.y + material.height / 2 + otherMaterial.height / 2 + 5;
+        material.materialUnder = null;
+        material.start = true;
+        material.gravity = 0.05;
+        otherMaterial.gravity = 0.05;
+      }
+      //if material is lower then otherMaterial.
+      else if (material.y < otherMaterial.y) {
+        material.y =
+          otherMaterial.y + otherMaterial.height / 2 + material.height / 2 + 5;
+        otherMaterial.materialUnder = null;
+        material.start = true;
+        material.gravity = 0.05;
+        otherMaterial.gravity = 0.05;
+      }
+    }
+
+    //Makes the materials fall to the ground.
+    startFreeFallForMaterialOnTop(material);
+    startFreeFallForMaterialOnTop(otherMaterial);
     startFreeFall(material);
+    startFreeFall(otherMaterial);
     material.start = false;
   }
   rect(material.x, material.y, material.width, material.height);
@@ -711,7 +745,7 @@ Makes the materials on top of the current one fall when there is nothing under.
 */
 function startFreeFallForMaterialOnTop(myMaterialUnder) {
   //Sorting out the array of the materials based on their y position.
-  //We want the biggest y to be the first of the new array.
+  //We want the material with the biggest y to be the first of the new array.
   let sortedMaterials = materials.sort(function (a, b) {
     return a.y < b.y;
   });
@@ -814,6 +848,7 @@ function consequenceEnemyTouchingMaterial(enemy) {
       //If it is completely transparent, it dies and is no longer there.
       if (materials[i].fill.alpha < 10) {
         startFreeFall(materials[i]);
+        //if its alpha is inferior to 10, take it out of the array.
         materials.splice(i, 1);
       }
     }
@@ -969,8 +1004,8 @@ function mousePressed() {
   //Hard
   if (state === `title` && mouseIsInsideShape(hard)) {
     state = `simulation`;
-    countMaterial = 10;
-    countEnemy = 16;
+    countMaterial = 9;
+    countEnemy = 19;
     createEverythingForGame();
   }
 
