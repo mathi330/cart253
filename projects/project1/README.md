@@ -1,8 +1,10 @@
-# Template p5 project
+# Building Blocks
 
-This is the README file for the entire project. For more official projects you should write information here about the nature of the project, your name, any special explanations of how the project works, etc.
+by Mathilde Davan
 
-What I want to do:
-Some kind of game where the goal is to use "material" to protect something (not sure what yet) from "enemies."
-If the thing that is being protected is touched by anything, "material" or "enemies," it dies.
-"enemies" disappear when they touch "material" and "material" looses some "durability" (represented by the opacity).
+This is a game/simulation where the player builds something with blocks (what I call "material" in my code) and see if they will all be destroyed by the enemy attack or if some will remain at the end of the time. The game starts on a title page with the instructions on how to play and three levels for the player to choose from.
+The simulation starts with the chosen level and with only the materials for the player to build with. Once the player is done building, they can start the enemy attack that lasts 15 seconds by pressing ENTER on their keyboard.
+During the attack, the player cannot interact with the simulation and only wait for one of the 2 possible endings. They can see the remaining time at the bottom of the canvas with the dark line in the ground reducing.
+The happy ending happens if there are still materials after the end of the attack, while the sad ending happens if all the materials were destroyed by the enemies.
+After either ending, the player can click on any key of their keyboard to go
+back to the title page.
