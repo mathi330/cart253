@@ -1,6 +1,6 @@
 /**
-Title of Project
-Author Name
+Building Blocks
+Mathilde Davan
 
 This is a template. You must fill in the title,
 author, and this description to match your project!
@@ -10,7 +10,7 @@ author, and this description to match your project!
 
 let state = `title`;
 
-//the bottom of the canvas that represents the earth/ground.
+// The bottom of the canvas that represents the earth/ground.
 let ground = {
   x: undefined,
   y: undefined,
@@ -21,6 +21,14 @@ let ground = {
     g: 200,
     b: 200,
   },
+};
+
+// The object for the visual aspect of the timer
+let myLittleTimer = {
+  x: 0,
+  y: undefined,
+  width: undefined,
+  height: ground.height / 3,
 };
 
 // The customized cursor (a small circle)
@@ -44,7 +52,8 @@ let countEnemy = undefined;
 //Timer
 let beginTimer = false;
 // 60 frames per second so 60 times the number of seconds I want.
-let myTimer = 60 * 15;
+let numSec = 60 * 15;
+let myTimer = numSec;
 
 //------------------------------------
 //------------------------------------
@@ -87,14 +96,13 @@ function createEverythingForGame() {
 
 /**
 function for the material's object.
-(the name variable is to help me know which material is which when debugging).
 */
 function createMaterial() {
   let myWidth = random(width / 17, width / 12);
   let myHeight = random(height / 25, height / 13);
   let material = {
     x: random(myWidth / 2, width - myWidth / 2),
-    y: ground.y - ground.height / 2 - myHeight / 2,
+    y: random(myHeight, height - ground.height - myHeight / 2),
     width: myWidth,
     sizeX: myWidth,
     height: myHeight,
@@ -112,6 +120,7 @@ function createMaterial() {
     gravity: 0,
     acceleration: 0.05,
     materialUnder: null,
+    start: true,
   };
   return material;
 }
@@ -121,13 +130,10 @@ function for the enemy's object (similar to the one for the material).
 */
 function createEnemy() {
   let mySize = random(width / 60, width / 100);
-  let speedValues = [-6, -5, -4, -3, -2, -1, 1, 2, 3, 4, 5, 6];
+  let speedValues = [-7, -6, -5, -4, -3, 3, 4, 5, 6, 7];
   let enemy = {
     size: mySize,
-    noSize: 0,
-    currentSize: undefined,
-    fillBeforeAttack: color(100, 100),
-    fillDuringAttack: color(random(180, 255), random(180, 255), 0, 200),
+    fill: color(random(180, 255), random(180, 255), 0, 200),
     x: random(mySize + 6, width - mySize - 6),
     y: mySize + 6,
     vx: 0,
@@ -137,7 +143,8 @@ function createEnemy() {
     maxSpeedValue: 6,
     startAttack: false,
     numLives: 0,
-    maxLives: 3,
+    maxLives: 5,
+    noEnemy: true,
   };
   return enemy;
 }
@@ -171,6 +178,9 @@ function reset() {
 //------------------------------------
 //------------------------------------
 
+/**
+Function calling the title, the simulation, and the endings.
+*/
 function draw() {
   background(0);
 
@@ -199,7 +209,7 @@ function draw() {
 //------------------------------------
 
 /**
-Create the title page.
+Create the title page with the instructions for the user.
 */
 function title() {
   push();
@@ -208,13 +218,15 @@ function title() {
   textAlign(LEFT, TOP);
   textSize(20);
   text(
-    `    Drag and drop the blocks to build a structure.
+    `    Instructions:
+    Drag and drop the blocks to build a structure.
     Press ENTER to start the enemy attack.
     Try to make a structure that will survive until the time is up!`,
-    width / 5,
-    height / 5
+    width / 7,
+    height / 7
   );
 
+  textStyle(BOLD);
   textAlign(CENTER, CENTER);
   textSize(32);
   text(`Building Blocks`, width / 2, height / 2);
@@ -225,8 +237,8 @@ function title() {
     `Click the left arrow for an easy level,
     the up arrow for a medium level
     and the right arrow for a hard level!`,
-    (width / 5) * 4,
-    (height / 5) * 4
+    (width / 6) * 5,
+    (height / 6) * 5
   );
   pop();
 }
@@ -237,16 +249,18 @@ Create the simulation.
 function simulation() {
   displayGround();
 
-  //loop to process the dragging of materials.
+  //loop to process the dragging of a material and makes the materials on top fall
   loopForMaterialDragging();
 
-  //loop to create the materials.
+  //loop to create the materials inside the canvas, and have a gravity.
   materialsCreation();
 
-  //Loop to create the enemies.
+  //Loop to create enemies inside the canvas when the attack starts.
   enemiesCreation();
 
-  //Chooses which ending is the right one.
+  //Chooses 1 of 2 endings.
+  //   happy ending: when the timer ends before all the materials disappear.
+  //   sad ending: when all the materials are killed by the enemies before the end of the timer.
   chooseEnding();
 }
 
@@ -312,7 +326,7 @@ function displayGround() {
 }
 
 /**
-function to process the dragging of materials.
+function to process the dragging of a material and the fall of any material on top of it.
 */
 function loopForMaterialDragging() {
   for (let i = 0; i < materials.length; i++) {
@@ -323,7 +337,7 @@ function loopForMaterialDragging() {
       !material.isBeingDragged &&
       !material.materialUnder === null
     ) {
-      if (material.y === ground.y - ground.height / 2 - material.height / 2) {
+      if (material.y === height - ground.height - material.height / 2) {
         if (shapeIsInsideShape(material, material.materialUnder)) {
           startFreeFall(material);
           material.materialUnder = null;
@@ -363,8 +377,6 @@ Inside the loopForMaterialDragging() function.
 */
 
 /**
-handleDragging()
-
 function that make the material shape be dragged when isBeingDragged is true.
 */
 function handleDragging(material) {
@@ -384,6 +396,7 @@ Checks if two materials are overlapping.
 */
 function shapeIsInsideShape(material, otherMaterial) {
   if (
+    //looks if 2 shapes are touching/overlapping.
     material.x + material.width / 2 >=
       otherMaterial.x - otherMaterial.width / 2 &&
     material.x - material.width / 2 <=
@@ -430,6 +443,8 @@ function drawMaterial(material, otherMaterial) {
   insideCanvas(material, ground);
   // stroke(material.stroke);
   noStroke();
+
+  //Change the color of the material depending on if it is being dragged (grey) or not (color).
   if (material.colorfulFill) {
     fill(
       material.fill.r,
@@ -441,6 +456,12 @@ function drawMaterial(material, otherMaterial) {
     fill(material.fillWhenDragged);
   }
 
+  //Loop to make the materials fall at the start of the simulation.
+  //If 2 materials are overlapping at the start, one will not fall => needs debugging.
+  if (material.start) {
+    startFreeFall(material);
+    material.start = false;
+  }
   rect(material.x, material.y, material.width, material.height);
   pop();
 }
@@ -456,14 +477,16 @@ Inside the enemiesCreation() function.
 Displays the enemy's shape using appropriate drawing settings
 */
 function drawEnemy(enemy) {
-  push();
-  noStroke();
-  fill(enemy.fillBeforeAttack);
-  restrictEnemyToCanvas(enemy);
-  consequenceEnemyTouchingMaterial(enemy);
-  moveEnemy(enemy);
-  ellipse(enemy.x, enemy.y, enemy.currentSize);
-  pop();
+  if (!enemy.noEnemy) {
+    push();
+    noStroke();
+    fill(enemy.fill);
+    restrictEnemyToCanvas(enemy);
+    consequenceEnemyTouchingMaterial(enemy);
+    moveEnemy(enemy);
+    ellipse(enemy.x, enemy.y, enemy.size);
+    pop();
+  }
 }
 
 //------------------------------------
@@ -506,7 +529,7 @@ function gravityMaterial(material, otherMaterial) {
   //If statement to create a gravity effect.
 
   if (!material.isBeingDragged && material.gravity > 0) {
-    if (material.y === ground.y - ground.height / 2 - material.height / 2) {
+    if (material.y === height - ground.height - material.height / 2) {
       //resets the gravity to zero when it touches the ground.
       material.gravity = 0;
     } else if (shapeIsInsideShape(material, otherMaterial)) {
@@ -532,7 +555,7 @@ function insideCanvas(shape, ground) {
   shape.y = constrain(
     shape.y,
     -shape.height / 2,
-    ground.y - ground.height / 2 - shape.height / 2
+    height - ground.height - shape.height / 2
   );
 }
 
@@ -570,16 +593,17 @@ function consequenceEnemyTouchingMaterial(enemy) {
       //Sees if the enemy still has a life
       if (enemy.numLives < enemy.maxLives) {
         //if yes, the enemy's y is reinitialized
-        enemy.y = enemy.currentSize + enemy.maxSpeedValue;
+        enemy.y = enemy.size + enemy.maxSpeedValue;
         enemy.numLives++;
       } else {
-        //if not, the enemy disappears (and stop moving).
+        //if not, the enemy disappears.
         enemy.startAttack = false;
       }
+      //Every time a material is touched by an enemy, it will become more transparent.
       materials[i].fill.alpha -= 20;
-      if (materials[i].fill.alpha <= 20) {
+      //If it is completely transparent, it dies and is no longer there.
+      if (materials[i].fill.alpha < 10) {
         startFreeFall(materials[i]);
-        //removes the dead material from the list.
         materials.splice(i, 1);
       }
     }
@@ -591,15 +615,13 @@ Makes the enemy move according to its velocity.
 */
 function moveEnemy(enemy) {
   if (enemy.startAttack) {
-    fill(enemy.fillDuringAttack);
     enemy.vx = enemy.speedX;
     enemy.vy = enemy.speedY;
-    enemy.currentSize = enemy.size;
+    enemy.noEnemy = false;
   } else {
-    fill(enemy.fillBeforeAttack);
     enemy.vx = 0;
     enemy.vy = 0;
-    enemy.currentSize = enemy.noSize;
+    enemy.noEnemy = true;
   }
   enemy.x += enemy.vx;
   enemy.y += enemy.vy;
@@ -610,10 +632,10 @@ Checks if an enemy is touching a material.
 */
 function enemyIsTouchingMaterial(enemy, material) {
   if (
-    enemy.x + enemy.currentSize / 2 >= material.x - material.width / 2 &&
-    enemy.x - enemy.currentSize / 2 <= material.x + material.width / 2 &&
-    enemy.y + enemy.currentSize / 2 >= material.y - material.height / 2 &&
-    enemy.y - enemy.currentSize / 2 <= material.y + material.height / 2 &&
+    enemy.x + enemy.size / 2 >= material.x - material.width / 2 &&
+    enemy.x - enemy.size / 2 <= material.x + material.width / 2 &&
+    enemy.y + enemy.size / 2 >= material.y - material.height / 2 &&
+    enemy.y - enemy.size / 2 <= material.y + material.height / 2 &&
     !material.isBeingDragged
   ) {
     return true;
@@ -632,7 +654,27 @@ considering the timer and the number of material left.
 function chooseEnding() {
   if (beginTimer) {
     myTimer--;
-    if (materials.length <= 0 && state === `simulation`) {
+    //Create a visual timer at the bottom of the canvas (in the ground).
+    push();
+    rectMode(CORNER);
+    noStroke();
+    fill(50, 100);
+
+    let thePassingTime;
+    thePassingTime = map(myTimer, 0, numSec, 0, ground.width);
+    myLittleTimer.y = height - myLittleTimer.height;
+    myLittleTimer.width = thePassingTime;
+
+    rect(
+      myLittleTimer.x,
+      myLittleTimer.y,
+      myLittleTimer.width,
+      myLittleTimer.height
+    );
+    pop();
+
+    //Chooses ending.
+    if (materials.length <= 1 && state === `simulation`) {
       state = `sad ending`;
     } else if (myTimer <= 0 && materials.length > 0 && state === `simulation`) {
       state = `happy ending`;
@@ -729,51 +771,57 @@ function mouseReleased() {
 Changes the orientation of the material the user is double clicking on.
  */
 function doubleClicked() {
-  for (let i = 0; i < materials.length; i++) {
-    if (
-      mouseIsInsideShape(materials[i]) &&
-      materials[i].width > materials[i].height
-    ) {
-      materials[i].width = materials[i].sizeY;
-      materials[i].height = materials[i].sizeX;
-    } else if (
-      mouseIsInsideShape(materials[i]) &&
-      materials[i].width < materials[i].height
-    ) {
-      materials[i].width = materials[i].sizeX;
-      materials[i].height = materials[i].sizeY;
+  if (allowMovingMaterial) {
+    for (let i = 0; i < materials.length; i++) {
+      if (
+        mouseIsInsideShape(materials[i]) &&
+        materials[i].width > materials[i].height
+      ) {
+        materials[i].width = materials[i].sizeY;
+        materials[i].height = materials[i].sizeX;
+      } else if (
+        mouseIsInsideShape(materials[i]) &&
+        materials[i].width < materials[i].height
+      ) {
+        materials[i].width = materials[i].sizeX;
+        materials[i].height = materials[i].sizeY;
+      }
     }
   }
 }
 
 function keyPressed() {
+  //Starts the different levels
   if (keyCode === LEFT_ARROW && state === `title`) {
     state = `simulation`;
-    countMaterial = 7; //1 material has 5 "lives"
-    countEnemy = 7; //1 enemy has 3 "lives"
+    countMaterial = 8;
+    countEnemy = 7;
     createEverythingForGame();
   }
   if (keyCode === UP_ARROW && state === `title`) {
     state = `simulation`;
-    countMaterial = 7;
-    countEnemy = 12;
+    countMaterial = 8;
+    countEnemy = 13;
     createEverythingForGame();
   }
   if (keyCode === RIGHT_ARROW && state === `title`) {
     state = `simulation`;
-    countMaterial = 7;
-    countEnemy = 17;
+    countMaterial = 10;
+    countEnemy = 15;
     createEverythingForGame();
   }
 
+  //Start the enemy attack.
   if (keyCode === ENTER && state === `simulation`) {
     for (let i = 0; i < enemies.length; i++) {
       enemies[i].startAttack = true;
+      enemies[i].noEnemy = false;
     }
     beginTimer = true;
     allowMovingMaterial = false;
   }
 
+  //restarts the game oncce it's finished.
   if (state === `happy ending` || state === `sad ending`) {
     reset();
     state = `title`;
