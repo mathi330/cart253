@@ -40,6 +40,52 @@ let cursor = {
   stroke: undefined,
 };
 
+// Objects for the buttons
+let easy = {
+  x: undefined,
+  y: undefined,
+  width: 160,
+  height: 40,
+  fill: {
+    r: undefined,
+    g: undefined,
+    b: undefined,
+    alpha: 200,
+  },
+  fillHover: 150,
+  hover: false,
+};
+
+let medium = {
+  x: undefined,
+  y: undefined,
+  width: 160,
+  height: 40,
+  fill: {
+    r: undefined,
+    g: undefined,
+    b: undefined,
+    alpha: 200,
+  },
+  fillHover: 150,
+  hover: false,
+};
+
+let hard = {
+  x: undefined,
+  y: undefined,
+  width: 160,
+  height: 40,
+  fill: {
+    r: undefined,
+    g: undefined,
+    b: undefined,
+    alpha: 200,
+  },
+  fillHover: 150,
+  hover: false,
+};
+
 // The materials.
 let materials = [];
 let countMaterial = undefined;
@@ -68,6 +114,7 @@ function setup() {
 
   setupGround();
   noCursor();
+  chooseButtonsColor();
 
   // Default stroke colors for the cursor.
   cursor.stroke = color(255);
@@ -75,6 +122,18 @@ function setup() {
 
 //------------------------------------
 //------------------------------------
+
+function chooseButtonsColor() {
+  easy.fill.r = random(150, 255);
+  easy.fill.g = random(100, 150);
+  easy.fill.b = random(150, 230);
+  medium.fill.r = random(150, 255);
+  medium.fill.g = random(100, 150);
+  medium.fill.b = random(150, 230);
+  hard.fill.r = random(150, 255);
+  hard.fill.g = random(100, 150);
+  hard.fill.b = random(150, 230);
+}
 
 /**
 Initializing the objects for the game.
@@ -173,6 +232,7 @@ function reset() {
   myTimer = 60 * 15;
   createMaterial();
   createEnemy();
+  chooseButtonsColor();
 }
 
 //------------------------------------
@@ -215,14 +275,14 @@ function title() {
   push();
   fill(255);
   textFont(`Quicksand`);
-  textAlign(LEFT, TOP);
+  textAlign(CENTER, CENTER);
   textSize(20);
   text(
-    `    Instructions:
+    `Instructions:
     Drag and drop the blocks to build a structure.
     Press ENTER to start the enemy attack.
     Try to make a structure that will survive until the time is up!`,
-    width / 7,
+    width / 2,
     height / 7
   );
 
@@ -230,17 +290,10 @@ function title() {
   textAlign(CENTER, CENTER);
   textSize(32);
   text(`Building Blocks`, width / 2, height / 2);
-
-  textAlign(RIGHT, BOTTOM);
-  textSize(20);
-  text(
-    `Click the left arrow for an easy level,
-    the up arrow for a medium level
-    and the right arrow for a hard level!`,
-    (width / 6) * 5,
-    (height / 6) * 5
-  );
   pop();
+  easyButton();
+  mediumButton();
+  hardButton();
 }
 
 /**
@@ -305,6 +358,98 @@ moves and displays the customized cursor.
 function myCursor() {
   moveCursor();
   drawCursor();
+}
+
+//------------------------------------
+//------------------------------------
+
+/**
+Inside the title() function.
+*/
+
+/**
+The three following functions are to create the buttons to choose the level.
+*/
+function easyButton() {
+  push();
+  noStroke();
+  easy.x = width / 6;
+  easy.y = (height / 6) * 5;
+
+  //Create a hover effect
+  if (mouseIsInsideShape(easy)) {
+    easy.hover = true;
+  } else {
+    easy.hover = false;
+  }
+  if (easy.hover) {
+    fill(easy.fillHover);
+  } else {
+    fill(easy.fill.r, easy.fill.g, easy.fill.b, easy.fill.alpha);
+  }
+
+  rect(easy.x, easy.y, easy.width, easy.height);
+
+  //text inside the button.
+  fill(255);
+  textAlign(CENTER, CENTER);
+  textSize(20);
+  text(`Easy`, easy.x, easy.y);
+  pop();
+}
+
+function mediumButton() {
+  push();
+  noStroke();
+  medium.x = (width / 6) * 3;
+  medium.y = (height / 6) * 5;
+
+  //Create a hover effect
+  if (mouseIsInsideShape(medium)) {
+    medium.hover = true;
+  } else {
+    medium.hover = false;
+  }
+  if (medium.hover) {
+    fill(medium.fillHover);
+  } else {
+    fill(medium.fill.r, medium.fill.g, medium.fill.b, medium.fill.alpha);
+  }
+  rect(medium.x, medium.y, medium.width, medium.height);
+
+  //text inside the button.
+  fill(255);
+  textAlign(CENTER, CENTER);
+  textSize(20);
+  text(`Medium`, medium.x, medium.y);
+  pop();
+}
+
+function hardButton() {
+  push();
+  noStroke();
+  hard.x = (width / 6) * 5;
+  hard.y = (height / 6) * 5;
+
+  //Create a hover effect
+  if (mouseIsInsideShape(hard)) {
+    hard.hover = true;
+  } else {
+    hard.hover = false;
+  }
+  if (hard.hover) {
+    fill(hard.fillHover);
+  } else {
+    fill(hard.fill.r, hard.fill.g, hard.fill.b, hard.fill.alpha);
+  }
+  rect(hard.x, hard.y, hard.width, hard.height);
+
+  //text inside the button.
+  fill(255);
+  textAlign(CENTER, CENTER);
+  textSize(20);
+  text(`Hard`, hard.x, hard.y);
+  pop();
 }
 
 //------------------------------------
@@ -741,14 +886,40 @@ function mouseIsInsideShape(material) {
 Sees if the mouse is inside the shape when the mouse is pressed.
 */
 function mousePressed() {
-  if (allowMovingMaterial) {
-    for (let i = 0; i < materials.length; i++) {
-      if (mouseIsInsideShape(materials[i])) {
-        materials[i].isBeingDragged = true;
+  //3 first statement are to make the simulation start depending on the level selected.
+  //Easy
+  if (state === `title` && mouseIsInsideShape(easy)) {
+    state = `simulation`;
+    countMaterial = 8;
+    countEnemy = 7;
+    createEverythingForGame();
+  }
+  //Medium
+  if (state === `title` && mouseIsInsideShape(medium)) {
+    state = `simulation`;
+    countMaterial = 8;
+    countEnemy = 13;
+    createEverythingForGame();
+  }
+  //Hard
+  if (state === `title` && mouseIsInsideShape(hard)) {
+    state = `simulation`;
+    countMaterial = 10;
+    countEnemy = 15;
+    createEverythingForGame();
+  }
 
-        materials[i].materialUnder = null;
-        //make any material on top of the material being dragged to start their free fall.
-        startFreeFallForMaterialOnTop(materials[i]);
+  //Drag a material in the simulation.
+  if (state === `simulation`) {
+    if (allowMovingMaterial) {
+      for (let i = 0; i < materials.length; i++) {
+        if (mouseIsInsideShape(materials[i])) {
+          materials[i].isBeingDragged = true;
+
+          materials[i].materialUnder = null;
+          //make any material on top of the material being dragged start falling.
+          startFreeFallForMaterialOnTop(materials[i]);
+        }
       }
     }
   }
@@ -791,26 +962,6 @@ function doubleClicked() {
 }
 
 function keyPressed() {
-  //Starts the different levels
-  if (keyCode === LEFT_ARROW && state === `title`) {
-    state = `simulation`;
-    countMaterial = 8;
-    countEnemy = 7;
-    createEverythingForGame();
-  }
-  if (keyCode === UP_ARROW && state === `title`) {
-    state = `simulation`;
-    countMaterial = 8;
-    countEnemy = 13;
-    createEverythingForGame();
-  }
-  if (keyCode === RIGHT_ARROW && state === `title`) {
-    state = `simulation`;
-    countMaterial = 10;
-    countEnemy = 15;
-    createEverythingForGame();
-  }
-
   //Start the enemy attack.
   if (keyCode === ENTER && state === `simulation`) {
     for (let i = 0; i < enemies.length; i++) {
