@@ -21,6 +21,9 @@ class Ball {
 
     this.vx = constrain(this.vx, -this.maxSpeed, this.maxSpeed);
     this.vy = constrain(this.vy, -this.maxSpeed, this.maxSpeed);
+    if (this.x - this.size / 2 <= 0 || this.x + this.size / 2 >= width) {
+      this.vx = -this.vx;
+    }
 
     this.x = this.x + this.vx;
     this.y = this.y + this.vy;
@@ -49,7 +52,7 @@ class Ball {
   display() {
     push();
     fill(255, 50, 50);
-    stroke(0);
+    noStroke();
     ellipse(this.x, this.y, this.size);
     pop();
   }
