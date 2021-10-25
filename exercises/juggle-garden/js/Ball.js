@@ -8,6 +8,10 @@ class Ball {
     this.ay = 0;
     this.maxSpeed = 10;
     this.size = 50;
+    this.goodColor = color(100, 255, 100);
+    this.badColor = color(255, 100, 100);
+    this.chooseColor = [this.goodColor, this.badColor];
+    this.color = random(this.chooseColor);
     this.active = true;
   }
 
@@ -21,10 +25,13 @@ class Ball {
 
     this.vx = constrain(this.vx, -this.maxSpeed, this.maxSpeed);
     this.vy = constrain(this.vy, -this.maxSpeed, this.maxSpeed);
+
+    //Make the ball bounce of the sides of the canvas when they touch.
     if (this.x - this.size / 2 <= 0 || this.x + this.size / 2 >= width) {
       this.vx = -this.vx;
     }
 
+    //Adding the velocity to the x position.
     this.x = this.x + this.vx;
     this.y = this.y + this.vy;
 
@@ -33,6 +40,7 @@ class Ball {
     }
   }
 
+  //Make the ball bounce when it is on the paddle.
   bounce(paddle) {
     if (
       this.x > paddle.x - paddle.width / 2 &&
@@ -51,7 +59,7 @@ class Ball {
 
   display() {
     push();
-    fill(255, 50, 50);
+    fill(this.color);
     noStroke();
     ellipse(this.x, this.y, this.size);
     pop();

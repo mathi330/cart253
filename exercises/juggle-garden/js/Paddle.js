@@ -5,12 +5,13 @@ class Paddle {
     this.x = width / 2;
     this.y = height - this.height / 2;
     this.ax = 0;
-    this.acceleration = 0.3;
+    this.acceleration = 1;
     this.vx = 0;
     this.friction = 0.93;
-    this.maxSpeed = 30;
+    this.maxSpeed = 100;
   }
 
+  // Creates friction when moving.
   handleFriction() {
     if (keyIsDown(RIGHT_ARROW)) {
       this.ax = this.acceleration;
@@ -21,6 +22,7 @@ class Paddle {
     }
   }
 
+  // Applies the friction to the movements.
   move() {
     this.vx += this.ax;
     this.vx *= this.friction;
