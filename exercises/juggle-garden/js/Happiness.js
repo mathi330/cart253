@@ -8,8 +8,8 @@ class Happiness {
     this.ay = 0;
     this.maxSpeed = 10;
     this.gravityForce = 0.0025;
-    this.size = 50;
-    this.color = color(100, 255, 100);
+    this.size = 60;
+    this.color = color(255, 255, 0);
     this.active = true;
   }
 
@@ -54,6 +54,7 @@ class Happiness {
       this.vy = -this.vy;
       this.ay = 0;
 
+      //Makes the paddle get bigger when they touch.
       paddle.width += 10;
     }
   }

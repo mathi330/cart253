@@ -8,7 +8,7 @@ class Sadness {
     this.ay = 0;
     this.maxSpeed = 9.5;
     this.gravityForce = 0.0023;
-    this.size = 50;
+    this.size = 40;
     this.color = color(100, 100, 255);
     this.active = true;
   }
@@ -53,6 +53,7 @@ class Sadness {
       this.vy = -this.vy;
       this.ay = 0;
 
+      //Makes the paddle get smaller when they touch.
       if (paddle.width <= 80) {
         paddle.width = 0;
       } else {

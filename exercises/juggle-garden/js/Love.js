@@ -42,6 +42,7 @@ class Love {
 
   //Make the ball bounce when it is on the paddle.
   bounce(paddle) {
+    //Sees if the ball is on the paddle.
     if (
       this.x > paddle.x - paddle.width / 2 &&
       this.x < paddle.x + paddle.width / 2 &&
@@ -65,7 +66,9 @@ class Love {
     stroke(this.color);
     noFill();
     ellipse(this.x, this.y, this.size);
-    if (this.size >= 100) {
+
+    //Win the game if the love bubble gets big enough.
+    if (this.size >= 50) {
       this.win = true;
     }
     pop();

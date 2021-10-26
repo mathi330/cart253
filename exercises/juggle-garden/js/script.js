@@ -10,7 +10,12 @@ author, and this description to match your project!
 
 let state = `title`;
 
+let decorations = [];
+let numDeco = 10;
+
 let paddle;
+
+let love;
 
 let happy = [];
 let numHappiness = 4;
@@ -18,7 +23,6 @@ let angry = [];
 let numAnger = 2;
 let sad = [];
 let numSadness = 2;
-let love;
 
 //Timer
 let beginTimer = true;
@@ -26,34 +30,55 @@ let beginTimer = true;
 let numSec = 60 * 7;
 let myTimer = numSec;
 
+//Sets up the game at the beginning.
 function setup() {
   createCanvas(windowWidth, windowHeight);
 
+  setupDeco();
   setupEmotions();
 }
 
+//Sets up the deco for the background of the title and endings.
+function setupDeco() {
+  let chooseColor = [
+    color(100, 100, 255, 100), //blue = sadness
+    color(255, 255, 0, 100), //yellow = happiness
+    color(255, 100, 100, 100), //red = anger
+    color(255, 51, 255, 100), //pink = love
+  ];
+  for (let i = 0; i < numDeco; i++) {
+    let x = random(0, width);
+    let y = random(-400, -100);
+    let myDeco = new Deco(x, y, chooseColor);
+    decorations.push(myDeco);
+  }
+}
+
+//Sets up the different emotions in the simulation and the paddle.
 function setupEmotions() {
   paddle = new Paddle(300, 20);
-  love = new Love();
+
+  love = new Love(); //pink
 
   for (let i = 0; i < numHappiness; i++) {
     let happyBubble = new Happiness();
     happy.push(happyBubble);
-  }
+  } //yellow
 
   for (let i = 0; i < numAnger; i++) {
     let angryBubble = new Anger();
     angry.push(angryBubble);
-  }
+  } //red
 
   for (let i = 0; i < numSadness; i++) {
     let sadBubble = new Sadness();
     sad.push(sadBubble);
-  }
+  } //blue
 }
 
+//Calls the different states
 function draw() {
-  background(0, 200);
+  background(0, 200); //slightly transparent to give a little after-image of the falling bubbles
 
   switch (state) {
     case `title`:
@@ -75,6 +100,16 @@ function draw() {
 }
 
 function title() {
+  //Displaying the decorations (and make them move).
+  for (let i = 0; i < decorations.length; i++) {
+    let myDeco = decorations[i];
+    myDeco.gravity();
+    myDeco.move();
+    myDeco.bounce();
+    myDeco.display();
+  }
+
+  //text with title an instructions.
   push();
   fill(255);
   textFont(`Balsamiq Sans`);
@@ -94,25 +129,29 @@ function title() {
   pop();
 }
 
+//Simulation
 function simulation() {
   if (paddle.active) {
     paddle.move();
     paddle.handleFriction();
     paddle.display();
-  } else {
+  }
+  //lose or win depending on the size of the paddle.
+  else {
     state = `lose`;
   }
   if (paddle.win) {
     state = `win`;
   }
 
-  //Creates the ball that corresponds to love.
+  //Creates love.
   if (love.active) {
     love.gravity();
     love.move();
     love.bounce(paddle);
     love.display();
   }
+  //Win if the bubble gets bigger than 50.
   if (love.win) {
     state = `win`;
   }
@@ -122,7 +161,7 @@ function simulation() {
     myTimer--;
   }
 
-  //Make new balls fall every time the timer gets to 0.
+  //Make new balls/emotions fall every time the timer gets to 0.
   if (myTimer === 0) {
     let howMuchHappiness = random(numHappiness);
     for (let i = 0; i < howMuchHappiness; i++) {
@@ -142,7 +181,7 @@ function simulation() {
     myTimer = numSec;
   }
 
-  //Creates the balls with all the necessary information.
+  //Displays the emotions (and make them move).
   for (let i = 0; i < happy.length; i++) {
     let happyBubble = happy[i];
     if (happyBubble.active) {
@@ -153,7 +192,6 @@ function simulation() {
     }
   }
 
-  //Creates the balls with all the necessary information.
   for (let i = 0; i < angry.length; i++) {
     let angryBubble = angry[i];
     if (angryBubble.active) {
@@ -164,7 +202,6 @@ function simulation() {
     }
   }
 
-  //Creates the balls with all the necessary information.
   for (let i = 0; i < sad.length; i++) {
     let sadBubble = sad[i];
     if (sadBubble.active) {
@@ -176,20 +213,46 @@ function simulation() {
   }
 }
 
+// Displays this ending page if the player loses.
 function loseEnding() {
+  //Decorations just life for the title page.
+  for (let i = 0; i < decorations.length; i++) {
+    let myDeco = decorations[i];
+    myDeco.gravity();
+    myDeco.move();
+    myDeco.bounce();
+    myDeco.display();
+  }
+
+  //Text.
   push();
   fill(255);
   textFont(`Balsamiq Sans`);
   textAlign(CENTER, CENTER);
   textSize(32);
-  text(`No motivation left...`, width / 2, height / 2);
+  text(
+    `You feel empty, uncapable of remembering what joy feels like...`,
+    width / 2,
+    height / 2
+  );
   textAlign(CENTER, BOTTOM);
   textSize(20);
-  text(`Click any key to start again!`, width / 2, (height / 5) * 4);
+  text(`Click any key to try again`, width / 2, (height / 5) * 4);
   pop();
 }
 
+// Displays this ending page if the player wins.
 function winEnding() {
+  //Decorations just life for the title page.
+  for (let i = 0; i < decorations.length; i++) {
+    let myDeco = decorations[i];
+    myDeco.gravity();
+    myDeco.move();
+    myDeco.bounce();
+    myDeco.display();
+  }
+
+  //Text.
   push();
   fill(255);
   textFont(`Balsamiq Sans`);
@@ -202,10 +265,14 @@ function winEnding() {
   pop();
 }
 
+//Changes the state when a key is pressed according to the current state.
 function keyPressed() {
+  //if the state is title, go to the simulation.
   if (state === `title`) {
     state = `simulation`;
-  } else if (state === `lose` || state === `win`) {
+  }
+  //If the state is win or lose, go to the title.
+  else if (state === `lose` || state === `win`) {
     for (let i = 0; i < happy.length; i++) {
       happy[i].active = false;
     }
@@ -215,7 +282,23 @@ function keyPressed() {
     for (let i = 0; i < sad.length; i++) {
       sad[i].active = false;
     }
-    setupEmotions();
     state = `title`;
+    //resets the decorations for the new game.
+    decorations = [];
+    setupDeco();
+  }
+}
+
+//Adds a decoration at the mouse's coordinates when the state is not simulation.
+function mousePressed() {
+  if (state !== `simulation`) {
+    let chooseColor = [
+      color(100, 100, 255, 100),
+      color(100, 255, 100, 100),
+      color(255, 100, 100, 100),
+      color(255, 51, 255, 100),
+    ];
+    let myDeco = new Deco(mouseX, mouseY, chooseColor);
+    decorations.push(myDeco);
   }
 }

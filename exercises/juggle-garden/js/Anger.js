@@ -8,7 +8,7 @@ class Anger {
     this.ay = 0;
     this.maxSpeed = 10.5;
     this.gravityForce = 0.0027;
-    this.size = 50;
+    this.size = 80;
     this.color = color(255, 100, 100);
     this.active = true;
   }
@@ -53,6 +53,7 @@ class Anger {
       this.vy = -this.vy;
       this.ay = 0;
 
+      //Makes the paddle get smaller when they touch.
       if (paddle.width <= 30) {
         paddle.width = 0;
       } else {

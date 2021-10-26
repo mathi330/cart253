@@ -40,14 +40,18 @@ class Paddle {
     noStroke();
     this.width = constrain(this.width, 0, this.maxWidth);
     ellipse(this.x, this.y, this.width, this.height);
+
+    //Lose if the paddle disappears.
     if (this.width <= 5) {
       this.active = false;
     }
+    //Win if it gets big enough (half the width of the screen).
     if (this.width >= this.maxWidth) {
       this.win = true;
     }
     pop();
   }
+  //Reset the paddle to start a new game.
   reset() {
     push();
     fill(255);
