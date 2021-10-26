@@ -1,15 +1,15 @@
-class GreenBall {
-  constructor(x, y) {
-    this.x = x;
-    this.y = y;
+class Sadness {
+  constructor() {
+    this.x = random(0, width);
+    this.y = random(-400, -100);
     this.vx = 0;
     this.vy = 0;
     this.ax = 0;
     this.ay = 0;
-    this.maxSpeed = 10;
-    this.gravityForce = 0.0025;
+    this.maxSpeed = 9.5;
+    this.gravityForce = 0.0023;
     this.size = 50;
-    this.color = color(100, 255, 100);
+    this.color = color(100, 100, 255);
     this.active = true;
   }
 
@@ -33,7 +33,6 @@ class GreenBall {
     this.x = this.x + this.vx;
     this.y = this.y + this.vy;
 
-    //Sees if the ball fell.
     if (this.y - this.size / 2 > height) {
       this.active = false;
     }
@@ -54,7 +53,11 @@ class GreenBall {
       this.vy = -this.vy;
       this.ay = 0;
 
-      paddle.width += 10;
+      if (paddle.width <= 80) {
+        paddle.width = 0;
+      } else {
+        paddle.width -= 50;
+      }
     }
   }
 

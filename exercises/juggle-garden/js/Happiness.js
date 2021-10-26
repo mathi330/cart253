@@ -1,15 +1,15 @@
-class RedBall {
-  constructor(x, y) {
-    this.x = x;
-    this.y = y;
+class Happiness {
+  constructor() {
+    this.x = random(0, width);
+    this.y = random(-400, -100);
     this.vx = 0;
     this.vy = 0;
     this.ax = 0;
     this.ay = 0;
     this.maxSpeed = 10;
-    this.gravityForce = 0.0023;
+    this.gravityForce = 0.0025;
     this.size = 50;
-    this.color = color(255, 100, 100);
+    this.color = color(100, 255, 100);
     this.active = true;
   }
 
@@ -33,6 +33,7 @@ class RedBall {
     this.x = this.x + this.vx;
     this.y = this.y + this.vy;
 
+    //Sees if the ball fell.
     if (this.y - this.size / 2 > height) {
       this.active = false;
     }
@@ -53,7 +54,7 @@ class RedBall {
       this.vy = -this.vy;
       this.ay = 0;
 
-      paddle.width -= 50;
+      paddle.width += 10;
     }
   }
 

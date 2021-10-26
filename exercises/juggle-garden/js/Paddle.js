@@ -1,14 +1,15 @@
 class Paddle {
-  constructor(w, h) {
-    this.width = w;
-    this.height = h;
+  constructor() {
+    this.width = 300;
+    this.height = 20;
     this.x = width / 2;
-    this.y = height - this.height / 2;
+    this.y = height - this.height / 2 - 10;
     this.ax = 0;
     this.acceleration = 1;
     this.vx = 0;
     this.friction = 0.93;
     this.maxSpeed = 100;
+    this.active = true;
   }
 
   // Creates friction when moving.
@@ -31,19 +32,23 @@ class Paddle {
     this.x = constrain(this.x, this.width / 2, width - this.width / 2);
   }
 
-  die(state) {
-    if (this.width <= 5) {
-      state = `dead`;
-    }
-  }
-
   display() {
     push();
     fill(255);
     noStroke();
-    rectMode(CENTER);
     this.width = constrain(this.width, 0, width / 2);
     ellipse(this.x, this.y, this.width, this.height);
+    if (this.width <= 5) {
+      this.active = false;
+    }
     pop();
+  }
+  reset() {
+    push();
+    fill(255);
+    noStroke();
+    this.width = 300;
+    this.x = width / 2;
+    this.active = true;
   }
 }

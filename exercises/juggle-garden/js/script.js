@@ -8,16 +8,16 @@ author, and this description to match your project!
 
 "use strict";
 
-let state = `animation`;
+let state = `title`;
 
 let paddle;
 
-let greenBalls = [];
-let numGreenBalls = 4;
-let purpleBalls = [];
-let numPurpleBalls = 2;
-let redBalls = [];
-let numRedBalls = 2;
+let happy = [];
+let numHappiness = 4;
+let angry = [];
+let numAnger = 2;
+let sad = [];
+let numSadness = 2;
 
 //Timer
 let beginTimer = true;
@@ -29,26 +29,29 @@ function setup() {
   createCanvas(windowWidth, windowHeight);
 
   paddle = new Paddle(300, 20);
+  setupEmotions();
+}
 
-  for (let i = 0; i < numGreenBalls; i++) {
+function setupEmotions() {
+  for (let i = 0; i < numHappiness; i++) {
     let x = random(0, width);
     let y = random(-400, -100);
-    let greenBall = new GreenBall(x, y);
-    greenBalls.push(greenBall);
+    let happyBubble = new Happiness(x, y);
+    happy.push(happyBubble);
   }
 
-  for (let i = 0; i < numRedBalls; i++) {
+  for (let i = 0; i < numAnger; i++) {
     let x = random(0, width);
     let y = random(-400, -100);
-    let redBall = new RedBall(x, y);
-    redBalls.push(redBall);
+    let angryBubble = new Anger(x, y);
+    angry.push(angryBubble);
   }
 
-  for (let i = 0; i < numPurpleBalls; i++) {
+  for (let i = 0; i < numSadness; i++) {
     let x = random(0, width);
     let y = random(-400, -100);
-    let purpleBall = new PurpleBall(x, y);
-    purpleBalls.push(purpleBall);
+    let sadBubble = new Sadness(x, y);
+    sad.push(sadBubble);
   }
 }
 
@@ -60,23 +63,37 @@ function draw() {
       title();
       break;
 
-    case `animation`:
-      animation();
+    case `simulation`:
+      simulation();
       break;
 
     case `dead`:
-      ending();
+      sadEnding();
       break;
   }
 }
 
-function title() {}
+function title() {
+  push();
+  fill(255);
+  textFont(`Balsamiq Sans`);
+  textAlign(CENTER, CENTER);
+  textSize(32);
+  text(`Catch the good emotions!`, width / 2, height / 2);
+  textAlign(CENTER, BOTTOM);
+  textSize(20);
+  text(`Click any key to start!`, width / 2, (height / 5) * 4);
+  pop();
+}
 
-function animation() {
-  paddle.move();
-  paddle.handleFriction();
-  paddle.display();
-  paddle.die(state);
+function simulation() {
+  if (paddle.active) {
+    paddle.move();
+    paddle.handleFriction();
+    paddle.display();
+  } else {
+    state = `dead`;
+  }
 
   //Timer.
   if (beginTimer) {
@@ -85,62 +102,86 @@ function animation() {
 
   //Make new balls fall every time the timer gets to 0.
   if (myTimer === 0) {
-    let howManyGreenBalls = random(numGreenBalls);
-    for (let i = 0; i < howManyGreenBalls; i++) {
-      let x = random(0, width);
-      let y = random(-400, -100);
-      let greenBall = new GreenBall(x, y);
-      greenBalls.push(greenBall);
+    let howMuchHappiness = random(numHappiness);
+    for (let i = 0; i < howMuchHappiness; i++) {
+      let happyBubble = new Happiness();
+      happy.push(happyBubble);
     }
-    let howManyRedBalls = random(numRedBalls);
-    for (let i = 0; i < howManyRedBalls; i++) {
-      let x = random(0, width);
-      let y = random(-400, -100);
-      let redBall = new RedBall(x, y);
-      redBalls.push(redBall);
+    let howMuchAnger = random(numAnger);
+    for (let i = 0; i < howMuchAnger; i++) {
+      let angryBubble = new Anger();
+      angry.push(angryBubble);
     }
-    let howManyPurpleBalls = random(numPurpleBalls);
-    for (let i = 0; i < howManyPurpleBalls; i++) {
-      let x = random(0, width);
-      let y = random(-400, -100);
-      let purpleBall = new PurpleBall(x, y);
-      purpleBalls.push(purpleBall);
+    let howMuchSadness = random(numSadness);
+    for (let i = 0; i < howMuchSadness; i++) {
+      let sadBubble = new Sadness();
+      sad.push(sadBubble);
     }
     myTimer = numSec;
   }
 
   //Creates the balls with all the necessary information.
-  for (let i = 0; i < greenBalls.length; i++) {
-    let greenBall = greenBalls[i];
-    if (greenBall.active) {
-      greenBall.gravity();
-      greenBall.move();
-      greenBall.bounce(paddle);
-      greenBall.display();
+  for (let i = 0; i < happy.length; i++) {
+    let happyBubble = happy[i];
+    if (happyBubble.active) {
+      happyBubble.gravity();
+      happyBubble.move();
+      happyBubble.bounce(paddle);
+      happyBubble.display();
     }
   }
 
   //Creates the balls with all the necessary information.
-  for (let i = 0; i < redBalls.length; i++) {
-    let redBall = redBalls[i];
-    if (redBall.active) {
-      redBall.gravity();
-      redBall.move();
-      redBall.bounce(paddle);
-      redBall.display();
+  for (let i = 0; i < angry.length; i++) {
+    let angryBubble = angry[i];
+    if (angryBubble.active) {
+      angryBubble.gravity();
+      angryBubble.move();
+      angryBubble.bounce(paddle);
+      angryBubble.display();
     }
   }
 
   //Creates the balls with all the necessary information.
-  for (let i = 0; i < purpleBalls.length; i++) {
-    let purpleBall = purpleBalls[i];
-    if (purpleBall.active) {
-      purpleBall.gravity();
-      purpleBall.move();
-      purpleBall.bounce(paddle);
-      purpleBall.display();
+  for (let i = 0; i < sad.length; i++) {
+    let sadBubble = sad[i];
+    if (sadBubble.active) {
+      sadBubble.gravity();
+      sadBubble.move();
+      sadBubble.bounce(paddle);
+      sadBubble.display();
     }
   }
 }
 
-function ending() {}
+function sadEnding() {
+  push();
+  fill(255);
+  textFont(`Balsamiq Sans`);
+  textAlign(CENTER, CENTER);
+  textSize(32);
+  text(`No motivation left...`, width / 2, height / 2);
+  textAlign(CENTER, BOTTOM);
+  textSize(20);
+  text(`Click any key to start again!`, width / 2, (height / 5) * 4);
+  pop();
+}
+
+function keyPressed() {
+  if (state === `title`) {
+    state = `simulation`;
+  } else if (state === `dead` || state === `happy`) {
+    paddle.reset();
+    for (let i = 0; i < happy.length; i++) {
+      happy[i].active = false;
+    }
+    for (let i = 0; i < angry.length; i++) {
+      angry[i].active = false;
+    }
+    for (let i = 0; i < sad.length; i++) {
+      sad[i].active = false;
+    }
+    setupEmotions();
+    state = `title`;
+  }
+}

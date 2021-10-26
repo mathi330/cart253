@@ -1,15 +1,15 @@
-class PurpleBall {
-  constructor(x, y) {
-    this.x = x;
-    this.y = y;
+class Anger {
+  constructor() {
+    this.x = random(0, width);
+    this.y = random(-400, -100);
     this.vx = 0;
     this.vy = 0;
     this.ax = 0;
     this.ay = 0;
-    this.maxSpeed = 10;
+    this.maxSpeed = 10.5;
     this.gravityForce = 0.0027;
     this.size = 50;
-    this.color = color(230, 100, 230);
+    this.color = color(255, 100, 100);
     this.active = true;
   }
 
@@ -53,7 +53,11 @@ class PurpleBall {
       this.vy = -this.vy;
       this.ay = 0;
 
-      paddle.width -= 10;
+      if (paddle.width <= 30) {
+        paddle.width = 0;
+      } else {
+        paddle.width -= 10;
+      }
     }
   }
 
@@ -64,4 +68,6 @@ class PurpleBall {
     ellipse(this.x, this.y, this.size);
     pop();
   }
+
+  reset() {}
 }
