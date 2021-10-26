@@ -10,6 +10,8 @@ class Paddle {
     this.friction = 0.93;
     this.maxSpeed = 100;
     this.active = true;
+    this.maxWidth = width / 2;
+    this.win = false;
   }
 
   // Creates friction when moving.
@@ -36,10 +38,13 @@ class Paddle {
     push();
     fill(255);
     noStroke();
-    this.width = constrain(this.width, 0, width / 2);
+    this.width = constrain(this.width, 0, this.maxWidth);
     ellipse(this.x, this.y, this.width, this.height);
     if (this.width <= 5) {
       this.active = false;
+    }
+    if (this.width >= this.maxWidth) {
+      this.win = true;
     }
     pop();
   }

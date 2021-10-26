@@ -1,0 +1,3 @@
+class Deco {
+  constructor() {}
+}

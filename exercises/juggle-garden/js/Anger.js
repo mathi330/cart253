@@ -63,8 +63,9 @@ class Anger {
 
   display() {
     push();
-    fill(this.color);
-    noStroke();
+    strokeWeight(5);
+    stroke(this.color);
+    noFill();
     ellipse(this.x, this.y, this.size);
     pop();
   }

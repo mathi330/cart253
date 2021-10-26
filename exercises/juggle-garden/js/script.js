@@ -18,6 +18,7 @@ let angry = [];
 let numAnger = 2;
 let sad = [];
 let numSadness = 2;
+let love;
 
 //Timer
 let beginTimer = true;
@@ -28,35 +29,31 @@ let myTimer = numSec;
 function setup() {
   createCanvas(windowWidth, windowHeight);
 
-  paddle = new Paddle(300, 20);
   setupEmotions();
 }
 
 function setupEmotions() {
+  paddle = new Paddle(300, 20);
+  love = new Love();
+
   for (let i = 0; i < numHappiness; i++) {
-    let x = random(0, width);
-    let y = random(-400, -100);
-    let happyBubble = new Happiness(x, y);
+    let happyBubble = new Happiness();
     happy.push(happyBubble);
   }
 
   for (let i = 0; i < numAnger; i++) {
-    let x = random(0, width);
-    let y = random(-400, -100);
-    let angryBubble = new Anger(x, y);
+    let angryBubble = new Anger();
     angry.push(angryBubble);
   }
 
   for (let i = 0; i < numSadness; i++) {
-    let x = random(0, width);
-    let y = random(-400, -100);
-    let sadBubble = new Sadness(x, y);
+    let sadBubble = new Sadness();
     sad.push(sadBubble);
   }
 }
 
 function draw() {
-  background(0);
+  background(0, 200);
 
   switch (state) {
     case `title`:
@@ -67,8 +64,12 @@ function draw() {
       simulation();
       break;
 
-    case `dead`:
-      sadEnding();
+    case `lose`:
+      loseEnding();
+      break;
+
+    case `win`:
+      winEnding();
       break;
   }
 }
@@ -77,6 +78,13 @@ function title() {
   push();
   fill(255);
   textFont(`Balsamiq Sans`);
+  textAlign(CENTER, TOP);
+  textSize(20);
+  text(
+    `Use the left and right arrow keys to move the paddle.`,
+    width / 2,
+    height / 5
+  );
   textAlign(CENTER, CENTER);
   textSize(32);
   text(`Catch the good emotions!`, width / 2, height / 2);
@@ -92,7 +100,21 @@ function simulation() {
     paddle.handleFriction();
     paddle.display();
   } else {
-    state = `dead`;
+    state = `lose`;
+  }
+  if (paddle.win) {
+    state = `win`;
+  }
+
+  //Creates the ball that corresponds to love.
+  if (love.active) {
+    love.gravity();
+    love.move();
+    love.bounce(paddle);
+    love.display();
+  }
+  if (love.win) {
+    state = `win`;
   }
 
   //Timer.
@@ -154,7 +176,7 @@ function simulation() {
   }
 }
 
-function sadEnding() {
+function loseEnding() {
   push();
   fill(255);
   textFont(`Balsamiq Sans`);
@@ -167,11 +189,23 @@ function sadEnding() {
   pop();
 }
 
+function winEnding() {
+  push();
+  fill(255);
+  textFont(`Balsamiq Sans`);
+  textAlign(CENTER, CENTER);
+  textSize(32);
+  text(`Happiness will always be by your side! :)`, width / 2, height / 2);
+  textAlign(CENTER, BOTTOM);
+  textSize(20);
+  text(`Click any key to start again!`, width / 2, (height / 5) * 4);
+  pop();
+}
+
 function keyPressed() {
   if (state === `title`) {
     state = `simulation`;
-  } else if (state === `dead` || state === `happy`) {
-    paddle.reset();
+  } else if (state === `lose` || state === `win`) {
     for (let i = 0; i < happy.length; i++) {
       happy[i].active = false;
     }

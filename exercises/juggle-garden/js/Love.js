@@ -1,4 +1,4 @@
-class Happiness {
+class Love {
   constructor() {
     this.x = random(0, width);
     this.y = random(-400, -100);
@@ -8,9 +8,10 @@ class Happiness {
     this.ay = 0;
     this.maxSpeed = 10;
     this.gravityForce = 0.0025;
-    this.size = 50;
-    this.color = color(100, 255, 100);
+    this.size = 10;
+    this.color = color(255, 51, 255);
     this.active = true;
+    this.win = false;
   }
 
   gravity() {
@@ -54,7 +55,7 @@ class Happiness {
       this.vy = -this.vy;
       this.ay = 0;
 
-      paddle.width += 10;
+      this.size += 2;
     }
   }
 
@@ -64,6 +65,9 @@ class Happiness {
     stroke(this.color);
     noFill();
     ellipse(this.x, this.y, this.size);
+    if (this.size >= 100) {
+      this.win = true;
+    }
     pop();
   }
 }
