@@ -8,12 +8,13 @@ author, and this description to match your project!
 
 "use strict";
 
-let state = `title`;
+let state = `animation`;
 
 let paddle;
 
-let balls = [];
-let numBalls = 5;
+let greenBalls = [];
+let purpleBalls = [];
+let numBalls = 3;
 
 //Timer
 let beginTimer = true;
@@ -29,14 +30,38 @@ function setup() {
   for (let i = 0; i < numBalls; i++) {
     let x = random(0, width);
     let y = random(-400, -100);
-    let ball = new Ball(x, y);
-    balls.push(ball);
+    let greenBall = new GreenBall(x, y);
+    greenBalls.push(greenBall);
+  }
+  for (let i = 0; i < numBalls; i++) {
+    let x = random(0, width);
+    let y = random(-400, -100);
+    let purpleBall = new PurpleBall(x, y);
+    purpleBalls.push(purpleBall);
   }
 }
 
 function draw() {
   background(0);
 
+  switch (state) {
+    case `title`:
+      title();
+      break;
+
+    case `animation`:
+      animation();
+      break;
+
+    case `ending`:
+      ending();
+      break;
+  }
+}
+
+function title() {}
+
+function animation() {
   paddle.move();
   paddle.handleFriction();
   paddle.display();
@@ -51,20 +76,31 @@ function draw() {
     for (let i = 0; i < howManyBalls; i++) {
       let x = random(0, width);
       let y = random(-400, -100);
-      let ball = new Ball(x, y);
-      balls.push(ball);
+      let greenBall = new GreenBall(x, y);
+      greenBalls.push(greenBall);
     }
     myTimer = numSec;
   }
 
   //Creates the balls with all the necessary information.
-  for (let i = 0; i < balls.length; i++) {
-    let ball = balls[i];
-    if (ball.active) {
-      ball.gravity();
-      ball.move();
-      ball.bounce(paddle);
-      ball.display();
+  for (let i = 0; i < greenBalls.length; i++) {
+    let greenBall = greenBalls[i];
+    if (greenBall.active) {
+      greenBall.gravity();
+      greenBall.move();
+      greenBall.bounce(paddle);
+      greenBall.display();
+    }
+  }
+
+  //Creates the balls with all the necessary information.
+  for (let i = 0; i < purpleBalls.length; i++) {
+    let purpleBall = purpleBalls[i];
+    if (purpleBall.active) {
+      purpleBall.gravity();
+      purpleBall.move();
+      purpleBall.bounce(paddle);
+      purpleBall.display();
     }
   }
 }
