@@ -287,6 +287,7 @@ function keyPressed() {
     for (let i = 0; i < sad.length; i++) {
       sad[i].active = false;
     }
+    setupEmotions();
     state = `title`;
     //resets the decorations for the new game.
     decorations = [];

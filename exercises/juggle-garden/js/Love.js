@@ -68,7 +68,7 @@ class Love {
     ellipse(this.x, this.y, this.size);
 
     //Win the game if the love bubble gets big enough.
-    if (this.size >= 50) {
+    if (this.size >= 100) {
       this.win = true;
     }
     pop();
