@@ -1,22 +1,40 @@
 class Ball {
   constructor(x, y) {
     this.x = x;
-    this.y = y;
+    this.originalY = y;
+    this.upsideDownY = height - y;
+    this.y = this.originalY;
     this.vx = 0;
     this.vy = 0;
     this.ax = 0;
     this.ay = 0;
     this.maxSpeed = 10;
+    this.gravityForce = 0.0025;
     this.size = 50;
-    this.goodColor = color(100, 255, 100);
-    this.badColor = color(255, 100, 100);
-    this.chooseColor = [this.goodColor, this.badColor];
+    this.green = color(100, 255, 100);
+    this.red = color(255, 100, 100);
+    this.purple = color(230, 100, 230);
+    //To have more chance for the ball to be green then red.
+    this.chooseColor = [
+      this.green,
+      this.green,
+      this.green,
+      this.green,
+      this.green,
+      this.purple,
+      this.purple,
+      this.purple,
+      this.red,
+    ];
     this.color = random(this.chooseColor);
+    this.beginTimer = false;
+    this.numSec = 60 * 4;
+    this.myTimer = this.numSec;
     this.active = true;
   }
 
-  gravity(force) {
-    this.ay += force;
+  gravity() {
+    this.ay += this.gravityForce;
   }
 
   move() {
@@ -40,6 +58,16 @@ class Ball {
     }
   }
 
+  timer() {
+    if (this.beginTimer) {
+      this.myTimer = this.numSec;
+      this.myTimer--;
+      if (this.myTimer === 0) {
+        this.beginTimer = false;
+      }
+    }
+  }
+
   //Make the ball bounce when it is on the paddle.
   bounce(paddle) {
     if (
@@ -54,6 +82,16 @@ class Ball {
 
       this.vy = -this.vy;
       this.ay = 0;
+
+      if (this.color === this.purple) {
+        paddle.width -= 10;
+      }
+      if (this.color === this.green) {
+        paddle.width += 10;
+      }
+      if (this.color === this.red) {
+        paddle.width -= 50;
+      }
     }
   }
 

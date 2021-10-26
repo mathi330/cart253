@@ -31,11 +31,18 @@ class Paddle {
     this.x = constrain(this.x, this.width / 2, width - this.width / 2);
   }
 
+  die(state) {
+    if (this.width <= 5) {
+      state = `dead`;
+    }
+  }
+
   display() {
     push();
     fill(255);
     noStroke();
     rectMode(CENTER);
+    this.width = constrain(this.width, 0, width / 2);
     rect(this.x, this.y, this.width, this.height);
     pop();
   }

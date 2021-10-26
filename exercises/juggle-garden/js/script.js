@@ -8,12 +8,12 @@ author, and this description to match your project!
 
 "use strict";
 
-let gravityForce = 0.0025;
+let state = `title`;
 
 let paddle;
 
 let balls = [];
-let numBalls = 1;
+let numBalls = 5;
 
 //Timer
 let beginTimer = true;
@@ -40,25 +40,31 @@ function draw() {
   paddle.move();
   paddle.handleFriction();
   paddle.display();
+  paddle.die(state);
 
-  for (let i = 0; i < balls.length; i++) {
-    let ball = balls[i];
-    if (ball.active) {
-      ball.gravity(gravityForce);
-      ball.move();
-      ball.bounce(paddle);
-      ball.display();
-    }
-  }
-
+  //Makes new balls appear every time the timer gets to 0.
   if (beginTimer) {
     myTimer--;
   }
   if (myTimer === 0) {
-    let x = random(0, width);
-    let y = random(-400, -100);
-    let ball = new Ball(x, y);
-    balls.push(ball);
+    let howManyBalls = random(1, numBalls);
+    for (let i = 0; i < howManyBalls; i++) {
+      let x = random(0, width);
+      let y = random(-400, -100);
+      let ball = new Ball(x, y);
+      balls.push(ball);
+    }
     myTimer = numSec;
+  }
+
+  //Creates the balls with all the necessary information.
+  for (let i = 0; i < balls.length; i++) {
+    let ball = balls[i];
+    if (ball.active) {
+      ball.gravity();
+      ball.move();
+      ball.bounce(paddle);
+      ball.display();
+    }
   }
 }
