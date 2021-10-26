@@ -1,5 +1,5 @@
-class RedBalls {
-  constructor() {
+class RedBall {
+  constructor(x, y) {
     this.x = x;
     this.y = y;
     this.vx = 0;
@@ -10,6 +10,7 @@ class RedBalls {
     this.gravityForce = 0.0023;
     this.size = 50;
     this.color = color(255, 100, 100);
+    this.active = true;
   }
 
   gravity() {

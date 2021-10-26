@@ -10,6 +10,7 @@ class GreenBall {
     this.gravityForce = 0.0025;
     this.size = 50;
     this.color = color(100, 255, 100);
+    this.active = true;
   }
 
   gravity() {

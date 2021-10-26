@@ -43,7 +43,7 @@ class Paddle {
     noStroke();
     rectMode(CENTER);
     this.width = constrain(this.width, 0, width / 2);
-    rect(this.x, this.y, this.width, this.height);
+    ellipse(this.x, this.y, this.width, this.height);
     pop();
   }
 }

@@ -1,5 +1,5 @@
-class PurpleBalls {
-  constructor() {
+class PurpleBall {
+  constructor(x, y) {
     this.x = x;
     this.y = y;
     this.vx = 0;
@@ -10,6 +10,7 @@ class PurpleBalls {
     this.gravityForce = 0.0027;
     this.size = 50;
     this.color = color(230, 100, 230);
+    this.active = true;
   }
 
   gravity() {
