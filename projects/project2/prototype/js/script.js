@@ -28,7 +28,8 @@ function draw() {
   background(0);
   myBezierVertexShapes();
   myCurveVertexShapes();
-  // myQuadraticVertexShapes();
+  myQuadraticVertexShapes();
+  movingShapes();
 }
 
 function myBezierVertexShapes() {
@@ -123,10 +124,30 @@ function myQuadraticVertexShapes() {
   //Start 1st shape
   beginShape();
   vertex(100, 500);
-  quadraticVertex(160, 520, 120, 550);
-  quadraticVertex(140, 570, 80, 590);
-  quadraticVertex(110, 520, 100, 500);
-  vertex(100, 500);
+  quadraticVertex(200, 510, 120, 550);
+  quadraticVertex(60, 580, 80, 590);
+  quadraticVertex(0, 590, 100, 530);
+  quadraticVertex(130, 510, 100, 500);
+  endShape();
+
+  //Start 2nd shape
+  beginShape();
+  vertex(250, 530);
+  quadraticVertex(270, 450, 300, 490);
+  quadraticVertex(330, 550, 270, 550);
+  quadraticVertex(290, 610, 250, 590);
+  quadraticVertex(200, 560, 250, 530);
+  endShape();
+
+  //Start 3rd shape
+  beginShape();
+  vertex(400, 500);
+  quadraticVertex(500, 510, 420, 550);
+  quadraticVertex(360, 580, 380, 590);
+  quadraticVertex(300, 590, 400, 530);
+  quadraticVertex(430, 510, 400, 500);
   endShape();
   pop();
 }
+
+function movingShapes() {}
