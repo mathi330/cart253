@@ -6,13 +6,60 @@ To do:
 - Create a weird shape
 - Make it move using noise
     - Experiment with different kind of movements
-        - Whole shape moving
-        - Each point moving independently
-        - Both of the above at once
-    - Use random (just to see)
+        - Whole shape moving (red)
+        - Each point moving independently (blue)
+        - Both of the above at once (green)
 */
 
 "use strict";
+
+let myRedShape = {
+  xOiginPoint: 500,
+  yOriginPoint: 100,
+
+  x0: 0,
+  y0: 0,
+  x1: 80,
+  y1: -40,
+  x2: 20,
+  y2: 20,
+  x3: 90,
+  y3: 10,
+
+  x4: 70,
+  y4: 40,
+  x5: 50,
+  y5: 80,
+  x6: 0,
+  y6: 90,
+
+  x7: -20,
+  y7: 70,
+  x8: 50,
+  y8: 30,
+
+  xoff: 0,
+  numberOfPoints: 9,
+};
+
+let myBlueShape = {
+  x0: 540,
+  y0: 500,
+  x1: 640,
+  y1: 510,
+  x2: 560,
+  y2: 550,
+  x3: 500,
+  y3: 580,
+  x4: 520,
+  y4: 590,
+  x5: 440,
+  y5: 590,
+  x6: 540,
+  y6: 530,
+  x7: 570,
+  y7: 510,
+};
 
 /**
 Description of setup
@@ -26,18 +73,18 @@ Description of draw()
 */
 function draw() {
   background(0);
-  myBezierVertexShapes();
-  myCurveVertexShapes();
+  // myRedShapes();
+  // myCurveVertexShapes();
   myQuadraticVertexShapes();
   movingShapes();
 }
 
-function myBezierVertexShapes() {
+function myRedShapes() {
   //Create a shape using bezierVertex()
   push();
   strokeWeight(5);
-  fill(255);
-  stroke(255, 0, 0);
+  fill(255, 100);
+  stroke(255, 0, 0, 100);
 
   //Start 1st shape
   beginShape();
@@ -67,8 +114,8 @@ function myCurveVertexShapes() {
   //Create a shape using curveVertex();
   push();
   strokeWeight(5);
-  fill(255);
-  stroke(0, 255, 0);
+  fill(255, 100);
+  stroke(0, 255, 0, 100);
 
   //Start 1st shape
   beginShape();
@@ -99,17 +146,17 @@ function myCurveVertexShapes() {
 
   //Start 3rd shape
   beginShape();
-  curveVertex(375, 325); // smooth
-  curveVertex(400, 300); //start
-  curveVertex(425, 325);
-  curveVertex(450, 350);
-  curveVertex(425, 375);
-  curveVertex(400, 400);
-  curveVertex(375, 375);
-  curveVertex(350, 350);
+  curveVertex(325, 325); // smooth
+  curveVertex(350, 300); //start
   curveVertex(375, 325);
-  curveVertex(400, 300); //end
-  curveVertex(425, 325);
+  curveVertex(400, 350);
+  curveVertex(375, 375);
+  curveVertex(350, 400);
+  curveVertex(325, 375);
+  curveVertex(300, 350);
+  curveVertex(325, 325);
+  curveVertex(350, 300); //end
+  curveVertex(375, 325);
   endShape();
   pop();
 }
@@ -118,8 +165,8 @@ function myQuadraticVertexShapes() {
   //Create a shape using quadraticVertex()
   push();
   strokeWeight(5);
-  fill(255);
-  stroke(0, 0, 255);
+  fill(255, 100);
+  stroke(0, 0, 255, 100);
 
   //Start 1st shape
   beginShape();
@@ -150,4 +197,117 @@ function myQuadraticVertexShapes() {
   pop();
 }
 
-function movingShapes() {}
+function movingShapes() {
+  // movingRed();
+  // movingGreen();
+
+  movingBlue();
+}
+
+function movingRed() {
+  //bezierVertex (red)
+
+  //noise move (whole shape moving)
+  myRedShape.xOiginPoint = map(noise(myRedShape.xoff), 0, 1, 0, width);
+  myRedShape.yOriginPoint = map(noise(myRedShape.xoff + 100), 0, 1, 0, height);
+
+  myRedShape.xoff += 0.003;
+
+  push();
+  strokeWeight(5);
+  // fill(255);
+  noFill();
+  stroke(255, 0, 0);
+
+  beginShape();
+  vertex(
+    myRedShape.xOiginPoint + myRedShape.x0,
+    myRedShape.yOriginPoint + myRedShape.y0
+  );
+  bezierVertex(
+    myRedShape.xOiginPoint + myRedShape.x1,
+    myRedShape.yOriginPoint + myRedShape.y1,
+    myRedShape.xOiginPoint + myRedShape.x2,
+    myRedShape.yOriginPoint + myRedShape.y2,
+    myRedShape.xOiginPoint + myRedShape.x3,
+    myRedShape.yOriginPoint + myRedShape.y3
+  );
+  bezierVertex(
+    myRedShape.xOiginPoint + myRedShape.x4,
+    myRedShape.yOriginPoint + myRedShape.y4,
+    myRedShape.xOiginPoint + myRedShape.x5,
+    myRedShape.yOriginPoint + myRedShape.y5,
+    myRedShape.xOiginPoint + myRedShape.x6,
+    myRedShape.yOriginPoint + myRedShape.y6
+  );
+  bezierVertex(
+    myRedShape.xOiginPoint + myRedShape.x7,
+    myRedShape.yOriginPoint + myRedShape.y7,
+    myRedShape.xOiginPoint + myRedShape.x8,
+    myRedShape.yOriginPoint + myRedShape.y8,
+    myRedShape.xOiginPoint + myRedShape.x0,
+    myRedShape.yOriginPoint + myRedShape.y0
+  );
+  endShape();
+  pop();
+}
+
+function movingGreen() {
+  //curveVertex (green)
+  push();
+  strokeWeight(5);
+  fill(255);
+  stroke(0, 255, 0);
+
+  beginShape();
+  curveVertex(475, 325); // smooth
+  curveVertex(500, 300); //start
+  curveVertex(525, 325);
+  curveVertex(550, 350);
+  curveVertex(525, 375);
+  curveVertex(500, 400);
+  curveVertex(475, 375);
+  curveVertex(450, 350);
+  curveVertex(475, 325);
+  curveVertex(500, 300); //end
+  curveVertex(525, 325);
+  endShape();
+  pop();
+}
+
+function movingBlue() {
+  //quadraticVertex (blue)
+  push();
+  strokeWeight(5);
+  fill(255);
+  stroke(0, 0, 255);
+
+  beginShape();
+  vertex(myBlueShape.x0, myBlueShape.y0);
+  quadraticVertex(
+    myBlueShape.x1,
+    myBlueShape.y1,
+    myBlueShape.x2,
+    myBlueShape.y2
+  );
+  quadraticVertex(
+    myBlueShape.x3,
+    myBlueShape.y3,
+    myBlueShape.x4,
+    myBlueShape.y4
+  );
+  quadraticVertex(
+    myBlueShape.x5,
+    myBlueShape.y5,
+    myBlueShape.x6,
+    myBlueShape.y6
+  );
+  quadraticVertex(
+    myBlueShape.x7,
+    myBlueShape.y7,
+    myBlueShape.x0,
+    myBlueShape.y0
+  );
+  endShape();
+  pop();
+}
