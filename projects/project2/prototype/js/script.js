@@ -65,6 +65,33 @@ let myBlueShape = {
   xoff: 0,
 };
 
+let myGreenShape = {
+  xOriginPoint: 500,
+  yOriginPoint: 350,
+
+  x0: 0,
+  y0: -50,
+  x1: 25,
+  y1: -25,
+  x2: 50,
+  y2: 0,
+  x3: 25,
+  y3: 25,
+  x4: 0,
+  y4: 50,
+  x5: -25,
+  y5: 25,
+  x6: -50,
+  y6: 0,
+  x7: -25,
+  y7: -25,
+
+  xoff: 0,
+  xoff1: 0,
+
+  distortionRange: 20,
+};
+
 /**
 Description of setup
 */
@@ -78,8 +105,8 @@ Description of draw()
 function draw() {
   background(0);
   // myRedShapes();
-  // myCurveVertexShapes();
-  myQuadraticVertexShapes();
+  myCurveVertexShapes();
+  // myQuadraticVertexShapes();
   movingShapes();
 }
 
@@ -203,8 +230,8 @@ function myQuadraticVertexShapes() {
 
 function movingShapes() {
   // movingRed();
-  // movingGreen();
-  movingBlue();
+  movingGreen();
+  // movingBlue();
 }
 
 function movingRed() {
@@ -257,24 +284,155 @@ function movingRed() {
 
 function movingGreen() {
   //curveVertex (green)
+
+  //noise
+  //Make the wholde shape move
+  myGreenShape.xOriginPoint = map(noise(myGreenShape.xoff), 0, 1, 0, width);
+  myGreenShape.yOriginPoint = map(
+    noise(myGreenShape.xoff + 100),
+    0,
+    1,
+    0,
+    height
+  );
+  myGreenShape.xoff += 0.002;
+
+  //Make each point change
+  let x0 = map(
+    noise(myGreenShape.xoff1),
+    0,
+    1,
+    myGreenShape.x0 - myGreenShape.distortionRange,
+    myGreenShape.x0 + myGreenShape.distortionRange
+  );
+  let y0 = map(
+    noise(myGreenShape.xoff1),
+    0,
+    1,
+    myGreenShape.y0 - myGreenShape.distortionRange,
+    myGreenShape.y0 + myGreenShape.distortionRange
+  );
+  let x1 = map(
+    noise(myGreenShape.xoff1 + 300),
+    0,
+    1,
+    myGreenShape.x1 - myGreenShape.distortionRange,
+    myGreenShape.x1 + myGreenShape.distortionRange
+  );
+  let y1 = map(
+    noise(myGreenShape.xoff1 + 400),
+    0,
+    1,
+    myGreenShape.y1 - myGreenShape.distortionRange,
+    myGreenShape.y1 + myGreenShape.distortionRange
+  );
+  let x2 = map(
+    noise(myGreenShape.xoff1 + 500),
+    0,
+    1,
+    myGreenShape.x2 - myGreenShape.distortionRange,
+    myGreenShape.x2 + myGreenShape.distortionRange
+  );
+  let y2 = map(
+    noise(myGreenShape.xoff1 + 600),
+    0,
+    1,
+    myGreenShape.y2 - myGreenShape.distortionRange,
+    myGreenShape.y2 + myGreenShape.distortionRange
+  );
+  let x3 = map(
+    noise(myGreenShape.xoff1 + 700),
+    0,
+    1,
+    myGreenShape.x3 - myGreenShape.distortionRange,
+    myGreenShape.x3 + myGreenShape.distortionRange
+  );
+  let y3 = map(
+    noise(myGreenShape.xoff1 + 800),
+    0,
+    1,
+    myGreenShape.y3 - myGreenShape.distortionRange,
+    myGreenShape.y3 + myGreenShape.distortionRange
+  );
+  let x4 = map(
+    noise(myGreenShape.xoff1 + 900),
+    0,
+    1,
+    myGreenShape.x4 - myGreenShape.distortionRange,
+    myGreenShape.x4 + myGreenShape.distortionRange
+  );
+  let y4 = map(
+    noise(myGreenShape.xoff1 + 1000),
+    0,
+    1,
+    myGreenShape.y4 - myGreenShape.distortionRange,
+    myGreenShape.y4 + myGreenShape.distortionRange
+  );
+  let x5 = map(
+    noise(myGreenShape.xoff1 + 1100),
+    0,
+    1,
+    myGreenShape.x5 - myGreenShape.distortionRange,
+    myGreenShape.x5 + myGreenShape.distortionRange
+  );
+  let y5 = map(
+    noise(myGreenShape.xoff1 + 1200),
+    0,
+    1,
+    myGreenShape.y5 - myGreenShape.distortionRange,
+    myGreenShape.y5 + myGreenShape.distortionRange
+  );
+  let x6 = map(
+    noise(myGreenShape.xoff1 + 1300),
+    0,
+    1,
+    myGreenShape.x6 - myGreenShape.distortionRange,
+    myGreenShape.x6 + myGreenShape.distortionRange
+  );
+  let y6 = map(
+    noise(myGreenShape.xoff1 + 1400),
+    0,
+    1,
+    myGreenShape.y6 - myGreenShape.distortionRange,
+    myGreenShape.y6 + myGreenShape.distortionRange
+  );
+  let x7 = map(
+    noise(myGreenShape.xoff1 + 1500),
+    0,
+    1,
+    myGreenShape.x7 - myGreenShape.distortionRange,
+    myGreenShape.x7 + myGreenShape.distortionRange
+  );
+  let y7 = map(
+    noise(myGreenShape.xoff1 + 1600),
+    0,
+    1,
+    myGreenShape.y7 - myGreenShape.distortionRange,
+    myGreenShape.y7 + myGreenShape.distortionRange
+  );
+
+  myGreenShape.xoff1 += 0.005;
+
   push();
   strokeWeight(5);
-  fill(255);
+  noFill();
+  // fill(255);
   stroke(0, 255, 0);
 
   beginShape();
-  curveVertex(475, 325); // smooth
-  curveVertex(500, 300); //start
-  curveVertex(525, 325);
-  curveVertex(550, 350);
-  curveVertex(525, 375);
-  curveVertex(500, 400);
-  curveVertex(475, 375);
-  curveVertex(450, 350);
-  curveVertex(475, 325);
-  curveVertex(500, 300); //end
-  curveVertex(525, 325);
+  curveVertex(myGreenShape.xOriginPoint + x7, myGreenShape.yOriginPoint + y7);
+  curveVertex(myGreenShape.xOriginPoint + x0, myGreenShape.yOriginPoint + y0);
+  curveVertex(myGreenShape.xOriginPoint + x1, myGreenShape.yOriginPoint + y1);
+  curveVertex(myGreenShape.xOriginPoint + x2, myGreenShape.yOriginPoint + y2);
+  curveVertex(myGreenShape.xOriginPoint + x3, myGreenShape.yOriginPoint + y3);
+  curveVertex(myGreenShape.xOriginPoint + x4, myGreenShape.yOriginPoint + y4);
+  curveVertex(myGreenShape.xOriginPoint + x5, myGreenShape.yOriginPoint + y5);
+  curveVertex(myGreenShape.xOriginPoint + x6, myGreenShape.yOriginPoint + y6);
+  curveVertex(myGreenShape.xOriginPoint + x7, myGreenShape.yOriginPoint + y7);
+  curveVertex(myGreenShape.xOriginPoint + x0, myGreenShape.yOriginPoint + y0);
+  curveVertex(myGreenShape.xOriginPoint + x1, myGreenShape.yOriginPoint + y1);
   endShape();
+
   pop();
 }
 
@@ -306,7 +464,8 @@ function movingBlue() {
 
   push();
   strokeWeight(5);
-  fill(255);
+  noFill();
+  // fill(255);
   stroke(0, 0, 255);
 
   beginShape();
