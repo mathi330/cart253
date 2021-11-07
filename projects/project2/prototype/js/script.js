@@ -14,7 +14,7 @@ To do:
 "use strict";
 
 let myRedShape = {
-  xOiginPoint: 500,
+  xOriginPoint: 500,
   yOriginPoint: 100,
 
   x0: 0,
@@ -39,26 +39,30 @@ let myRedShape = {
   y8: 30,
 
   xoff: 0,
-  numberOfPoints: 9,
 };
 
 let myBlueShape = {
-  x0: 540,
-  y0: 500,
-  x1: 640,
-  y1: 510,
-  x2: 560,
-  y2: 550,
-  x3: 500,
-  y3: 580,
-  x4: 520,
-  y4: 590,
-  x5: 440,
-  y5: 590,
-  x6: 540,
-  y6: 530,
-  x7: 570,
-  y7: 510,
+  xOriginPoint: 500,
+  yOriginPoint: 580,
+
+  x0: 40,
+  y0: -80,
+  x1: 140,
+  y1: -70,
+  x2: 60,
+  y2: -30,
+  x3: 0,
+  y3: 0,
+  x4: 20,
+  y4: 10,
+  x5: -60,
+  y5: 10,
+  x6: 40,
+  y6: -50,
+  x7: 70,
+  y7: -70,
+
+  xoff: 0,
 };
 
 /**
@@ -200,7 +204,6 @@ function myQuadraticVertexShapes() {
 function movingShapes() {
   // movingRed();
   // movingGreen();
-
   movingBlue();
 }
 
@@ -208,7 +211,7 @@ function movingRed() {
   //bezierVertex (red)
 
   //noise move (whole shape moving)
-  myRedShape.xOiginPoint = map(noise(myRedShape.xoff), 0, 1, 0, width);
+  myRedShape.xOriginPoint = map(noise(myRedShape.xoff), 0, 1, 0, width);
   myRedShape.yOriginPoint = map(noise(myRedShape.xoff + 100), 0, 1, 0, height);
 
   myRedShape.xoff += 0.003;
@@ -221,31 +224,31 @@ function movingRed() {
 
   beginShape();
   vertex(
-    myRedShape.xOiginPoint + myRedShape.x0,
+    myRedShape.xOriginPoint + myRedShape.x0,
     myRedShape.yOriginPoint + myRedShape.y0
   );
   bezierVertex(
-    myRedShape.xOiginPoint + myRedShape.x1,
+    myRedShape.xOriginPoint + myRedShape.x1,
     myRedShape.yOriginPoint + myRedShape.y1,
-    myRedShape.xOiginPoint + myRedShape.x2,
+    myRedShape.xOriginPoint + myRedShape.x2,
     myRedShape.yOriginPoint + myRedShape.y2,
-    myRedShape.xOiginPoint + myRedShape.x3,
+    myRedShape.xOriginPoint + myRedShape.x3,
     myRedShape.yOriginPoint + myRedShape.y3
   );
   bezierVertex(
-    myRedShape.xOiginPoint + myRedShape.x4,
+    myRedShape.xOriginPoint + myRedShape.x4,
     myRedShape.yOriginPoint + myRedShape.y4,
-    myRedShape.xOiginPoint + myRedShape.x5,
+    myRedShape.xOriginPoint + myRedShape.x5,
     myRedShape.yOriginPoint + myRedShape.y5,
-    myRedShape.xOiginPoint + myRedShape.x6,
+    myRedShape.xOriginPoint + myRedShape.x6,
     myRedShape.yOriginPoint + myRedShape.y6
   );
   bezierVertex(
-    myRedShape.xOiginPoint + myRedShape.x7,
+    myRedShape.xOriginPoint + myRedShape.x7,
     myRedShape.yOriginPoint + myRedShape.y7,
-    myRedShape.xOiginPoint + myRedShape.x8,
+    myRedShape.xOriginPoint + myRedShape.x8,
     myRedShape.yOriginPoint + myRedShape.y8,
-    myRedShape.xOiginPoint + myRedShape.x0,
+    myRedShape.xOriginPoint + myRedShape.x0,
     myRedShape.yOriginPoint + myRedShape.y0
   );
   endShape();
@@ -277,36 +280,63 @@ function movingGreen() {
 
 function movingBlue() {
   //quadraticVertex (blue)
+
+  //noise (need to modify each point according to their coordinates)
+  myBlueShape.x0 = map(noise(myBlueShape.xoff), 0, 1, 0, 80);
+  myBlueShape.y0 = map(noise(myBlueShape.xoff + 100), 0, 1, -120, -40);
+
+  myBlueShape.x1 = map(noise(myBlueShape.xoff + 200), 0, 1, 100, 180);
+  myBlueShape.y1 = map(noise(myBlueShape.xoff + 300), 0, 1, -110, -30);
+  myBlueShape.x2 = map(noise(myBlueShape.xoff + 400), 0, 1, 20, 100);
+  myBlueShape.y2 = map(noise(myBlueShape.xoff + 500), 0, 1, -70, 10);
+
+  myBlueShape.x3 = map(noise(myBlueShape.xoff + 600), 0, 1, -40, 40);
+  myBlueShape.y3 = map(noise(myBlueShape.xoff + 700), 0, 1, -40, 40);
+  myBlueShape.x4 = map(noise(myBlueShape.xoff + 800), 0, 1, -20, 60);
+  myBlueShape.y4 = map(noise(myBlueShape.xoff + 900), 0, 1, -30, 50);
+
+  myBlueShape.x5 = map(noise(myBlueShape.xoff + 1000), 0, 1, -100, -20);
+  myBlueShape.y5 = map(noise(myBlueShape.xoff + 1100), 0, 1, -30, 50);
+  myBlueShape.x6 = map(noise(myBlueShape.xoff + 1200), 0, 1, 0, 80);
+  myBlueShape.y6 = map(noise(myBlueShape.xoff + 1300), 0, 1, -90, -10);
+
+  myBlueShape.x7 = map(noise(myBlueShape.xoff + 1200), 0, 1, 30, 110);
+  myBlueShape.y7 = map(noise(myBlueShape.xoff + 1300), 0, 1, -110, -30);
+  myBlueShape.xoff += 0.003;
+
   push();
   strokeWeight(5);
   fill(255);
   stroke(0, 0, 255);
 
   beginShape();
-  vertex(myBlueShape.x0, myBlueShape.y0);
-  quadraticVertex(
-    myBlueShape.x1,
-    myBlueShape.y1,
-    myBlueShape.x2,
-    myBlueShape.y2
+  vertex(
+    myBlueShape.xOriginPoint + myBlueShape.x0,
+    myBlueShape.yOriginPoint + myBlueShape.y0
   );
   quadraticVertex(
-    myBlueShape.x3,
-    myBlueShape.y3,
-    myBlueShape.x4,
-    myBlueShape.y4
+    myBlueShape.xOriginPoint + myBlueShape.x1,
+    myBlueShape.yOriginPoint + myBlueShape.y1,
+    myBlueShape.xOriginPoint + myBlueShape.x2,
+    myBlueShape.yOriginPoint + myBlueShape.y2
   );
   quadraticVertex(
-    myBlueShape.x5,
-    myBlueShape.y5,
-    myBlueShape.x6,
-    myBlueShape.y6
+    myBlueShape.xOriginPoint + myBlueShape.x3,
+    myBlueShape.yOriginPoint + myBlueShape.y3,
+    myBlueShape.xOriginPoint + myBlueShape.x4,
+    myBlueShape.yOriginPoint + myBlueShape.y4
   );
   quadraticVertex(
-    myBlueShape.x7,
-    myBlueShape.y7,
-    myBlueShape.x0,
-    myBlueShape.y0
+    myBlueShape.xOriginPoint + myBlueShape.x5,
+    myBlueShape.yOriginPoint + myBlueShape.y5,
+    myBlueShape.xOriginPoint + myBlueShape.x6,
+    myBlueShape.yOriginPoint + myBlueShape.y6
+  );
+  quadraticVertex(
+    myBlueShape.xOriginPoint + myBlueShape.x7,
+    myBlueShape.yOriginPoint + myBlueShape.y7,
+    myBlueShape.xOriginPoint + myBlueShape.x0,
+    myBlueShape.yOriginPoint + myBlueShape.y0
   );
   endShape();
   pop();
