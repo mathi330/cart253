@@ -8,10 +8,10 @@ author, and this description to match your project!
 
 "use strict";
 
-let oscillator;
+// let oscillators = [];
 
 let circles = [];
-let numCircles = 3;
+let numCircles = 10;
 
 /**
 Description of setup
@@ -22,10 +22,9 @@ function setup() {
 
   for (let i = 0; i < numCircles; i++) {
     let circle = new Circle(i);
+    circle.oscillator = new p5.Oscillator(440, `sine`);
     circles.push(circle);
   }
-
-  oscillator = new p5.Oscillator(440, `sine`);
 }
 
 /**
@@ -37,10 +36,20 @@ function draw() {
   for (let i = 0; i < circles.length; i++) {
     let circle = circles[i];
     circle.move();
+    circle.sound();
     circle.display();
+
+    circle.oscillator.freq(circle.freq);
+    circle.oscillator.amp(circle.amp);
   }
 }
 
 function mousePressed() {
-  oscillator.start();
+  for (let i = 0; i < circles.length; i++) {
+    let circle = circles[i];
+    circle.oscillator.start();
+  }
 }
+// function mouseReleased() {
+//   oscillator.stop();
+// }
