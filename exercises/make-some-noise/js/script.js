@@ -49,23 +49,23 @@ function draw() {
     let circle = circles[i];
     circle.move();
     circle.sound();
+    circle.colorChange();
     circle.display();
 
     circle.oscillator.freq(circle.freq);
     circle.oscillator.amp(circle.amp);
-
-    let micLevel = mic.getLevel();
-    let r = map(micLevel, 0, 1, circle.stroke.r, 255);
-    circle.stroke.r = r;
   }
 }
 
 function mousePressed() {
   for (let i = 0; i < circles.length; i++) {
     let circle = circles[i];
-    circle.oscillator.start();
+    if (circle.playingSound === false) {
+      circle.oscillator.start();
+      circle.playingSound = true;
+    } else if (circle.playingSound === true) {
+      circle.oscillator.stop();
+      circle.playingSound = false;
+    }
   }
 }
-// function mouseReleased() {
-//   oscillator.stop();
-// }
