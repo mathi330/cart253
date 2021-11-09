@@ -14,11 +14,13 @@ let numLines = 3;
 
 function setup() {
   createCanvas(windowWidth, 500);
+
   background(0);
 
   for (let i = 0; i < numShapes; i++) {
     let shape = new Shape(i);
     shapes.push(shape);
+    shape.choosePoints();
   }
 
   for (let i = 0; i < numLines; i++) {
@@ -37,7 +39,7 @@ function draw() {
 
   for (let i = 0; i < shapes.length; i++) {
     let shape = shapes[i];
-    shape.move();
+    // shape.move();
     shape.distort();
     shape.display();
   }
