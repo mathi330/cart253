@@ -8,10 +8,16 @@ author, and this description to match your project!
 
 "use strict";
 
-// let oscillators = [];
+let mic;
 
 let circles = [];
 let numCircles = 10;
+
+// let circleColor = {
+//   r: undefined,
+//   g: undefined,
+//   b: undefined,
+// };
 
 /**
 Description of setup
@@ -21,10 +27,16 @@ function setup() {
   userStartAudio();
 
   for (let i = 0; i < numCircles; i++) {
+    // circleColor.r = random(50, 120);
+    // circleColor.g = random(80, 180);
+    // circleColor.b = random(150, 255);
     let circle = new Circle(i);
     circle.oscillator = new p5.Oscillator(440, `sine`);
     circles.push(circle);
   }
+
+  mic = new p5.AudioIn();
+  mic.start();
 }
 
 /**
@@ -41,6 +53,10 @@ function draw() {
 
     circle.oscillator.freq(circle.freq);
     circle.oscillator.amp(circle.amp);
+
+    let micLevel = mic.getLevel();
+    let r = map(micLevel, 0, 1, circle.stroke.r, 255);
+    circle.stroke.r = r;
   }
 }
 
