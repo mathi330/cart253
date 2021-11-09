@@ -13,11 +13,7 @@ let mic;
 let circles = [];
 let numCircles = 10;
 
-// let circleColor = {
-//   r: undefined,
-//   g: undefined,
-//   b: undefined,
-// };
+let reverb;
 
 /**
 Description of setup
@@ -26,17 +22,24 @@ function setup() {
   createCanvas(700, 700);
   userStartAudio();
 
-  for (let i = 0; i < numCircles; i++) {
-    // circleColor.r = random(50, 120);
-    // circleColor.g = random(80, 180);
-    // circleColor.b = random(150, 255);
-    let circle = new Circle(i);
-    circle.oscillator = new p5.Oscillator(440, `sine`);
-    circles.push(circle);
-  }
-
+  reverb = new p5.Reverb();
   mic = new p5.AudioIn();
   mic.start();
+
+  for (let i = 0; i < numCircles; i++) {
+    let circle = new Circle(i);
+
+    circle.oscillator = new p5.Envelope(
+      circle.t1,
+      circle.l1,
+      circle.t2,
+      circle.l2
+    );
+    circle.oscillator = new p5.Oscillator(circle.freq, `sine`);
+    circles.push(circle);
+
+    reverb.process(circle.oscillator, 3, 2);
+  }
 }
 
 /**
@@ -57,6 +60,7 @@ function draw() {
   }
 }
 
+// Make the sound start and stop playing when clicking on the canvas.
 function mousePressed() {
   for (let i = 0; i < circles.length; i++) {
     let circle = circles[i];

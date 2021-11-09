@@ -16,8 +16,17 @@ class Circle {
     this.t = 1000 * start;
     this.speed = 0.003;
 
-    this.freq = random(20, 2000);
+    this.freq = random(20, 800);
     this.amp = 0.2;
+
+    //envelop test (taken from the p5.js envelop library: https://p5js.org/reference/#/p5.Envelope)
+    this.t1 = random(10); // attack time in seconds
+    this.l1 = random(10); // attack level 0.0 to 1.0
+    this.t2 = random(10); // decay time in seconds
+    this.l2 = random(10); // decay level  0.0 to 1.0
+
+    this.reverbTime = random(0.5, 15);
+    this.reverbDecay = random(0.0, 10);
     this.oscillator = undefined;
     this.playingSound = false;
   }
@@ -42,7 +51,6 @@ class Circle {
     this.size = newSize;
 
     //color
-    let r = map(micLevel, 0, 1, 0, 255 - this.stroke.r);
     let red = this.stroke.r + micLevel * 255;
     this.stroke.r = red;
   }
