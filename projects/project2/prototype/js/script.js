@@ -2,6 +2,9 @@
 Prototype
 Mathilde Davan
 
+This is a prototype for a bigger project. Here I concentrated more on the aesthetic
+and learning how to create weird looking shapes. This prototype does not contain
+any interactive elements and is more of a visual experience.
 */
 
 "use strict";
@@ -30,7 +33,7 @@ function setup() {
 }
 
 function draw() {
-  background(0, 50);
+  background(0, 40);
 
   for (let i = 0; i < lines.length; i++) {
     let line = lines[i];
@@ -39,7 +42,7 @@ function draw() {
 
   for (let i = 0; i < shapes.length; i++) {
     let shape = shapes[i];
-    // shape.move();
+    shape.move();
     shape.distort();
     shape.display();
   }

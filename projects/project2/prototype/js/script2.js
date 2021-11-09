@@ -104,9 +104,9 @@ Description of draw()
 */
 function draw() {
   background(0);
-  // myRedShapes();
-  // myCurveVertexShapes();
-  // myQuadraticVertexShapes();
+  myRedShapes();
+  myCurveVertexShapes();
+  myQuadraticVertexShapes();
   movingShapes();
 }
 
@@ -114,8 +114,8 @@ function myRedShapes() {
   //Create a shape using bezierVertex()
   push();
   strokeWeight(5);
-  fill(255, 100);
-  stroke(255, 0, 0, 100);
+  fill(255, 20);
+  stroke(255, 0, 0, 20);
 
   //Start 1st shape
   beginShape();
@@ -145,8 +145,8 @@ function myCurveVertexShapes() {
   //Create a shape using curveVertex();
   push();
   strokeWeight(5);
-  fill(255, 100);
-  stroke(0, 255, 0, 100);
+  fill(255, 20);
+  stroke(0, 255, 0, 20);
 
   //Start 1st shape
   beginShape();
@@ -196,8 +196,8 @@ function myQuadraticVertexShapes() {
   //Create a shape using quadraticVertex()
   push();
   strokeWeight(5);
-  fill(255, 100);
-  stroke(0, 0, 255, 100);
+  fill(255, 20);
+  stroke(0, 0, 255, 20);
 
   //Start 1st shape
   beginShape();

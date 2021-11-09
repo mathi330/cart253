@@ -54,30 +54,6 @@ class Shape {
 
   //puts the info from the xCoordinate and yCoordinate arrays into xDistortedCoordinates and yDistortedCoordinates
   choosePoints() {
-    // let a = 0;
-    //
-    // for (let i = 0; i < this.xCoordinate.length; i++) {
-    //   a += 100;
-    //   let x = map(
-    //     noise(this.xoff1 + a),
-    //     0,
-    //     1,
-    //     this.xCoordinate[i] - this.distortionRange / 2,
-    //     this.xCoordinate[i] + this.distortionRange * 2
-    //   );
-    //   this.xDistortedCoordinates.push(x);
-    //   a += 100;
-    //   let y = map(
-    //     noise(this.xoff1 + a),
-    //     0,
-    //     1,
-    //     this.yCoordinate[i] - this.distortionRange / 2,
-    //     this.yCoordinate[i] + this.distortionRange * 2
-    //   );
-    //   this.yDistortedCoordinates.push(y);
-    // }
-    // this.xoff1 += this.speed;
-
     for (let i = 0; i < this.xCoordinate.length; i++) {
       let x = this.xCoordinate[i];
       this.xDistortedCoordinates.push(x);
@@ -91,16 +67,13 @@ class Shape {
     let a = 0;
 
     for (let i = 0; i < this.xDistortedCoordinates.length; i++) {
-      let xDist = this.xDistortedCoordinates[i];
-      let yDist = this.yDistortedCoordinates[i];
-
       a += 100;
 
       let x = map(
         noise(this.xoff1 + a),
         0,
         1,
-        -this.distortionRange,
+        -this.distortionRange / 2,
         this.distortionRange
       );
 
@@ -110,14 +83,12 @@ class Shape {
         noise(this.xoff1 + a),
         0,
         1,
-        -this.distortionRange,
+        -this.distortionRange / 2,
         this.distortionRange
       );
 
-      this.xDistortedCoordinates[i] += x;
-      this.yDistortedCoordinates[i] += y;
-
-      // console.log(x, y);
+      this.xDistortedCoordinates[i] = this.xCoordinate[i] + x;
+      this.yDistortedCoordinates[i] = this.yCoordinate[i] + y;
     }
     this.xoff1 += this.speed;
   }
@@ -149,7 +120,7 @@ class Shape {
       this.yCenter + this.yDistortedCoordinates[1]
     );
 
-    //center of the shape
+    // center of the shape
     // ellipse(this.xCenter, this.yCenter, 1);
     endShape();
     pop();
