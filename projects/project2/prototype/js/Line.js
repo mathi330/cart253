@@ -1,10 +1,10 @@
 class Line {
   constructor(origin) {
-    this.yNoise = 1000 * origin;
+    this.myNoise = 1000 * origin;
 
     //speed at which the line moves
     this.speed = random(0.000004, 0.000005);
-    // dsitance between each point of the line
+    // distance between each point of the line
     this.spaceBetweenPoints = random(1, 10);
 
     this.stroke = {
@@ -19,11 +19,16 @@ class Line {
   makeLine() {
     stroke(this.stroke.r, this.stroke.g, this.stroke.b, this.stroke.a);
     strokeWeight(this.strokeWeight);
-    // this.xWave = map(10, 0, width, 0.5, 5);
 
+    //Create the points of the line
     for (let i = 0; i < width; i += this.spaceBetweenPoints) {
-      point(i, height * noise(this.yNoise, i / 1000));
-      this.yNoise += this.speed;
+      point(i, height * noise(this.myNoise, i / 1000));
+      this.myNoise += this.speed;
     }
   }
 }
+
+/**
+Inspiration and original code from John Connolly (teacher in Cegep)
+https://editor.p5js.org/Mat412/sketches/ZvfGtIyX6
+*/

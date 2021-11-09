@@ -8,7 +8,7 @@ To do:
         - Both of the above at once (green)
 
 This page is only used to experiment and not the actual prototype (so it's
-normal that it isn't called in the index). 
+normal that it isn't called in the index).
 */
 
 "use strict";
@@ -89,7 +89,7 @@ let myGreenShape = {
   xoff: 1000,
   xoff1: 0,
 
-  distortionRange: 20,
+  distortionRange: 50,
 };
 
 /**
@@ -302,113 +302,113 @@ function movingGreen() {
     noise(myGreenShape.xoff1),
     0,
     1,
-    myGreenShape.x0 - myGreenShape.distortionRange,
-    myGreenShape.x0 + myGreenShape.distortionRange
+    myGreenShape.x0 - myGreenShape.distortionRange / 2,
+    myGreenShape.x0 + myGreenShape.distortionRange * 2
   );
   let y0 = map(
     noise(myGreenShape.xoff1),
     0,
     1,
-    myGreenShape.y0 - myGreenShape.distortionRange,
-    myGreenShape.y0 + myGreenShape.distortionRange
+    myGreenShape.y0 - myGreenShape.distortionRange / 2,
+    myGreenShape.y0 + myGreenShape.distortionRange * 2
   );
   let x1 = map(
     noise(myGreenShape.xoff1 + 300),
     0,
     1,
-    myGreenShape.x1 - myGreenShape.distortionRange,
-    myGreenShape.x1 + myGreenShape.distortionRange
+    myGreenShape.x1 - myGreenShape.distortionRange / 2,
+    myGreenShape.x1 + myGreenShape.distortionRange * 2
   );
   let y1 = map(
     noise(myGreenShape.xoff1 + 400),
     0,
     1,
-    myGreenShape.y1 - myGreenShape.distortionRange,
-    myGreenShape.y1 + myGreenShape.distortionRange
+    myGreenShape.y1 - myGreenShape.distortionRange / 2,
+    myGreenShape.y1 + myGreenShape.distortionRange * 2
   );
   let x2 = map(
     noise(myGreenShape.xoff1 + 500),
     0,
     1,
-    myGreenShape.x2 - myGreenShape.distortionRange,
-    myGreenShape.x2 + myGreenShape.distortionRange
+    myGreenShape.x2 - myGreenShape.distortionRange / 2,
+    myGreenShape.x2 + myGreenShape.distortionRange * 2
   );
   let y2 = map(
     noise(myGreenShape.xoff1 + 600),
     0,
     1,
-    myGreenShape.y2 - myGreenShape.distortionRange,
-    myGreenShape.y2 + myGreenShape.distortionRange
+    myGreenShape.y2 - myGreenShape.distortionRange / 2,
+    myGreenShape.y2 + myGreenShape.distortionRange * 2
   );
   let x3 = map(
     noise(myGreenShape.xoff1 + 700),
     0,
     1,
-    myGreenShape.x3 - myGreenShape.distortionRange,
-    myGreenShape.x3 + myGreenShape.distortionRange
+    myGreenShape.x3 - myGreenShape.distortionRange / 2,
+    myGreenShape.x3 + myGreenShape.distortionRange * 2
   );
   let y3 = map(
     noise(myGreenShape.xoff1 + 800),
     0,
     1,
-    myGreenShape.y3 - myGreenShape.distortionRange,
-    myGreenShape.y3 + myGreenShape.distortionRange
+    myGreenShape.y3 - myGreenShape.distortionRange / 2,
+    myGreenShape.y3 + myGreenShape.distortionRange * 2
   );
   let x4 = map(
     noise(myGreenShape.xoff1 + 900),
     0,
     1,
-    myGreenShape.x4 - myGreenShape.distortionRange,
-    myGreenShape.x4 + myGreenShape.distortionRange
+    myGreenShape.x4 - myGreenShape.distortionRange / 2,
+    myGreenShape.x4 + myGreenShape.distortionRange * 2
   );
   let y4 = map(
     noise(myGreenShape.xoff1 + 1000),
     0,
     1,
-    myGreenShape.y4 - myGreenShape.distortionRange,
-    myGreenShape.y4 + myGreenShape.distortionRange
+    myGreenShape.y4 - myGreenShape.distortionRange / 2,
+    myGreenShape.y4 + myGreenShape.distortionRange * 2
   );
   let x5 = map(
     noise(myGreenShape.xoff1 + 1100),
     0,
     1,
-    myGreenShape.x5 - myGreenShape.distortionRange,
-    myGreenShape.x5 + myGreenShape.distortionRange
+    myGreenShape.x5 - myGreenShape.distortionRange / 2,
+    myGreenShape.x5 + myGreenShape.distortionRange * 2
   );
   let y5 = map(
     noise(myGreenShape.xoff1 + 1200),
     0,
     1,
-    myGreenShape.y5 - myGreenShape.distortionRange,
-    myGreenShape.y5 + myGreenShape.distortionRange
+    myGreenShape.y5 - myGreenShape.distortionRange / 2,
+    myGreenShape.y5 + myGreenShape.distortionRange * 2
   );
   let x6 = map(
     noise(myGreenShape.xoff1 + 1300),
     0,
     1,
-    myGreenShape.x6 - myGreenShape.distortionRange,
-    myGreenShape.x6 + myGreenShape.distortionRange
+    myGreenShape.x6 - myGreenShape.distortionRange / 2,
+    myGreenShape.x6 + myGreenShape.distortionRange * 2
   );
   let y6 = map(
     noise(myGreenShape.xoff1 + 1400),
     0,
     1,
-    myGreenShape.y6 - myGreenShape.distortionRange,
-    myGreenShape.y6 + myGreenShape.distortionRange
+    myGreenShape.y6 - myGreenShape.distortionRange / 2,
+    myGreenShape.y6 + myGreenShape.distortionRange * 2
   );
   let x7 = map(
     noise(myGreenShape.xoff1 + 1500),
     0,
     1,
-    myGreenShape.x7 - myGreenShape.distortionRange,
-    myGreenShape.x7 + myGreenShape.distortionRange
+    myGreenShape.x7 - myGreenShape.distortionRange / 2,
+    myGreenShape.x7 + myGreenShape.distortionRange * 2
   );
   let y7 = map(
     noise(myGreenShape.xoff1 + 1600),
     0,
     1,
-    myGreenShape.y7 - myGreenShape.distortionRange,
-    myGreenShape.y7 + myGreenShape.distortionRange
+    myGreenShape.y7 - myGreenShape.distortionRange / 2,
+    myGreenShape.y7 + myGreenShape.distortionRange * 2
   );
 
   myGreenShape.xoff1 += 0.005;
