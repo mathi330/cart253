@@ -138,4 +138,9 @@ function keyPressed() {
       }
     }
   }
+  //Sees if the key that is pressed is the backspace
+  if (keyCode === BACKSPACE) {
+    circles[0].oscillator.stop(); //stops the sound of the first circle in the array
+    circles.splice(0, 1); //deletes the first circle in the array
+  }
 }
