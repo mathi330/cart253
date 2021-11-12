@@ -21,7 +21,7 @@ class Circle {
     this.freqRange2 = [440, 840];
     this.freqRange3 = [20, 940];
     this.freq = random(20, 840); //initial frequency
-    this.amp = 0.1;
+    this.amp = 0.05;
 
     //envelop test (taken from the p5.js envelop library: https://p5js.org/reference/#/p5.Envelope)
     this.t1 = random(10); // attack time in seconds
@@ -37,8 +37,8 @@ class Circle {
 
   //Makes the circle move using noise
   move() {
-    this.x = map(noise(this.t), 0, 1, -100, width + 100);
-    this.y = map(noise(this.t + 200), 0, 1, -100, height + 100);
+    this.x = map(noise(this.t), 0, 1, -300, width + 300);
+    this.y = map(noise(this.t + 200), 0, 1, -200, height + 200);
     this.t += this.speed;
   }
 
@@ -54,7 +54,7 @@ class Circle {
       this.freq = map(this.x, 0, width, this.freqRange3[0], this.freqRange3[1]);
     }
 
-    this.amp = map(this.y, 0, height, 0.1, 0); //Louder when the circle is at the top and quieter when the circle is closer to the bottom of the canvas
+    this.amp = map(this.y, 0, height, 0.06, 0); //Louder when the circle is at the top and quieter when the circle is closer to the bottom of the canvas
   }
 
   //Make the color and size of the circle change by using the audio input from a mic
