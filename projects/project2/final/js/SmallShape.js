@@ -1,10 +1,10 @@
-class Shape {
+class SmallShape {
   constructor(origin) {
     //middle of the shape
     this.xCenter = random(0, width);
     this.yCenter = random(0, height);
 
-    this.size = random(2, 30);
+    this.size = random(5, 20);
     this.strokeWeight = random(1, 5);
     this.stroke = color(
       random(50, 100),
@@ -43,7 +43,7 @@ class Shape {
     this.speed = 0.002;
     //movement points
     this.xoff1 = random(0, 1000);
-    this.distortionRange = 50;
+    this.distortionRange = 30;
   }
 
   move() {
