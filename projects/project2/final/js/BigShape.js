@@ -55,17 +55,17 @@ class BigShape {
     this.yDistortedCoordinates = [];
 
     //movements
-    this.xoff = -1000 * origin;
+    this.t = -1000 * origin;
     this.speed = 0.002;
     //movement points
-    this.xoff1 = random(0, 1000);
+    this.t1 = random(0, 1000);
     this.distortionRange = 60;
   }
 
   move() {
-    this.xCenter = map(noise(this.xoff), 0, 1, -100, width + 100);
-    this.yCenter = map(noise(this.xoff + 100), 0, 1, -100, height + 100);
-    this.xoff += this.speed;
+    this.xCenter = map(noise(this.t), 0, 1, -100, width + 100);
+    this.yCenter = map(noise(this.t + 100), 0, 1, -100, height + 100);
+    this.t += this.speed;
   }
 
   //puts the info from the xCoordinate and yCoordinate arrays into xDistortedCoordinates and yDistortedCoordinates
@@ -86,7 +86,7 @@ class BigShape {
       a += 100;
 
       let x = map(
-        noise(this.xoff1 + a),
+        noise(this.t1 + a),
         0,
         1,
         -this.distortionRange / 2,
@@ -96,7 +96,7 @@ class BigShape {
       a += 100;
 
       let y = map(
-        noise(this.xoff1 + a),
+        noise(this.t1 + a),
         0,
         1,
         -this.distortionRange / 2,
@@ -106,7 +106,7 @@ class BigShape {
       this.xDistortedCoordinates[i] = this.xCoordinate[i] + x;
       this.yDistortedCoordinates[i] = this.yCoordinate[i] + y;
     }
-    this.xoff1 += this.speed;
+    this.t1 += this.speed;
   }
 
   display() {
