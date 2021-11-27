@@ -1,3 +1,6 @@
+/**
+This is a class to create a line with independent points. The line moves like waves.
+*/
 class Line {
   constructor(origin) {
     this.myNoise = 1000 * origin;
@@ -17,10 +20,14 @@ class Line {
 
     //Sound
     this.freqRange = [20, 940]; //100, 500?
-    this.freq = random(20, 940);
-    this.amp = 0.05;
     this.numPoints = []; //Array to count the number of points in the line
-    this.freqPoint = []; //Keeps the frequency for each point
+    this.numOscillators = 50;
+    this.listOscillators = [];
+    for (let i = 0; i < this.numOscillators; i++) {
+      let myOscillator = new p5.Oscillator(440, `sine`);
+      this.listOscillators.push(myOscillator);
+      myOscillator.start();
+    }
     this.playingSound = undefined; //Sees if the sound is playing
   }
 
@@ -32,25 +39,36 @@ class Line {
     for (let i = 0; i < width; i += this.spaceBetweenPoints) {
       let y = height * noise(this.myNoise, i / 1000);
 
-      let newPoint = point(i, y); //Create a point for the line
-      let newFreq = map(y, height, 0, this.freqRange[0], this.freqRange[1]); //Map the freq for that point
+      let aPoint = new MyPoint();
+      aPoint.point = point(i, y); //Create a point for the line
+      aPoint.y = y;
 
       //Counting the points
-      this.numPoints.push(newPoint);
-      //Associating the point with a frequency
-      this.freqPoint.push(newFreq);
+      this.numPoints.push(aPoint);
 
       this.myNoise += this.speed;
     }
-  }
+    let incrPointForOscillator = Math.floor(
+      this.numPoints.length / this.numOscillators
+    );
 
-  // makeSound() {
-  //   for (let j = 0; j < this.numPoints.length; j++) {
-  //     this.numPoints[j].freq;
-  //     this.numPoints[j].amp;
-  //     this.numPoints[j].start;
-  //   }
-  // }
+    for (let i = 0; i < this.listOscillators.length; i++) {
+      let osc = this.listOscillators[i];
+      let indPoint = i * incrPointForOscillator;
+
+      if (indPoint < this.numPoints.length) {
+        //Map the freq for that point
+        let myFreq = map(
+          this.numPoints[indPoint].y,
+          height,
+          0,
+          this.freqRange[0],
+          this.freqRange[1]
+        );
+        osc.freq(myFreq);
+      }
+    }
+  }
 }
 
 /**

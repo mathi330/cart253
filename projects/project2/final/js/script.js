@@ -9,9 +9,8 @@ any interactive elements and is more of a visual experience.
 
 "use strict";
 
-//Sound
-let reverb;
-let playingSound = false;
+//background
+let bgColor = 0;
 
 //Shapes
 let bigShapes = [];
@@ -22,14 +21,18 @@ let numSmallShapes = 3;
 
 //Lines
 let lines = [];
-let numLines = 3;
+let numLines = 2;
+
+//Sound
+let reverb;
+let playingSound = false;
 
 // let myShape;
 
 function setup() {
   //Basics
-  createCanvas(windowWidth, 500);
-  background(0); //Added to make sure that at the beginning of the program the backgroung is not transparent
+  createCanvas(windowWidth, windowHeight);
+  background(40); //Added to make sure that at the beginning of the program the backgroung is not transparent
 
   //Call Reverb to use in program
   reverb = new p5.Reverb();
@@ -49,12 +52,6 @@ function setup() {
 
   for (let i = 0; i < numLines; i++) {
     let line = new Line(i);
-
-    for (let j = 0; j < line.numPoints.length; j++) {
-      line.numPoints[j] = new p5.Oscillator(line.freq, `sine`);
-      // reverb.process(line.numPoints[j], 3, 2);
-    }
-
     lines.push(line);
   }
 
@@ -64,7 +61,7 @@ function setup() {
 }
 
 function draw() {
-  background(0, 40);
+  background(bgColor, 40);
 
   displayLines();
   displayShapes();
@@ -75,13 +72,6 @@ function draw() {
 function displayLines() {
   for (let i = 0; i < lines.length; i++) {
     let line = lines[i];
-    // line.makeSound();
-    // for (let j = 0; j < line.numPoints.length; j++) {
-    //   let frequency = line.numPoints[j];
-    //   frequency.freq(line.freqPoint[j]);
-    //   frequency.amp(line.amp);
-    //   frequency.start();
-    // }
     line.makeLine();
   }
 }
@@ -99,5 +89,25 @@ function displayShapes() {
     smallShape.move();
     smallShape.distort();
     smallShape.display();
+  }
+}
+
+/**
+keyPressed()
+
+All the keyboard interactions
+*/
+function keyPressed() {
+  if (keyCode === 32) {
+    if (bgColor === 0) {
+      bgColor = 255;
+    } else {
+      bgColor = 0;
+    }
+  } else if (keyCode === ENTER) {
+    for (let i = 0; i < bigShapes.length; i++) {
+      let shape = bigShapes[i];
+      shape.colorChange();
+    }
   }
 }

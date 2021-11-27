@@ -1,3 +1,7 @@
+/**
+This class is to create a big shape containing 16 points.
+
+*/
 class BigShape {
   constructor(origin) {
     //middle of the shape
@@ -6,12 +10,15 @@ class BigShape {
 
     this.size = random(25, 40);
     this.strokeWeight = random(1, 5);
-    this.stroke = color(
-      random(50, 100),
-      random(80, 120),
-      random(100, 255),
-      random(120, 210)
-    );
+    this.chooseRed = random(50, 100);
+    this.chooseGreen = random(80, 120);
+    this.chooseBlue = random(100, 255);
+    this.chooseAlpha = random(120, 210);
+    this.r = this.chooseRed;
+    this.g = this.chooseGreen;
+    this.b = this.chooseBlue;
+    this.a = this.chooseAlpha;
+    // this.stroke = color(this.r, this.g, this.b, this.a);
 
     //points of the shape
     this.numCoordinates = 16;
@@ -109,11 +116,27 @@ class BigShape {
     this.t1 += this.speed;
   }
 
+  colorChange() {
+    if (this.r === this.chooseRed) {
+      this.r = this.chooseBlue;
+      this.g = this.chooseRed;
+      this.b = this.chooseGreen;
+    } else if (this.r === this.chooseBlue) {
+      this.r = this.chooseGreen;
+      this.g = this.chooseBlue;
+      this.b = this.chooseRed;
+    } else if (this.r === this.chooseGreen) {
+      this.r = this.chooseRed;
+      this.g = this.chooseGreen;
+      this.b = this.chooseBlue;
+    }
+  }
+
   display() {
     push();
     strokeWeight(this.strokeWeight);
     noFill();
-    stroke(this.stroke);
+    stroke(this.r, this.g, this.b, this.a);
 
     //forming the shape
     beginShape();

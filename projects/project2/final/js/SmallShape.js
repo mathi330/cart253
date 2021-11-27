@@ -1,3 +1,6 @@
+/**
+This class creates a small shape made of 8 points.
+*/
 class SmallShape {
   constructor(origin) {
     //middle of the shape
