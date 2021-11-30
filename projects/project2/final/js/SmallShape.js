@@ -1,5 +1,7 @@
 /**
-This class creates a small shape made of 8 points.
+This is a class to create a big shape (8 points).
+The shape moves around the canvas while each point distorts the shape itself
+(Same as BigShape just in smaller)
 */
 class SmallShape {
   constructor(origin) {
@@ -9,12 +11,15 @@ class SmallShape {
 
     this.size = random(5, 20);
     this.strokeWeight = random(1, 5);
-    this.stroke = color(
-      random(50, 100),
-      random(80, 120),
-      random(100, 255),
-      random(120, 210)
-    );
+    // colors
+    this.chooseRed = random(50, 100);
+    this.chooseGreen = random(80, 120);
+    this.chooseBlue = random(100, 255);
+    this.chooseAlpha = random(120, 210);
+    this.r = this.chooseRed;
+    this.g = this.chooseGreen;
+    this.b = this.chooseBlue;
+    this.a = this.chooseAlpha;
 
     //points of the shape
     this.numCoordinates = 8; //8 x and 8 y
@@ -42,17 +47,17 @@ class SmallShape {
     this.yDistortedCoordinates = [];
 
     //movements
-    this.xoff = -1000 * origin;
+    this.t = -1000 * origin;
     this.speed = 0.002;
     //movement points
-    this.xoff1 = random(0, 1000);
+    this.t1 = random(0, 1000);
     this.distortionRange = 30;
   }
 
   move() {
-    this.xCenter = map(noise(this.xoff), 0, 1, -100, width + 100);
-    this.yCenter = map(noise(this.xoff + 100), 0, 1, -100, height + 100);
-    this.xoff += this.speed;
+    this.xCenter = map(noise(this.t), 0, 1, -100, width + 100);
+    this.yCenter = map(noise(this.t + 100), 0, 1, -100, height + 100);
+    this.t += this.speed;
   }
 
   //puts the info from the xCoordinate and yCoordinate arrays into xDistortedCoordinates and yDistortedCoordinates
@@ -73,7 +78,7 @@ class SmallShape {
       a += 100;
 
       let x = map(
-        noise(this.xoff1 + a),
+        noise(this.t1 + a),
         0,
         1,
         -this.distortionRange / 2,
@@ -83,7 +88,7 @@ class SmallShape {
       a += 100;
 
       let y = map(
-        noise(this.xoff1 + a),
+        noise(this.t1 + a),
         0,
         1,
         -this.distortionRange / 2,
@@ -93,14 +98,30 @@ class SmallShape {
       this.xDistortedCoordinates[i] = this.xCoordinate[i] + x;
       this.yDistortedCoordinates[i] = this.yCoordinate[i] + y;
     }
-    this.xoff1 += this.speed;
+    this.t1 += this.speed;
+  }
+
+  colorChange() {
+    if (this.r === this.chooseRed) {
+      this.r = this.chooseBlue;
+      this.g = this.chooseRed;
+      this.b = this.chooseGreen;
+    } else if (this.r === this.chooseBlue) {
+      this.r = this.chooseGreen;
+      this.g = this.chooseBlue;
+      this.b = this.chooseRed;
+    } else if (this.r === this.chooseGreen) {
+      this.r = this.chooseRed;
+      this.g = this.chooseGreen;
+      this.b = this.chooseBlue;
+    }
   }
 
   display() {
     push();
     strokeWeight(this.strokeWeight);
     noFill();
-    stroke(this.stroke);
+    stroke(this.r, this.g, this.b, this.a);
 
     //forming the shape
     beginShape();

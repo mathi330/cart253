@@ -21,7 +21,7 @@ let numSmallShapes = 3;
 
 //Lines
 let lines = [];
-let numLines = 2;
+let numLines = 3;
 
 //Sound
 let reverb;
@@ -35,7 +35,7 @@ function setup() {
   background(40); //Added to make sure that at the beginning of the program the backgroung is not transparent
 
   //Call Reverb to use in program
-  reverb = new p5.Reverb();
+  // reverb = new p5.Reverb();
 
   //Creating 2 seperate for loops makes the big and small shapes of the same i be at the same center coordinates
   for (let i = 0; i < numBigShapes + numSmallShapes; i++) {
@@ -108,6 +108,14 @@ function keyPressed() {
     for (let i = 0; i < bigShapes.length; i++) {
       let shape = bigShapes[i];
       shape.colorChange();
+    }
+    for (let i = 0; i < smallShapes.length; i++) {
+      let shape = smallShapes[i];
+      shape.colorChange();
+    }
+    for (let i = 0; i < lines.length; i++) {
+      let line = lines[i];
+      line.colorChange();
     }
   }
 }

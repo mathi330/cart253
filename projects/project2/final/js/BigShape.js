@@ -1,6 +1,6 @@
 /**
-This class is to create a big shape containing 16 points.
-
+This is a class to create a big shape (16 points).
+The shape moves around the canvas while each point distorts the shape itself
 */
 class BigShape {
   constructor(origin) {
@@ -10,6 +10,7 @@ class BigShape {
 
     this.size = random(25, 40);
     this.strokeWeight = random(1, 5);
+    // colors
     this.chooseRed = random(50, 100);
     this.chooseGreen = random(80, 120);
     this.chooseBlue = random(100, 255);
@@ -18,7 +19,6 @@ class BigShape {
     this.g = this.chooseGreen;
     this.b = this.chooseBlue;
     this.a = this.chooseAlpha;
-    // this.stroke = color(this.r, this.g, this.b, this.a);
 
     //points of the shape
     this.numCoordinates = 16;
