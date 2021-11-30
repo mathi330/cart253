@@ -23,6 +23,10 @@ let numSmallShapes = 3;
 let lines = [];
 let numLines = 3;
 
+//Array containing all the shapes and lines
+let movingThings = [];
+let numMovingThings = 0;
+
 //Sound
 let reverb;
 let playingSound = false;
@@ -43,16 +47,24 @@ function setup() {
       let bigShape = new BigShape(i);
       bigShapes.push(bigShape);
       bigShape.choosePoints();
+
+      movingThings.push(bigShape);
+      numMovingThings += 1;
     } else if (i >= numBigShapes && i < numBigShapes + numSmallShapes) {
       let smallShape = new SmallShape(i);
       smallShapes.push(smallShape);
       smallShape.choosePoints();
+
+      movingThings.push(smallShape);
+      numMovingThings += 1;
     }
   }
 
   for (let i = 0; i < numLines; i++) {
     let line = new Line(i);
     lines.push(line);
+    movingThings.push(line);
+    numMovingThings += 1;
   }
 
   ///
@@ -98,13 +110,16 @@ keyPressed()
 All the keyboard interactions
 */
 function keyPressed() {
+  // change background color when pressing the spacebar
   if (keyCode === 32) {
     if (bgColor === 0) {
       bgColor = 255;
     } else {
       bgColor = 0;
     }
-  } else if (keyCode === ENTER) {
+  }
+  // change shapes and lines' color when pressing enter
+  else if (keyCode === ENTER) {
     for (let i = 0; i < bigShapes.length; i++) {
       let shape = bigShapes[i];
       shape.colorChange();
@@ -118,4 +133,18 @@ function keyPressed() {
       line.colorChange();
     }
   }
+  // change the color of one moving thing at random
+  else if (keyCode === SHIFT) {
+    let randomRed = random(20, 255);
+    let randomGreen = random(20, 255);
+    let randomBlue = random(20, 255);
+    let randomAlpha = random(210, 255);
+
+    let chooseShape = Math.floor(random(numMovingThings));
+    movingThings[chooseShape].r = randomRed;
+    movingThings[chooseShape].g = randomGreen;
+    movingThings[chooseShape].b = randomBlue;
+    movingThings[chooseShape].a = randomAlpha;
+  }
+  // add a shape when pressing delete
 }

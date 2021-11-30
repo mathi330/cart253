@@ -21,13 +21,6 @@ class Line {
     this.b = this.chooseBlue;
     this.a = this.chooseAlpha;
 
-    // this.stroke = {
-    //   r: random(150, 200),
-    //   g: random(10, 80),
-    //   b: random(100, 200),
-    //   a: random(230, 255),
-    // };
-
     //Sound
     this.freqRange = [300, 800]; //100, 500? 20, 940? 300, 800?
     this.ampChoice = random(0.01, 0.5); //choose the amplitude of the oscillators
@@ -59,6 +52,10 @@ class Line {
       this.r = this.chooseRed;
       this.g = this.chooseGreen;
       this.b = this.chooseBlue;
+    } else {
+      this.r = this.chooseGreen;
+      this.g = this.chooseBlue;
+      this.b = this.chooseRed;
     }
   }
 
