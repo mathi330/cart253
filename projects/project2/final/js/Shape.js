@@ -1,5 +1,8 @@
+/**
+This class is the super class for the big and small shape classes
+*/
 class Shape {
-  constructor(origin, smallest, biggest, distRange) {
+  constructor(origin, smallest, biggest, distRange, sound, minFreq, maxFreq) {
     //middle of the shape
     this.xCenter = random(0, width);
     this.yCenter = random(0, height);
@@ -22,12 +25,42 @@ class Shape {
     //movement points
     this.t1 = random(0, 1000);
     this.distortionRange = distRange;
+
+    // Everything related to sound in that class is from the make some noise exercise
+    this.freqRange = [minFreq, maxFreq];
+    this.freq = random(20, 840); //initial frequency
+    this.amp = 0.05;
+
+    //envelop test (taken from the p5.js envelop library: https://p5js.org/reference/#/p5.Envelope)
+    this.t1 = random(10); // attack time in seconds
+    this.l1 = random(10); // attack level 0.0 to 1.0
+    this.t2 = random(10); // decay time in seconds
+    this.l2 = random(10); // decay level  0.0 to 1.0
+
+    this.reverbTime = random(0.5, 15);
+    this.reverbDecay = random(0.0, 10);
+    this.oscillator = undefined;
+    this.playingSound = sound; //Sees if the sound is playing
   }
 
   move() {
     this.xCenter = map(noise(this.t), 0, 1, -100, width + 100);
     this.yCenter = map(noise(this.t + 100), 0, 1, -100, height + 100);
     this.t += this.speed;
+  }
+
+  //Chooses the range of the sound associated with the circle's coordinates
+  sound() {
+    //Applies the range of the frequence
+    this.freq = map(
+      this.xCenter,
+      0,
+      width,
+      this.freqRange[0],
+      this.freqRange[1]
+    );
+
+    this.amp = map(this.yCenter, 0, height, 0.1, 0.5); //Louder when the circle is at the top and quieter when the circle is closer to the bottom of the canvas
   }
 
   //puts the info from the xCoordinate and yCoordinate arrays into xDistortedCoordinates and yDistortedCoordinates

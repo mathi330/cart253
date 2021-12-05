@@ -3,9 +3,9 @@ This is a class to create a big shape (16 points).
 The shape moves around the canvas while each point distorts the shape itself
 */
 class BigShape extends Shape {
-  constructor(origin) {
+  constructor(origin, sound) {
     // Call the super class constructor
-    super(origin, 25, 40, 60);
+    super(origin, 25, 40, 60, sound, -50, 440);
 
     //points of the shape
     this.numCoordinates = 16;

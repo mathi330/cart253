@@ -4,9 +4,9 @@ The shape moves around the canvas while each point distorts the shape itself
 (Same as BigShape just in smaller)
 */
 class SmallShape extends Shape {
-  constructor(origin) {
+  constructor(origin, sound) {
     // Call the super class constructor
-    super(origin, 5, 20, 30);
+    super(origin, 5, 20, 30, sound, 440, 940);
 
     //points of the shape
     this.numCoordinates = 8; //8 x and 8 y

@@ -22,9 +22,11 @@ class Line {
     this.a = this.chooseAlpha;
 
     //Sound
-    this.freqRange = [300, 800]; //100, 500? 20, 940? 300, 800?
-    this.ampChoice = random(0.01, 0.5); //choose the amplitude of the oscillators
+    this.freqRange = [20, 1200]; //100, 500? 20, 940? 300, 800?
+    this.ampChoice = random(0.01, 0.06); //choose the amplitude of the oscillators
     this.numPoints = []; //Array to count the number of points in the line
+
+    this.playingSound = false; //Sees if the sound is playing
 
     //The number of oscillators per line
     this.numOscillators = 25;
@@ -33,10 +35,13 @@ class Line {
     for (let i = 0; i < this.numOscillators; i++) {
       let myOscillator = new p5.Oscillator(440, `sine`);
       this.listOscillators.push(myOscillator);
-      myOscillator.start(); //Start the sound right away
+      // If statement to see if the sound is playing from the start of the program or not
+      if (!this.playingSound) {
+        myOscillator.stop(); //Start the program without sound
+      } else if (this.playingSound) {
+        myOscillator.start();
+      }
     }
-
-    this.playingSound = false; //Sees if the sound is playing
   }
 
   colorChange() {
@@ -105,6 +110,22 @@ class Line {
         osc.freq(myFreq);
         osc.amp(this.ampChoice);
       }
+    }
+  }
+
+  stopSound() {
+    for (let i = 0; i < this.listOscillators.length; i++) {
+      let myOscillator = this.listOscillators[i];
+      this.playingSound = false;
+      myOscillator.stop();
+    }
+  }
+
+  startSound() {
+    for (let i = 0; i < this.listOscillators.length; i++) {
+      let myOscillator = this.listOscillators[i];
+      this.playingSound = true;
+      myOscillator.start();
     }
   }
 }
