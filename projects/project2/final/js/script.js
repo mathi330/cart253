@@ -2,9 +2,9 @@
 Prototype
 Mathilde Davan
 
-This is a prototype for a bigger project. Here I concentrated more on the aesthetic
-and learning how to create weird looking shapes. This prototype does not contain
-any interactive elements and is more of a visual experience.
+This file is the main script for the project. It is used to setup and display the
+shapes from the different classes. It is also mainly for the interactions with the
+keyboard.
 */
 
 "use strict";
@@ -26,13 +26,10 @@ let numShapes = 0;
 let lines = [];
 let numLines = 2;
 
-//Array containing all the shapes and lines
-let movingThings = [];
-let numMovingThings = 0;
-
 //Sound
 let reverb;
-let playingSound = false;
+let bigPlayingSound = false;
+let smallPlayingSound = false;
 
 // let myShape;
 
@@ -68,9 +65,6 @@ function setup() {
       shapes.push(bigShape);
       numShapes += 1;
 
-      movingThings.push(bigShape);
-      numMovingThings += 1;
-
       reverb.process(bigShape.oscillator, 3, 2); //Creates a reverb effect for the created shape
     } else if (i >= numBigShapes && i < numBigShapes + numSmallShapes) {
       let smallShape = new SmallShape(i, false);
@@ -89,9 +83,6 @@ function setup() {
       shapes.push(smallShape);
       numShapes += 1;
 
-      movingThings.push(smallShape);
-      numMovingThings += 1;
-
       reverb.process(smallShape.oscillator, 3, 2); //Creates a reverb effect for the created shape
     }
   }
@@ -99,8 +90,6 @@ function setup() {
   for (let i = 0; i < numLines; i++) {
     let line = new Line(i);
     lines.push(line);
-    movingThings.push(line);
-    numMovingThings += 1;
   }
 
   ///
@@ -108,6 +97,11 @@ function setup() {
   // myShape = new ShapeNotMoving();
 }
 
+/**
+draw()
+Creates a background (on top of the setup backgrounds) and calls the functions
+used to display the lines and shapes
+*/
 function draw() {
   background(bgColor, 40);
 
@@ -117,6 +111,10 @@ function draw() {
   // myShape.display();
 }
 
+/**
+displayLines()
+Displays the lines according to their class
+*/
 function displayLines() {
   for (let i = 0; i < lines.length; i++) {
     let line = lines[i];
@@ -124,6 +122,10 @@ function displayLines() {
   }
 }
 
+/**
+displayShapes()
+Displays the big and small shapes according to their class
+*/
 function displayShapes() {
   for (let i = 0; i < shapes.length; i++) {
     let shape = shapes[i];
@@ -153,6 +155,7 @@ function keyPressed() {
       bgColor = 0;
     }
   }
+
   // change shapes and lines' color when pressing enter
   else if (keyCode === ENTER) {
     for (let i = 0; i < bigShapes.length; i++) {
@@ -168,6 +171,7 @@ function keyPressed() {
       line.colorChange();
     }
   }
+
   // change the color of one moving thing at random
   else if (keyCode === SHIFT) {
     let randomRed = random(20, 255);
@@ -175,11 +179,20 @@ function keyPressed() {
     let randomBlue = random(20, 255);
     let randomAlpha = random(210, 255);
 
-    let chooseShape = Math.floor(random(numMovingThings));
-    movingThings[chooseShape].r = randomRed;
-    movingThings[chooseShape].g = randomGreen;
-    movingThings[chooseShape].b = randomBlue;
-    movingThings[chooseShape].a = randomAlpha;
+    let chooseLineOrShape = Math.floor(random(shapes.length + lines.length));
+    if (chooseLineOrShape < shapes.length) {
+      let chooseShape = Math.floor(random(shapes.length));
+      shapes[chooseShape].r = randomRed;
+      shapes[chooseShape].g = randomGreen;
+      shapes[chooseShape].b = randomBlue;
+      shapes[chooseShape].a = randomAlpha;
+    } else {
+      let chooseLine = Math.floor(random(lines.length));
+      lines[chooseLine].r = randomRed;
+      lines[chooseLine].g = randomGreen;
+      lines[chooseLine].b = randomBlue;
+      lines[chooseLine].a = randomAlpha;
+    }
   }
 
   //start and stop the sound of lines
@@ -206,14 +219,14 @@ function keyPressed() {
         bigShape.oscillator.start(); //Start the sound
         //Set the playingSound variables to true
         bigShape.playingSound = true;
-        playingSound = true;
+        bigPlayingSound = true;
 
         //If the playingSound variable is true (the sound is playing)
       } else if (bigShape.playingSound === true) {
         bigShape.oscillator.stop(); //Stop the sound
         //Set the playingSound variables to false
         bigShape.playingSound = false;
-        playingSound = false;
+        bigPlayingSound = false;
       }
     }
   }
@@ -228,14 +241,14 @@ function keyPressed() {
         smallShape.oscillator.start(); //Start the sound
         //Set the playingSound variables to true
         smallShape.playingSound = true;
-        playingSound = true;
+        smallPlayingSound = true;
 
         //If the playingSound variable is true (the sound is playing)
       } else if (smallShape.playingSound === true) {
         smallShape.oscillator.stop(); //Stop the sound
         //Set the playingSound variables to false
         smallShape.playingSound = false;
-        playingSound = false;
+        smallPlayingSound = false;
       }
     }
   }
@@ -244,7 +257,7 @@ function keyPressed() {
   else if (keyCode === LEFT_ARROW) {
     //If statement to determine wether the sound associated with the new shape should be heard or not
     //If the other shapes' sound are not playing
-    if (!playingSound) {
+    if (!bigPlayingSound) {
       let bigShape = new BigShape(shapes.length + 1, false); //create a new shape
 
       bigShape.oscillator = new p5.Envelope(
@@ -258,7 +271,6 @@ function keyPressed() {
       bigShape.choosePoints();
 
       shapes.push(bigShape);
-      movingThings.push(bigShape);
 
       reverb.process(bigShape.oscillator, 3, 2); //adds a reverb effect to the sound
 
@@ -277,7 +289,6 @@ function keyPressed() {
       bigShape.choosePoints();
 
       shapes.push(bigShape);
-      movingThings.push(bigShape);
 
       reverb.process(bigShape.oscillator, 3, 2);
       bigShape.oscillator.start(); //starts the sound for this shape too
@@ -288,7 +299,7 @@ function keyPressed() {
   else if (keyCode === 109 || keyCode === 77) {
     //If statement to determine wether the sound associated with the new shape should be heard or not
     //If the other shapes' sound are not playing
-    if (!playingSound) {
+    if (!smallPlayingSound) {
       let smallShape = new SmallShape(shapes.length + 1, false); //create a new shape
 
       smallShape.oscillator = new p5.Envelope(
@@ -302,7 +313,6 @@ function keyPressed() {
       smallShape.choosePoints();
 
       shapes.push(smallShape);
-      movingThings.push(smallShape);
 
       reverb.process(smallShape.oscillator, 3, 2); //adds a reverb effect to the sound
 
@@ -321,7 +331,6 @@ function keyPressed() {
       smallShape.choosePoints();
 
       shapes.push(smallShape);
-      movingThings.push(smallShape);
 
       reverb.process(smallShape.oscillator, 3, 2);
       smallShape.oscillator.start(); //starts the sound for this shape too
@@ -341,7 +350,72 @@ function keyPressed() {
     line.makeLine();
   }
 
-  // change the thickness of the shapes (and lines?)
+  // delete a shape when pressing ctrl
+  else if (keyCode === CONTROL) {
+    shapes[0].oscillator.stop();
+    shapes.splice(0, 1);
+  }
+
+  //change the thickness of all the shapes and lines
+  else if (keyCode === 97 || keyCode === 65) {
+    if (lines[0].strokeWeight > 2) {
+      for (let i = 0; i < shapes.length; i++) {
+        let shape = shapes[i];
+        let chooseThickness = random(1, 5);
+        shape.strokeWeight = chooseThickness;
+      }
+      for (let i = 0; i < lines.length; i++) {
+        let line = lines[i];
+        let chooseThickness = random(0.5, 2);
+        let chooseSpaceBetweenPoints = random(1, 6);
+        line.strokeWeight = chooseThickness;
+        line.spaceBetweenPoints = chooseSpaceBetweenPoints;
+      }
+    } else {
+      for (let i = 0; i < shapes.length; i++) {
+        let shape = shapes[i];
+        let chooseThickness = random(5, 12);
+        shape.strokeWeight = chooseThickness;
+      }
+      for (let i = 0; i < lines.length; i++) {
+        let line = lines[i];
+        let chooseThickness = random(3, 6);
+        let chooseSpaceBetweenPoints = random(6, 10);
+        line.strokeWeight = chooseThickness;
+        line.spaceBetweenPoints = chooseSpaceBetweenPoints;
+      }
+    }
+  }
+
+  // change the thickness of one shape or line when pressing 'c'
+  else if (keyCode === 99 || keyCode === 67) {
+    let chooseLineOrShape = Math.floor(random(shapes.length + lines.length));
+    if (chooseLineOrShape < shapes.length) {
+      let chooseShape = Math.floor(random(shapes.length));
+      let chooseThickness;
+
+      if (shapes[chooseShape].strokeWeight > 5) {
+        chooseThickness = random(1, 5);
+      } else {
+        chooseThickness = random(5, 12);
+      }
+      shapes[chooseShape].strokeWeight = chooseThickness;
+    } else {
+      let chooseLine = Math.floor(random(lines.length));
+      let chooseThickness;
+      let chooseSpaceBetweenPoints;
+
+      if (lines[chooseLine].strokeWeight > 5) {
+        chooseThickness = random(0.7, 2);
+        chooseSpaceBetweenPoints = random(1, 6);
+      } else {
+        chooseThickness = random(3, 6);
+        chooseSpaceBetweenPoints = random(6, 10);
+      }
+      lines[chooseLine].strokeWeight = chooseThickness;
+      lines[chooseLine].spaceBetweenPoints = chooseSpaceBetweenPoints;
+    }
+  }
 
   // change the distortion range of the shapes
 

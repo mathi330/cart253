@@ -23,7 +23,7 @@ class Line {
 
     //Sound
     this.freqRange = [20, 1200]; //100, 500? 20, 940? 300, 800?
-    this.ampChoice = random(0.01, 0.06); //choose the amplitude of the oscillators
+    this.ampChoice = random(0.01, 0.03); //choose the amplitude of the oscillators
     this.numPoints = []; //Array to count the number of points in the line
 
     this.playingSound = false; //Sees if the sound is playing

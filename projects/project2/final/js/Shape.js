@@ -2,7 +2,16 @@
 This class is the super class for the big and small shape classes
 */
 class Shape {
-  constructor(origin, smallest, biggest, distRange, sound, minFreq, maxFreq) {
+  constructor(
+    origin,
+    smallest,
+    biggest,
+    distRange,
+    sound,
+    minFreq,
+    maxFreq,
+    amp
+  ) {
     //middle of the shape
     this.xCenter = random(0, width);
     this.yCenter = random(0, height);
@@ -29,7 +38,7 @@ class Shape {
     // Everything related to sound in that class is from the make some noise exercise
     this.freqRange = [minFreq, maxFreq];
     this.freq = random(20, 840); //initial frequency
-    this.amp = 0.05;
+    this.amp = amp;
 
     //envelop test (taken from the p5.js envelop library: https://p5js.org/reference/#/p5.Envelope)
     this.t1 = random(10); // attack time in seconds
