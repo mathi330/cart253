@@ -29,7 +29,7 @@ class Line {
     this.playingSound = false; //Sees if the sound is playing
 
     //The number of oscillators per line
-    this.numOscillators = 25;
+    this.numOscillators = 15;
     this.listOscillators = [];
     //Create all the oscillators that will be used in the line
     for (let i = 0; i < this.numOscillators; i++) {
