@@ -5,7 +5,7 @@ The shape moves around the canvas while each point distorts the shape itself
 class BigShape extends Shape {
   constructor(origin, sound) {
     // Call the super class constructor
-    super(origin, 25, 40, 60, sound, 20, 440, 0.1);
+    super(origin, 25, 40, sound, 20, 440, 0.1);
 
     //points of the shape
     this.numCoordinates = 16;

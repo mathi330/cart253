@@ -8,9 +8,13 @@ class Line {
     //speed at which the line moves
     this.speed = random(0.000004, 0.000005);
     // distance between each point of the line
-    this.spaceBetweenPoints = random(1, 6);
+    this.smallSpaceBetweenPoints = random(1, 6);
+    this.bigSpaceBetweenPoints = random(6, 10);
+    this.spaceBetweenPoints = this.smallSpaceBetweenPoints;
 
-    this.strokeWeight = 1.5;
+    this.smallStroke = random(0.8, 2);
+    this.bigStroke = random(3, 6);
+    this.strokeWeight = this.smallStroke;
     // colors
     this.chooseRed = random(150, 200);
     this.chooseGreen = random(10, 80);
@@ -23,7 +27,7 @@ class Line {
 
     //Sound
     this.freqRange = [20, 1200]; //100, 500? 20, 940? 300, 800?
-    this.ampChoice = random(0.01, 0.03); //choose the amplitude of the oscillators
+    this.ampChoice = random(0.02, 0.05); //choose the amplitude of the oscillators
     this.numPoints = []; //Array to count the number of points in the line
 
     this.playingSound = false; //Sees if the sound is playing
@@ -62,6 +66,14 @@ class Line {
       this.g = this.chooseBlue;
       this.b = this.chooseRed;
     }
+  }
+
+  // changes the thinckness and space between points of the line
+  changeThinckness() {
+    this.smallStroke = random(0.8, 2);
+    this.bigStroke = random(3, 6);
+    this.smallSpaceBetweenPoints = random(1, 6);
+    this.bigSpaceBetweenPoints = random(6, 10);
   }
 
   makeLine() {

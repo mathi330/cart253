@@ -2,22 +2,15 @@
 This class is the super class for the big and small shape classes
 */
 class Shape {
-  constructor(
-    origin,
-    smallest,
-    biggest,
-    distRange,
-    sound,
-    minFreq,
-    maxFreq,
-    amp
-  ) {
+  constructor(origin, smallest, biggest, sound, minFreq, maxFreq, amp) {
     //middle of the shape
     this.xCenter = random(0, width);
     this.yCenter = random(0, height);
 
     this.size = random(smallest, biggest);
-    this.strokeWeight = random(1, 5);
+    this.smallStroke = random(1, 5);
+    this.bigStroke = random(5, 15);
+    this.strokeWeight = this.smallStroke;
     // colors
     this.chooseRed = random(50, 100);
     this.chooseGreen = random(80, 120);
@@ -33,7 +26,7 @@ class Shape {
     this.speed = 0.002;
     //movement points
     this.t1 = random(0, 1000);
-    this.distortionRange = distRange;
+    this.distortionRange = 0;
 
     // Everything related to sound in that class is from the make some noise exercise
     this.freqRange = [minFreq, maxFreq];
@@ -69,7 +62,7 @@ class Shape {
       this.freqRange[1]
     );
 
-    this.amp = map(this.yCenter, 0, height, 0.1, 0.5); //Louder when the circle is at the top and quieter when the circle is closer to the bottom of the canvas
+    this.amp = map(this.yCenter, 0, height, 0.2, 0.6); //Louder when the circle is at the top and quieter when the circle is closer to the bottom of the canvas
   }
 
   //puts the info from the xCoordinate and yCoordinate arrays into xDistortedCoordinates and yDistortedCoordinates
@@ -131,6 +124,11 @@ class Shape {
       this.g = this.chooseBlue;
       this.b = this.chooseRed;
     }
+  }
+
+  changeThinckness() {
+    this.smallStroke = random(1, 5);
+    this.bigStroke = random(5, 15);
   }
 
   display(numCoordinate) {
