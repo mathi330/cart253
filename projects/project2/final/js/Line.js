@@ -1,5 +1,8 @@
 /**
 This is a class to create a line with independent points. The line moves like waves.
+
+Inspiration and original code for the movement of the line from John Connolly (teacher in Cegep)
+https://editor.p5js.org/Mat412/sketches/ZvfGtIyX6
 */
 class Line {
   constructor(origin) {
@@ -48,7 +51,9 @@ class Line {
     }
   }
 
+  // Set the order the colors go through when they change
   colorChange() {
+    // Create a rotation with the colors being pinkish -> yellow -> blue/green
     if (this.r === this.chooseRed) {
       this.r = this.chooseBlue;
       this.g = this.chooseRed;
@@ -76,6 +81,7 @@ class Line {
     this.bigSpaceBetweenPoints = random(6, 10);
   }
 
+  // Create the line point by point (and make it move) and associate the oscillators to the right points
   makeLine() {
     stroke(this.r, this.g, this.b, this.a);
     strokeWeight(this.strokeWeight);
@@ -125,24 +131,23 @@ class Line {
     }
   }
 
+  // stop sound of the oscillators
   stopSound() {
+    // For every oscillator on the line
     for (let i = 0; i < this.listOscillators.length; i++) {
       let myOscillator = this.listOscillators[i];
-      this.playingSound = false;
-      myOscillator.stop();
+      this.playingSound = false; //set the playing sound variable to false
+      myOscillator.stop(); //stop the oscillator
     }
   }
 
+  // start sound of the oscillators
   startSound() {
+    // For every oscillator on the line
     for (let i = 0; i < this.listOscillators.length; i++) {
       let myOscillator = this.listOscillators[i];
-      this.playingSound = true;
-      myOscillator.start();
+      this.playingSound = true; //set the playing sound variable to true
+      myOscillator.start(); //start the oscillator
     }
   }
 }
-
-/**
-Inspiration and original code for the movement of the line from John Connolly (teacher in Cegep)
-https://editor.p5js.org/Mat412/sketches/ZvfGtIyX6
-*/

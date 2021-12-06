@@ -8,6 +8,8 @@ class SmallShape extends Shape {
     // Call the super class constructor
     super(origin, 5, 20, sound, 440, 940, 0.05);
 
+    this.distortion = [0, 15, 30, 45, 60];
+
     //points of the shape
     this.numCoordinates = 8; //8 x and 8 y
     this.xCoordinate = [
@@ -34,7 +36,8 @@ class SmallShape extends Shape {
     this.yDistortedCoordinates = [];
   }
 
+  // display shape
   display() {
-    super.display(7);
+    super.display(7); //last point of the shape
   }
 }

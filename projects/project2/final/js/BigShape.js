@@ -7,8 +7,10 @@ class BigShape extends Shape {
     // Call the super class constructor
     super(origin, 25, 40, sound, 20, 440, 0.1);
 
+    this.distortion = [0, 30, 60, 90, 120];
+
     //points of the shape
-    this.numCoordinates = 16;
+    this.numCoordinates = 16; //16 x and 16 y
     this.xCoordinate = [
       0,
       this.size,
@@ -49,7 +51,8 @@ class BigShape extends Shape {
     this.yDistortedCoordinates = [];
   }
 
+  // display shape
   display() {
-    super.display(15);
+    super.display(15); //last point of the shape
   }
 }

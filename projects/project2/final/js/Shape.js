@@ -8,6 +8,7 @@ class Shape {
     this.yCenter = random(0, height);
 
     this.size = random(smallest, biggest);
+    // different stroke size
     this.smallStroke = random(1, 5);
     this.bigStroke = random(5, 15);
     this.strokeWeight = this.smallStroke;
@@ -45,15 +46,18 @@ class Shape {
     this.playingSound = sound; //Sees if the sound is playing
   }
 
+  // Makes the whole shape move across the canvas
   move() {
+    // Uses noise to move the center coordinates of the shape
     this.xCenter = map(noise(this.t), 0, 1, -100, width + 100);
     this.yCenter = map(noise(this.t + 100), 0, 1, -100, height + 100);
+    // add speed to t to make the shape actually move
     this.t += this.speed;
   }
 
   //Chooses the range of the sound associated with the circle's coordinates
   sound() {
-    //Applies the range of the frequence
+    //Applies the range of the frequency
     this.freq = map(
       this.xCenter,
       0,
@@ -62,10 +66,11 @@ class Shape {
       this.freqRange[1]
     );
 
-    this.amp = map(this.yCenter, 0, height, 0.2, 0.6); //Louder when the circle is at the top and quieter when the circle is closer to the bottom of the canvas
+    //Louder when the shape is at the top and quieter when the shape is closer to the bottom of the canvas
+    this.amp = map(this.yCenter, 0, height, 0.2, 0.6);
   }
 
-  //puts the info from the xCoordinate and yCoordinate arrays into xDistortedCoordinates and yDistortedCoordinates
+  //Puts the info from the xCoordinate and yCoordinate arrays into xDistortedCoordinates and yDistortedCoordinates
   choosePoints() {
     for (let i = 0; i < this.xCoordinate.length; i++) {
       let x = this.xCoordinate[i];
@@ -76,12 +81,14 @@ class Shape {
     }
   }
 
+  // Make each point of the shape move in a certain margin from its original position
   distort() {
-    let a = 0;
+    let a = 0; //so that not every point has the movements
 
     for (let i = 0; i < this.xDistortedCoordinates.length; i++) {
       a += 100;
 
+      // map by how much the original x coordinate can move (what is the range of motion possible)
       let x = map(
         noise(this.t1 + a),
         0,
@@ -92,6 +99,7 @@ class Shape {
 
       a += 100;
 
+      // map by how much the original y coordinate can move (what is the range of motion possible)
       let y = map(
         noise(this.t1 + a),
         0,
@@ -100,13 +108,17 @@ class Shape {
         this.distortionRange
       );
 
+      // Add the distortion (x and y) to the original coordinates to get the coordinates of the distorted point
       this.xDistortedCoordinates[i] = this.xCoordinate[i] + x;
       this.yDistortedCoordinates[i] = this.yCoordinate[i] + y;
     }
+    // add speed to t1 to make the points actually move
     this.t1 += this.speed;
   }
 
+  // Set the order the colors go through when they change
   colorChange() {
+    // Create a rotation with the colors being blueish -> orange/pink -> green
     if (this.r === this.chooseRed) {
       this.r = this.chooseBlue;
       this.g = this.chooseRed;
@@ -126,11 +138,13 @@ class Shape {
     }
   }
 
+  // change the thickness of the shape's stroke
   changeThinckness() {
     this.smallStroke = random(1, 5);
     this.bigStroke = random(5, 15);
   }
 
+  // display the shape
   display(numCoordinate) {
     push();
     strokeWeight(this.strokeWeight);
@@ -139,27 +153,29 @@ class Shape {
 
     //forming the shape
     beginShape();
+    // last point of the array (not drawn but used to curve the beginning of the shape)
     curveVertex(
       this.xCenter + this.xDistortedCoordinates[numCoordinate],
       this.yCenter + this.yDistortedCoordinates[numCoordinate]
     );
+    // loop to draw all the points
     for (let i = 0; i < this.xDistortedCoordinates.length; i++) {
       curveVertex(
         this.xCenter + this.xDistortedCoordinates[i],
         this.yCenter + this.yDistortedCoordinates[i]
       );
     }
+    // first point to close the shape
     curveVertex(
       this.xCenter + this.xDistortedCoordinates[0],
       this.yCenter + this.yDistortedCoordinates[0]
     );
+    // second point (not drawn but used to curve the end of the shape => same use as the first curveVertex)
     curveVertex(
       this.xCenter + this.xDistortedCoordinates[1],
       this.yCenter + this.yDistortedCoordinates[1]
     );
 
-    // center of the shape
-    // ellipse(this.xCenter, this.yCenter, 1);
     endShape();
     pop();
   }

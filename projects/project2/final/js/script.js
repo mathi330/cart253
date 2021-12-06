@@ -5,6 +5,9 @@ Mathilde Davan
 This file is the main script for the project. It is used to setup and display the
 shapes from the different classes. It is also mainly for the interactions with the
 keyboard.
+
+The sound for the big and small shapes was taken from the make some noise exercise:
+https://mathi330.github.io/cart253/exercises/make-some-noise/
 */
 
 "use strict";
@@ -20,7 +23,6 @@ let smallShapes = [];
 let numSmallShapes = 3;
 
 let shapes = [];
-let numShapes = 0;
 
 //Lines
 let lines = [];
@@ -33,8 +35,6 @@ let smallPlayingSound = false;
 
 // variables for the change in distortion in the keyboard interactions
 let currentDistRange = 0;
-let smallDistRange = [0, 15, 30, 45, 60];
-let bigDistRange = [0, 30, 60, 90, 120];
 
 /**
 setup()
@@ -52,42 +52,12 @@ function setup() {
   for (let i = 0; i < numBigShapes + numSmallShapes; i++) {
     if (i < numBigShapes) {
       let bigShape = new BigShape(i, false); //create a new big shape
-
-      bigShape.oscillator = new p5.Envelope(
-        bigShape.t1,
-        bigShape.l1,
-        bigShape.t2,
-        bigShape.l2
-      ); //create an envelop for the sound
-      bigShape.oscillator = new p5.Oscillator(bigShape.freq, `sine`); //add/associate a sound to the shape
-
-      bigShapes.push(bigShape); //add the shape to the bigShapes array
-      bigShape.choosePoints(); //create/choose the points of the shape
-
-      shapes.push(bigShape); //add the shape to the shapes array
-      numShapes += 1; //count the number of objects in the shapes array
-
-      reverb.process(bigShape.oscillator, 3, 2); //Creates a reverb effect for the created shape
+      createShape(bigShape, bigShapes);
     }
     // Create the small shapes
     else if (i >= numBigShapes) {
       let smallShape = new SmallShape(i, false); //create a new small shape
-
-      smallShape.oscillator = new p5.Envelope(
-        smallShape.t1,
-        smallShape.l1,
-        smallShape.t2,
-        smallShape.l2
-      ); //create an envelop for the sound
-      smallShape.oscillator = new p5.Oscillator(smallShape.freq, `sine`); //add/associate a sound to the shape
-
-      smallShapes.push(smallShape); //add the shape to the smallShapes array
-      smallShape.choosePoints(); //create/choose the points of the shape
-
-      shapes.push(smallShape); //add the shape to the shapes array
-      numShapes += 1; //count the number of objects in the shapes array
-
-      reverb.process(smallShape.oscillator, 3, 2); //Creates a reverb effect for the created shape
+      createShape(smallShape, smallShapes);
     }
   }
 
@@ -96,6 +66,21 @@ function setup() {
     let line = new Line(i); //create a new line
     lines.push(line); //add the line at the end of the lines array
   }
+}
+
+/**
+createShape()
+Create a shape and pushes it into the appropriate array
+*/
+function createShape(shape, shapeArray) {
+  shape.oscillator = new p5.Envelope(shape.t1, shape.l1, shape.t2, shape.l2); //create an envelop for the sound of the new shape
+  shape.oscillator = new p5.Oscillator(shape.freq, `sine`); //create an oscillator for the new shape
+  shapeArray.push(shape); //add the shape to the bigShapes array
+  shape.choosePoints(); //create/choose the points of the shape
+
+  shapes.push(shape); //add the shape to the shapes array
+
+  reverb.process(shape.oscillator, 3, 2); //adds a reverb effect to the sound
 }
 
 /**
@@ -270,38 +255,13 @@ function keyPressed() {
     //If the other shapes' sound are NOT playing
     if (!bigPlayingSound) {
       let bigShape = new BigShape(shapes.length + 1, false); //create a new shape
-
-      bigShape.oscillator = new p5.Envelope(
-        bigShape.t1,
-        bigShape.l1,
-        bigShape.t2,
-        bigShape.l2
-      ); //create an envelop for the sound of the new shape
-      bigShape.oscillator = new p5.Oscillator(bigShape.freq, `sine`); //create an oscillator for the new shape
-      bigShapes.push(bigShape); //add the shape to the bigShapes array
-      bigShape.choosePoints(); //create/choose the points of the shape
-
-      shapes.push(bigShape); //add the shape to the shapes array
-
-      reverb.process(bigShape.oscillator, 3, 2); //adds a reverb effect to the sound
+      createShape(bigShape, bigShapes);
     }
     //If the other shapes' sound are playing
     else {
       let bigShape = new BigShape(shapes.length + 1, true); //create a new shape
+      createShape(bigShape, bigShapes);
 
-      bigShape.oscillator = new p5.Envelope(
-        bigShape.t1,
-        bigShape.l1,
-        bigShape.t2,
-        bigShape.l2
-      ); //create an envelop for the sound of the new shape
-      bigShape.oscillator = new p5.Oscillator(bigShape.freq, `sine`); //create an oscillator for the new shape
-      bigShapes.push(bigShape); //add the shape to the bigShapes array
-      bigShape.choosePoints(); //create/choose the points of the shape
-
-      shapes.push(bigShape); //add the shape to the shapes array
-
-      reverb.process(bigShape.oscillator, 3, 2); //adds a reverb effect to the sound
       bigShape.oscillator.start(); //starts the sound for this shape too
     }
   }
@@ -313,38 +273,13 @@ function keyPressed() {
     //If the other shapes' sound are NOT playing
     if (!smallPlayingSound) {
       let smallShape = new SmallShape(shapes.length + 1, false); //create a new shape
-
-      smallShape.oscillator = new p5.Envelope(
-        smallShape.t1,
-        smallShape.l1,
-        smallShape.t2,
-        smallShape.l2
-      ); //create an envelop for the sound of the new shape
-      smallShape.oscillator = new p5.Oscillator(smallShape.freq, `sine`); //create an oscillator for the new shape
-      smallShapes.push(smallShape); //add the shape to the smallShapes array
-      smallShape.choosePoints(); //create/choose the points of the shape
-
-      shapes.push(smallShape); //add the shape to the shapes array
-
-      reverb.process(smallShape.oscillator, 3, 2); //adds a reverb effect to the sound
+      createShape(smallShape, smallShapes);
     }
     //If the other shapes' sound are playing
     else {
       let smallShape = new SmallShape(shapes.length + 1, true); //create a new shape
+      createShape(smallShape, smallShapes);
 
-      smallShape.oscillator = new p5.Envelope(
-        smallShape.t1,
-        smallShape.l1,
-        smallShape.t2,
-        smallShape.l2
-      ); //create an envelop for the sound of the new shape
-      smallShape.oscillator = new p5.Oscillator(smallShape.freq, `sine`); //create an oscillator for the new shape
-      smallShapes.push(smallShape); //add the shape to the smallShapes array
-      smallShape.choosePoints(); //create/choose the points of the shape
-
-      shapes.push(smallShape); //add the shape to the shapes array
-
-      reverb.process(smallShape.oscillator, 3, 2); //adds a reverb effect to the sound
       smallShape.oscillator.start(); //starts the sound for this shape too
     }
   }
@@ -448,11 +383,11 @@ function keyPressed() {
   // (T) change the distortion range of the shapes
   else if (keyCode === 116 || keyCode === 84) {
     // Choose a coordinate of the array
-    let chooseDistRange = Math.floor(random(smallDistRange.length));
+    let chooseDistRange = Math.floor(random(shapes[0].distortion.length));
     // As long as the chosen coordinate is the same as the current one
     while (chooseDistRange === currentDistRange) {
       // Continue choosing one (to make sure there is a change everytime the key is pressed)
-      chooseDistRange = Math.floor(random(smallDistRange.length));
+      chooseDistRange = Math.floor(random(shapes[0].distortion.length));
     }
 
     // For every shape
@@ -461,15 +396,17 @@ function keyPressed() {
       // If the shape is a small one
       if (shape.numCoordinates === 8) {
         // apply the small distortion range chosen from the array
-        shape.distortionRange = smallDistRange[chooseDistRange];
+        shape.distortionRange = shape.distortion[chooseDistRange];
       }
       // If the shape is a big one
       else if (shape.numCoordinates === 16) {
         // apply the big distortion range chosen from the array
-        shape.distortionRange = bigDistRange[chooseDistRange];
+        shape.distortionRange = shape.distortion[chooseDistRange];
       }
     }
     // Change the current distortion range to the one that was just applied
     currentDistRange = chooseDistRange;
   }
 }
+
+// add audio input to change the color?
