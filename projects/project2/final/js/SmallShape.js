@@ -6,7 +6,7 @@ The shape moves around the canvas while each point distorts the shape itself
 class SmallShape extends Shape {
   constructor(origin, sound) {
     // Call the super class constructor
-    super(origin, 5, 20, sound, 440, 940, 0.05);
+    super(origin, 5, 20, sound, 440, 940);
 
     this.distortion = [0, 15, 30, 45, 60];
 

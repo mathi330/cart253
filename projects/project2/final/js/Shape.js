@@ -1,8 +1,9 @@
 /**
-This class is the super class for the big and small shape classes
+This class is the super class for the big and small shape classes.
+The sound elements were taken from the make some noise exercise (mostly in main script).
 */
 class Shape {
-  constructor(origin, smallest, biggest, sound, minFreq, maxFreq, amp) {
+  constructor(origin, smallest, biggest, sound, minFreq, maxFreq) {
     //middle of the shape
     this.xCenter = random(0, width);
     this.yCenter = random(0, height);
@@ -32,7 +33,7 @@ class Shape {
     // Everything related to sound in that class is from the make some noise exercise
     this.freqRange = [minFreq, maxFreq];
     this.freq = random(20, 840); //initial frequency
-    this.amp = amp;
+    this.amp = undefined;
 
     //envelop test (taken from the p5.js envelop library: https://p5js.org/reference/#/p5.Envelope)
     this.t1 = random(10); // attack time in seconds
@@ -67,7 +68,7 @@ class Shape {
     );
 
     //Louder when the shape is at the top and quieter when the shape is closer to the bottom of the canvas
-    this.amp = map(this.yCenter, 0, height, 0.2, 0.6);
+    this.amp = map(this.yCenter, 0, height, 0.3, 0.6);
   }
 
   //Puts the info from the xCoordinate and yCoordinate arrays into xDistortedCoordinates and yDistortedCoordinates
