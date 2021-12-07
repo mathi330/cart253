@@ -29,6 +29,6 @@ Because I also wanted to confuse the viewers and make them dabble with the keybo
 - change everything's color,
 - change everything's thickness.
 
-As for the visual and audio aspect of the piece, I wanted to create something abstract, relaxing, changing while still staying the same. To me, the lines represent the waves of sea or mountains as you pass by them in a car, a train,... The shapes moving can by the clouds, birds, trees,... And the sound is the wind, the sea,...
+As for the visual and audio aspect of the piece, I wanted to create something abstract, hypnotic, changing while still staying the same. To me, the lines represent the waves of sea or mountains as you pass by them in a car, a train,... The shapes moving can by the clouds, birds, trees,... And the sound is the wind, the sea,...
 But the It can also be a non geographic landscape. The lines can also be the trail of my thoughts in constant motion, and the shapes can be ideas.
 Because it is an abstract piece, it can really represent anything the viewer sees or imagine. It can represent something specific or simply be a relaxing image or anything really.
