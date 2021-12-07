@@ -27,7 +27,7 @@ class Shape {
     this.t = -1000 * origin;
     this.speed = 0.002;
     //movement points
-    this.t1 = random(0, 1000);
+    this.tt = random(0, 1000);
     this.distortionRange = 0;
 
     // Everything related to sound in that class is from the make some noise exercise
@@ -91,7 +91,7 @@ class Shape {
 
       // map by how much the original x coordinate can move (what is the range of motion possible)
       let x = map(
-        noise(this.t1 + a),
+        noise(this.tt + a),
         0,
         1,
         -this.distortionRange / 2,
@@ -102,7 +102,7 @@ class Shape {
 
       // map by how much the original y coordinate can move (what is the range of motion possible)
       let y = map(
-        noise(this.t1 + a),
+        noise(this.tt + a),
         0,
         1,
         -this.distortionRange / 2,
@@ -113,8 +113,8 @@ class Shape {
       this.xDistortedCoordinates[i] = this.xCoordinate[i] + x;
       this.yDistortedCoordinates[i] = this.yCoordinate[i] + y;
     }
-    // add speed to t1 to make the points actually move
-    this.t1 += this.speed;
+    // add speed to tt to make the points actually move
+    this.tt += this.speed;
   }
 
   // Set the order the colors go through when they change
