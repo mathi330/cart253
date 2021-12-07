@@ -553,24 +553,6 @@ function keyPressed() {
 }
 
 /**
-keyboard organization:
-
-13 changes:
-  1- Z = change the thickness of one thing
-  2- Y = change the color of one thing
-  3- C = big shape sound
-  4- V = small shape sound
-  5- X = line sound
-  6- A = delete shape
-  7- backspace = create new big shape
-  8- enter = create new small shape
-  9- shift = lightning
-  10- up arrow = change background color
-  11- down arrow = change everything's color
-  12- left arrow = change everything's thickness
-  13- rigth arrow = change everything's distortion range
-
-
 Not working for the "else if" at the end...
   keyCode !== 122 ||
   keyCode !== 90 ||
